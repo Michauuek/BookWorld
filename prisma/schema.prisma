@@ -24,12 +24,14 @@ model Users {
   role      String     @default("USER")
   favouriteGenres    UserFavouriteGenres[]
   favouriteBooks     UserFavouriteBooks[]
+  favouriteAuthors   UserFavourtieAuthors[]
 }
 
 model Authors {
-  id        Int      @id @default(autoincrement())
-  name      String
-  books     Books[]
+  id                     Int      @id @default(autoincrement())
+  name                   String
+  books                  Books[]
+  favouriteAuthors    UserFavourtieAuthors[]
 }
 
 model Ratings {
@@ -43,21 +45,21 @@ model Ratings {
 }
 
 model Books {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  author      Authors   @relation(fields: [authorId], references: [id])
-  authorId    Int
-  ratings     Ratings[]
-  genres      BookGenres[]
-  favouritesUsers     UserFavouriteBooks[]
+  id                  Int      @id @default(autoincrement())
+  title               String
+  description         String?
+  author              Authors   @relation(fields: [authorId], references: [id])
+  authorId            Int
+  ratings             Ratings[]
+  genres              BookGenres[]
+  favouriteBooks      UserFavouriteBooks[]
 }
 
 model Genres {
-  id        Int      @id @default(autoincrement())
-  name      String
-  books     BookGenres[]
-  users     UserFavouriteGenres[]
+  id                  Int      @id @default(autoincrement())
+  name                String
+  books               BookGenres[]
+  favouriteGenres     UserFavouriteGenres[]
 }
 
 model BookGenres {
@@ -87,7 +89,14 @@ model UserFavouriteBooks {
   @@id([userId, bookId])
 }
 
+model UserFavourtieAuthors {
+  user      Users     @relation(fields: [userId], references: [id])
+  userId    String
+  author    Authors   @relation(fields: [authorId], references: [id])
+  authorId  Int
 
+  @@id([userId, authorId])
+}
 
 
 
