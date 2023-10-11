@@ -26,6 +26,7 @@
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.19",
     "@types/node": "^20.8.4",
+    "prisma-dbml-generator": "^0.10.0",
     "ts-node-dev": "^2.0.0"
   }
 }
