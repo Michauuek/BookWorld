@@ -1,0 +1,68 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  email String [unique, not null]
+  name String
+  password String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  ratings Rating [not null]
+  role Role [not null]
+  roleId Int [not null]
+  comments Comment [not null]
+}
+
+Table Author {
+  id Int [pk, increment]
+  name String [not null]
+  books Book [not null]
+}
+
+Table Book {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  author Author [not null]
+  authorId Int [not null]
+  ratings Rating [not null]
+  comments Comment [not null]
+}
+
+Table Rating {
+  id Int [pk, increment]
+  book Book [not null]
+  bookId Int [not null]
+  user User [not null]
+  userId String [not null]
+  rating Int [not null]
+}
+
+Table Role {
+  id Int [pk, increment]
+  name String [not null]
+  users User [not null]
+}
+
+Table Comment {
+  id Int [pk, increment]
+  text String [not null]
+  user User [not null]
+  userId String [not null]
+  book Book [not null]
+  bookId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Ref: User.roleId > Role.id
+
+Ref: Book.authorId > Author.id
+
+Ref: Rating.bookId > Book.id
+
+Ref: Rating.userId > User.id
+
+Ref: Comment.userId > User.id
+
+Ref: Comment.bookId > Book.id
