@@ -14,57 +14,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
   password  String
   createdAt DateTime @default(now())
-  ratings   Rating[]
-  role      Role     @relation(fields: [roleId], references: [id])
-  roleId    Int
-  comments  Comment[]
+  ratings   Ratings[]
+  role      String     @default("USER")
+  favouriteGenres    UserFavouriteGenres[]
+  favouriteBooks     UserFavouriteBooks[]
 }
 
-model Author {
+model Authors {
   id        Int      @id @default(autoincrement())
   name      String
-  books     Book[]
+  books     Books[]
 }
 
-model Book {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  author      Author   @relation(fields: [authorId], references: [id])
-  authorId    Int
-  ratings     Rating[]
-  comments    Comment[]
-}
-
-model Rating {
-  id        Int      @id @default(autoincrement())
-  book      Book     @relation(fields: [bookId], references: [id])
+model Ratings {
+  id        Int       @id @default(autoincrement())
+  book      Books     @relation(fields: [bookId], references: [id])
   bookId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      Users     @relation(fields: [userId], references: [id])
   userId    String
+  comment   String?
   rating    Int
 }
 
-model Role {
-  id        Int      @id @default(autoincrement())
-  name      String
-  users     User[]
+model Books {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  author      Authors   @relation(fields: [authorId], references: [id])
+  authorId    Int
+  ratings     Ratings[]
+  genres      BookGenres[]
+  favouritesUsers     UserFavouriteBooks[]
 }
 
-model Comment {
+model Genres {
   id        Int      @id @default(autoincrement())
-  text      String
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  book      Book     @relation(fields: [bookId], references: [id])
-  bookId    Int
-  createdAt DateTime @default(now())
+  name      String
+  books     BookGenres[]
+  users     UserFavouriteGenres[]
 }
+
+model BookGenres {
+  book      Books     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  genre     Genres    @relation(fields: [genreId], references: [id])
+  genreId   Int
+
+  @@id([bookId, genreId])
+}
+
+model UserFavouriteGenres {
+  user      Users     @relation(fields: [userId], references: [id])
+  userId    String
+  genre     Genres    @relation(fields: [genreId], references: [id])
+  genreId   Int
+
+  @@id([userId, genreId])
+}
+
+model UserFavouriteBooks {
+  user      Users     @relation(fields: [userId], references: [id])
+  userId    String
+  book      Books     @relation(fields: [bookId], references: [id])
+  bookId    Int
+
+  @@id([userId, bookId])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

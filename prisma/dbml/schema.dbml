@@ -2,67 +2,99 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
-Table User {
+Table Users {
   id String [pk]
   email String [unique, not null]
   name String
   password String [not null]
   createdAt DateTime [default: `now()`, not null]
-  ratings Rating [not null]
-  role Role [not null]
-  roleId Int [not null]
-  comments Comment [not null]
+  ratings Ratings [not null]
+  role String [not null, default: 'USER']
+  favouriteGenres UserFavouriteGenres [not null]
+  favouriteBooks UserFavouriteBooks [not null]
 }
 
-Table Author {
+Table Authors {
   id Int [pk, increment]
   name String [not null]
-  books Book [not null]
+  books Books [not null]
 }
 
-Table Book {
+Table Ratings {
   id Int [pk, increment]
-  title String [not null]
-  description String
-  author Author [not null]
-  authorId Int [not null]
-  ratings Rating [not null]
-  comments Comment [not null]
-}
-
-Table Rating {
-  id Int [pk, increment]
-  book Book [not null]
+  book Books [not null]
   bookId Int [not null]
-  user User [not null]
+  user Users [not null]
   userId String [not null]
+  comment String
   rating Int [not null]
 }
 
-Table Role {
+Table Books {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  author Authors [not null]
+  authorId Int [not null]
+  ratings Ratings [not null]
+  genres BookGenres [not null]
+  favouritesUsers UserFavouriteBooks [not null]
+}
+
+Table Genres {
   id Int [pk, increment]
   name String [not null]
-  users User [not null]
+  books BookGenres [not null]
+  users UserFavouriteGenres [not null]
 }
 
-Table Comment {
-  id Int [pk, increment]
-  text String [not null]
-  user User [not null]
-  userId String [not null]
-  book Book [not null]
+Table BookGenres {
+  book Books [not null]
   bookId Int [not null]
-  createdAt DateTime [default: `now()`, not null]
+  genre Genres [not null]
+  genreId Int [not null]
+
+  indexes {
+    (bookId, genreId) [pk]
+  }
 }
 
-Ref: User.roleId > Role.id
+Table UserFavouriteGenres {
+  user Users [not null]
+  userId String [not null]
+  genre Genres [not null]
+  genreId Int [not null]
 
-Ref: Book.authorId > Author.id
+  indexes {
+    (userId, genreId) [pk]
+  }
+}
 
-Ref: Rating.bookId > Book.id
+Table UserFavouriteBooks {
+  user Users [not null]
+  userId String [not null]
+  book Books [not null]
+  bookId Int [not null]
 
-Ref: Rating.userId > User.id
+  indexes {
+    (userId, bookId) [pk]
+  }
+}
 
-Ref: Comment.userId > User.id
+Ref: Ratings.bookId > Books.id
 
-Ref: Comment.bookId > Book.id
+Ref: Ratings.userId > Users.id
+
+Ref: Books.authorId > Authors.id
+
+Ref: BookGenres.bookId > Books.id
+
+Ref: BookGenres.genreId > Genres.id
+
+Ref: UserFavouriteGenres.userId > Users.id
+
+Ref: UserFavouriteGenres.genreId > Genres.id
+
+Ref: UserFavouriteBooks.userId > Users.id
+
+Ref: UserFavouriteBooks.bookId > Books.id
