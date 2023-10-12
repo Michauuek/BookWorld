@@ -36,8 +36,10 @@ Table Books {
   id Int [pk, increment]
   title String [not null]
   description String
+  isbn String
   author Authors [not null]
   authorId Int [not null]
+  coverUrl String
   ratings Ratings [not null]
   genres BookGenres [not null]
   favouriteBooks UserFavouriteBooks [not null]
