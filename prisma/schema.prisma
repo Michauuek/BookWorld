@@ -24,14 +24,14 @@ model Users {
   role      String     @default("USER")
   favouriteGenres    UserFavouriteGenres[]
   favouriteBooks     UserFavouriteBooks[]
-  favouriteAuthors   UserFavourtieAuthors[]
+  favouriteAuthors   UserFavouriteAuthors[]
 }
 
 model Authors {
   id                     Int      @id @default(autoincrement())
   name                   String
   books                  Books[]
-  favouriteAuthors    UserFavourtieAuthors[]
+  favouriteAuthors    UserFavouriteAuthors[]
 }
 
 model Ratings {
@@ -91,7 +91,7 @@ model UserFavouriteBooks {
   @@id([userId, bookId])
 }
 
-model UserFavourtieAuthors {
+model UserFavouriteAuthors {
   user      Users     @relation(fields: [userId], references: [id])
   userId    String
   author    Authors   @relation(fields: [authorId], references: [id])

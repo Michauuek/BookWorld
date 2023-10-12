@@ -12,14 +12,14 @@ Table Users {
   role String [not null, default: 'USER']
   favouriteGenres UserFavouriteGenres [not null]
   favouriteBooks UserFavouriteBooks [not null]
-  favouriteAuthors UserFavourtieAuthors [not null]
+  favouriteAuthors UserFavouriteAuthors [not null]
 }
 
 Table Authors {
   id Int [pk, increment]
   name String [not null]
   books Books [not null]
-  favouriteAuthors UserFavourtieAuthors [not null]
+  favouriteAuthors UserFavouriteAuthors [not null]
 }
 
 Table Ratings {
@@ -85,7 +85,7 @@ Table UserFavouriteBooks {
   }
 }
 
-Table UserFavourtieAuthors {
+Table UserFavouriteAuthors {
   user Users [not null]
   userId String [not null]
   author Authors [not null]
@@ -114,6 +114,6 @@ Ref: UserFavouriteBooks.userId > Users.id
 
 Ref: UserFavouriteBooks.bookId > Books.id
 
-Ref: UserFavourtieAuthors.userId > Users.id
+Ref: UserFavouriteAuthors.userId > Users.id
 
-Ref: UserFavourtieAuthors.authorId > Authors.id
+Ref: UserFavouriteAuthors.authorId > Authors.id
