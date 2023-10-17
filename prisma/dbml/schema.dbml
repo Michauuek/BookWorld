@@ -6,6 +6,7 @@ Table Users {
   id String [pk]
   email String [unique, not null]
   name String
+  lastName String
   password String [not null]
   createdAt DateTime [default: `now()`, not null]
   ratings Ratings [not null]
@@ -18,6 +19,7 @@ Table Users {
 Table Authors {
   id Int [pk, increment]
   name String [not null]
+  lastName String
   books Books [not null]
   favouriteAuthors UserFavouriteAuthors [not null]
 }
