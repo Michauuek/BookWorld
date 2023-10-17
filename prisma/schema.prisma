@@ -15,13 +15,13 @@ datasource db {
 }
 
 model Users {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  ratings   Ratings[]
-  role      String     @default("USER")
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  name               String?
+  password           String
+  createdAt          DateTime @default(now())
+  ratings            Ratings[]
+  role               String     @default("USER")
   favouriteGenres    UserFavouriteGenres[]
   favouriteBooks     UserFavouriteBooks[]
   favouriteAuthors   UserFavouriteAuthors[]
@@ -31,7 +31,7 @@ model Authors {
   id                     Int      @id @default(autoincrement())
   name                   String
   books                  Books[]
-  favouriteAuthors    UserFavouriteAuthors[]
+  favouriteAuthors       UserFavouriteAuthors[]
 }
 
 model Ratings {
