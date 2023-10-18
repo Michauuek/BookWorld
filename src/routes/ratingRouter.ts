@@ -29,7 +29,7 @@ ratingRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
-authorRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+ratingRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });
 
