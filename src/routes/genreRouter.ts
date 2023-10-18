@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {validationMiddleware} from "../service/validator";
+import {validationMiddleware} from "../utils/validator";
 import {GenreRequest} from "../model/genreDto";
 import {plainToInstance} from "class-transformer";
 import {GenreService} from "../service/genreService";
@@ -13,6 +13,15 @@ genreRouter.post("/create", validationMiddleware(GenreRequest), async (req: Requ
     try {
         const savedGenre = await genreService.save(genre);
         return res.status(201).json(savedGenre);
+    } catch (error: any) {
+        return res.status(500).json({message: error.message});
+    }
+});
+
+genreRouter.get("/", async (req: Request, res: Response) => {
+    try {
+        const genres = await genreService.getAll();
+        return res.status(200).json(genres);
     } catch (error: any) {
         return res.status(500).json({message: error.message});
     }
