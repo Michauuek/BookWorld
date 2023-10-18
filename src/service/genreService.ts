@@ -1,5 +1,7 @@
 import {GenreRequest, GenreResponse} from "../model/genreDto";
 import {prisma} from "../utils/prisma";
+import {AppError} from "../exceptions/appError";
+import {HttpCode} from "../exceptions/httpCode";
 
 
 export class GenreService {
@@ -13,11 +15,19 @@ export class GenreService {
         });
     }
 
-    async getById(id: number): Promise<GenreResponse | null> {
+    async getById(id: number): Promise<GenreResponse> {
         console.info(`getById() - id: `, id);
-        return prisma.genres.findUnique({
+        const genre = await prisma.genres.findUnique({
             where: { id: id }
         });
+
+        if (!genre) {
+            throw new AppError({
+                httpCode: HttpCode.NOT_FOUND,
+                description: `Genre with id ${id} does not exist`,
+            })
+        }
+        return genre;
     }
 
     async save(genreRequest: GenreRequest): Promise<GenreResponse> {

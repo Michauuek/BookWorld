@@ -26,9 +26,9 @@ export class BookRequest {
 export interface BookResponse {
     id: number;
     title: string;
-    description?: string;
-    isbn?: string;
+    description: string | null;
+    isbn: string | null;
     authorId: number;
-    coverUrl?: string;
+    coverUrl: string | null;
     genres?: GenreResponse[];
 }

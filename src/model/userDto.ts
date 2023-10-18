@@ -24,8 +24,8 @@ export class UserRequest {
 export interface UserResponse {
     id: string;
     email: string;
-    name: string;
-    lastName: string;
+    name: string | null;
+    lastName: string | null;
     role: string;
     createdAt: Date;
     ratings?: RatingResponse[];

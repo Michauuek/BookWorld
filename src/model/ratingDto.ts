@@ -6,7 +6,7 @@ export class RatingRequest {
     bookId: number;
 
     @IsNumber()
-    userId: number;
+    userId: string;
 
     @IsString()
     comment?: string;
@@ -20,7 +20,7 @@ export class RatingRequest {
 export interface RatingResponse {
     id: number;
     bookId: number;
-    userId: number;
-    comment?: string;
+    userId: string;
+    comment: string | null;
     rating: number;
 }
