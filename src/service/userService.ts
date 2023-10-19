@@ -1,8 +1,9 @@
 import {UserRequest, UserResponse} from "../model/userDto";
 import {prisma} from "../utils/prisma";
-import {DEFAULT_USER_ROLE} from "../utils/constants";
+import {DEFAULT_USER_ROLE, SALT_ROUNDS} from "../utils/constants";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
+import * as bcrypt from 'bcryptjs';
 
 export class UserService {
 
@@ -43,12 +44,13 @@ export class UserService {
     }
 
     async save(userRequest: UserRequest): Promise<UserResponse> {
+        const hashedPassword = await this.hashPassword(userRequest.password);
         const savedUser = await prisma.users.create({
             data: {
                 email: userRequest.email,
                 name: userRequest.name,
                 lastName: userRequest.lastName,
-                password: userRequest.password,
+                password: hashedPassword,
                 role: DEFAULT_USER_ROLE
             },
             select: {
@@ -63,5 +65,13 @@ export class UserService {
         });
         console.info(`save() - savedUser: `, savedUser);
         return savedUser;
+    }
+
+    async hashPassword(password: string): Promise<string> {
+        return await bcrypt.hash(password, SALT_ROUNDS);
+    }
+
+    async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+        return bcrypt.compare(password, hashedPassword);
     }
 }
