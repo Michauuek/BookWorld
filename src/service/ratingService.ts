@@ -1,7 +1,6 @@
 import {prisma} from "../utils/prisma";
 import {RatingRequest, RatingResponse} from "../model/ratingDto";
-import {AppError} from "../exceptions/appError";
-import {HttpCode} from "../exceptions/httpCode";
+import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 
 export class RatingService {
@@ -21,10 +20,7 @@ export class RatingService {
         });
 
         if (!rating) {
-            throw new AppError({
-                httpCode: HttpCode.NOT_FOUND,
-                description: `Rating with id ${id} does not exist`,
-            })
+            throw new EntityNotFoundException(`Rating with id ${id} does not exist`)
         }
         return rating;
     }

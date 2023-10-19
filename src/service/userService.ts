@@ -1,8 +1,7 @@
 import {UserRequest, UserResponse} from "../model/userDto";
 import {prisma} from "../utils/prisma";
 import {DEFAULT_USER_ROLE} from "../utils/constants";
-import {AppError} from "../exceptions/appError";
-import {HttpCode} from "../exceptions/httpCode";
+import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 
 export class UserService {
@@ -38,10 +37,7 @@ export class UserService {
         });
 
         if (!user) {
-            throw new AppError({
-                httpCode: HttpCode.NOT_FOUND,
-                description: `User with id ${id} does not exist`,
-            })
+            throw new EntityNotFoundException(`User with id ${id} does not exist`)
         }
         return user;
     }

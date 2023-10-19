@@ -1,7 +1,6 @@
 import {prisma} from "../utils/prisma";
 import {BookRequest, BookResponse} from "../model/bookDto";
-import {AppError} from "../exceptions/appError";
-import {HttpCode} from "../exceptions/httpCode";
+import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 
 export class BookService {
@@ -17,10 +16,7 @@ export class BookService {
         });
 
         if (!book) {
-            throw new AppError({
-                httpCode: HttpCode.NOT_FOUND,
-                description: `Book with id ${id} does not exist`,
-            })
+            throw new EntityNotFoundException(`Book with id ${id} does not exist`)
         }
         return book;
     }

@@ -10,7 +10,6 @@ class ErrorHandler {
         if (error instanceof AppError) {
             return error.isOperational;
         }
-
         return false;
     }
 

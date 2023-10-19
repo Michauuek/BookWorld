@@ -1,7 +1,6 @@
 import {AuthorRequest, AuthorResponse} from "../model/authorDto";
 import {prisma} from "../utils/prisma";
-import {AppError} from "../exceptions/appError";
-import {HttpCode} from "../exceptions/httpCode";
+import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 
 export class AuthorService {
@@ -24,10 +23,7 @@ export class AuthorService {
         });
 
         if (!author) {
-            throw new AppError({
-                httpCode: HttpCode.NOT_FOUND,
-                description: `User with id ${id} does not exist`,
-            })
+            throw new EntityNotFoundException(`Author with id ${id} does not exist`)
         }
         return author;
     }
