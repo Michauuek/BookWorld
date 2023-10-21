@@ -13,6 +13,12 @@ export class LoginRequest {
     password: string;
 }
 
+export class RefreshTokenRequest {
+    @IsNotEmpty()
+    @IsString()
+    refreshToken: string;
+}
+
 
 export class AuthResponse {
     bearerToken: string;

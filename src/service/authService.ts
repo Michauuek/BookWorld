@@ -1,3 +1,4 @@
+import { randomInt, randomUUID } from "crypto";
 import { AppError } from "../exceptions/appError";
 import { UserFullResponse, UserResponse } from "../model/userDto";
 import { UserRole } from "../model/userRole";
@@ -20,34 +21,10 @@ interface TokenPayload {
 }
 
 interface RefreshToken {
-    token: string;
+    id: string;
+    user: UserFullResponse;
+    createdAt: Date;
     expAt: Date;
-}
-
-function createToken(user: UserFullResponse): string {
-    const payload: TokenPayload = {
-        id: user.id,
-        email: user.email,
-        role: user.role as UserRole,
-        createdAt: new Date(),
-        expAt: new Date(Date.now() + TOKEN_EXP_TIME)
-    };
-
-    const token = AES.encrypt(JSON.stringify(payload), process.env.JWT_SECRET || '');
-    return token.toString();
-}
-
-function createRefreshToken(user: UserFullResponse): string {
-    const payload: TokenPayload = {
-        id: user.id,
-        email: user.email,
-        role: user.role as UserRole,
-        createdAt: new Date(),
-        expAt: new Date(Date.now() + REFRESH_TOKEN_EXP_TIME)
-    };
-
-    const token = AES.encrypt(JSON.stringify(payload), process.env.JWT_SECRET || '');
-    return token.toString();
 }
 
 function tryParseJSON(jsonString: string): any {
@@ -197,8 +174,54 @@ export const allowOnly = (allowedRoles: UserRole[] = DEFAULT_ALLOWED): RequestHa
     }
 }
 
+interface TokenList {
+    expTime: Date;
+    id: string;
+}
+
 export class AuthService {
-    userService = new UserService();
+    private userService = new UserService();
+    private refreshTokens: TokenList[] = [];
+
+    private removeExpiredTokens() {
+        this.refreshTokens = this.refreshTokens.filter((token) => {
+            return token.expTime.getTime() > new Date().getTime();
+        });
+    }
+
+    private createToken(user: UserFullResponse): string {
+        const payload: TokenPayload = {
+            id: user.id,
+            email: user.email,
+            role: user.role as UserRole,
+            createdAt: new Date(),
+            expAt: new Date(Date.now() + TOKEN_EXP_TIME)
+        };
+
+        const token = AES.encrypt(JSON.stringify(payload), process.env.JWT_SECRET || '');
+        return token.toString();
+    }
+
+    private createRefreshToken(user: UserFullResponse): string {
+        const id = randomUUID();
+        const payload: RefreshToken = {
+            id: id,
+            user: user,
+            createdAt: new Date(),
+            expAt: new Date(Date.now() + REFRESH_TOKEN_EXP_TIME),
+        };
+
+        this.removeExpiredTokens()
+
+        this.refreshTokens.push({
+            expTime: payload.expAt,
+            id: id
+        });
+
+        const refreshToken = AES.encrypt(JSON.stringify(payload), process.env.JWT_SECRET || '');
+        return refreshToken.toString();
+    }
+
 
     authenticate = async (email: string, password: string) => {
         await new Promise(resolve => setTimeout(resolve, Math.random() * RANDOM_TIME));
@@ -219,10 +242,12 @@ export class AuthService {
             return null;
         }
 
-        const token = createToken(user);
-        const refreshToken = createRefreshToken(user);
+        const token = this.createToken(user);
+        const refreshToken = this.createRefreshToken(user);
 
         logger.info(`authenticate() - for user `, user.email);
+
+        this.removeExpiredTokens()
 
         return {
             token,
@@ -231,20 +256,50 @@ export class AuthService {
     }
 
     letMeIn = async (req: Request, action: Action<boolean> = async () => { return true }, allowedRoles: UserRole[] = DEFAULT_ALLOWED): Promise<boolean> => letMeIn(req, action, allowedRoles).catch((err) => { return false });
+    
     amIIn = async (req: Request, allowedRoles: UserRole[] = DEFAULT_ALLOWED) => amIIn(req, allowedRoles);
 
-    authorizeRefreshToken = async (refreshToken: string) => {
-        // decrypt refreshToken and check if it is valid
-        const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
-        const payload: TokenPayload = JSON.parse(decryptedToken.toString());
+    refresh = async (refreshToken: string) => {                
+        this.removeExpiredTokens()
 
-        if (payload.expAt < new Date()) {
+        const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
+        const payload: RefreshToken = JSON.parse(decryptedToken.toString());
+
+        if (payload.expAt.getTime() < new Date().getTime()) {
+            logger.info(`authorizeRefreshToken() - token expired for user `, payload.user.email);
             throw new AppError({
                 httpCode: 401,
                 name: "TokenExpired",
                 description: "Token expired"
             });
         }
+
+        const token = this.refreshTokens.find((token) => {
+            return token.id === payload.id;
+        });
+
+        if (!token) {
+            logger.info(`authorizeRefreshToken() - token not found for user `, payload.user.email);
+            throw new AppError({
+                httpCode: 401,
+                name: "Forbidden",
+                description: "Forbidden"
+            });
+        }
+
+        const newToken = this.createToken(payload.user);
+        const newRefreshToken = this.createRefreshToken(payload.user);
+
+        this.refreshTokens = this.refreshTokens.filter((token) => {
+            return token.id !== payload.id;
+        });
+
+        logger.info(`authorizeRefreshToken() - for user `, payload.user.email);
+
+        return {
+            token: newToken,
+            refreshToken: newRefreshToken
+        };
     }
 }
 

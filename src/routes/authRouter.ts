@@ -2,14 +2,14 @@ import { Router } from "express";
 import letMeIn, { AuthService, allowOnly, amIIn } from "../service/authService";
 import { AppError } from "../exceptions/appError";
 import { plainToInstance } from "class-transformer";
-import { LoginRequest } from "../model/authDto";
+import { LoginRequest, RefreshTokenRequest } from "../model/authDto";
 import { validationMiddleware } from "../utils/validator";
 
 
 const authRouter = Router();
 const authService = new AuthService();
 
-authRouter.get("/",validationMiddleware(LoginRequest), async (req, res) => {
+authRouter.get("/", validationMiddleware(LoginRequest), async (req, res) => {
     const request = plainToInstance(LoginRequest, req.body);
     
     // generate token
@@ -20,6 +20,15 @@ authRouter.get("/",validationMiddleware(LoginRequest), async (req, res) => {
         return res.status(err.httpCode).json(err);
     });
 });
+
+authRouter.get("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
+    authService.refresh(req.body.refreshToken).then((token) => {
+        return res.status(200).json(token);
+    }).catch((err: AppError) => {
+        console.log(err);
+        return res.status(err.httpCode).json(err);
+    });
+})
 
 authRouter.get("/test-bool", async (req, res) => {
     // bool test
