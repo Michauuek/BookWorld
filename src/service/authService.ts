@@ -1,15 +1,13 @@
 import { AppError } from "../exceptions/appError";
 import { UserFullResponse, UserResponse } from "../model/userDto";
 import { UserRole } from "../model/userRole";
+import { RANDOM_TIME, REFRESH_TOKEN_EXP_TIME, TOKEN_EXP_TIME } from "../utils/constants";
+import globalLogger from "../utils/logger";
 import { prisma } from "../utils/prisma";
 import { UserService } from "./userService";
 import { AES } from 'crypto-ts';
 import { enc } from 'crypto-ts';
 import { NextFunction, Request, RequestHandler, Response } from "express";
-// 15 minutes
-const TOKEN_EXP_TIME = 1000 * 60 * 15;
-// 7 days
-const REFRESH_TOKEN_EXP_TIME = 1000 * 60 * 60 * 24 * 7;
 
 interface TokenPayload {
     id: string;
@@ -59,6 +57,7 @@ function tryParseJSON(jsonString: string): any {
 }
 
 const userService = new UserService();
+const logger = globalLogger.child({class: 'AuthService'});
 
 type Action<T> = (user: UserResponse) => Promise<T>;
 
@@ -185,29 +184,36 @@ export class AuthService {
     userService = new UserService();
 
     authenticate = async (email: string, password: string) => {
+        await new Promise(resolve => setTimeout(resolve, Math.random() * RANDOM_TIME));
+
         const user: UserFullResponse|null = await prisma.users.findUnique({
             where: { email: email }
         });
         
-
         if (!user) {
+            logger.info(`authenticate() - user does not exists `, email);
             return null;
         }
 
         const isPasswordValid = await this.userService.verifyPassword(password, user.password);
 
         if (!isPasswordValid) {
+            logger.info(`authenticate() - auth failed for user `, user.email);
             return null;
         }
 
         const token = createToken(user);
         const refreshToken = createRefreshToken(user);
 
+        logger.info(`authenticate() - for user `, user.email);
+
         return {
             token,
             refreshToken
         };
     }
+
+    letMeIn = async (req: Request, action: Action<boolean> = async () => { return true }, allowedRoles: UserRole[] = ["ADMIN", "USER"]): Promise<boolean> => letMeIn(req, action, allowedRoles).catch((err) => { return false });
 
     authorizeRefreshToken = async (refreshToken: string) => {
         // decrypt refreshToken and check if it is valid
@@ -221,8 +227,6 @@ export class AuthService {
                 description: "Token expired"
             });
         }
-
-
     }
 }
 
