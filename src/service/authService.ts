@@ -9,6 +9,8 @@ import { AES } from 'crypto-ts';
 import { enc } from 'crypto-ts';
 import { NextFunction, Request, RequestHandler, Response } from "express";
 
+const DEFAULT_ALLOWED: UserRole[] = ["ADMIN", "USER"];
+
 interface TokenPayload {
     id: string;
     email: string;
@@ -107,7 +109,7 @@ type Action<T> = (user: UserResponse) => Promise<T>;
  * });
  * ```
  */
-async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = ["ADMIN", "USER"]): Promise<T> {
+async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = DEFAULT_ALLOWED): Promise<T> {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
         throw new AppError({
@@ -167,7 +169,7 @@ async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => 
  * }
  * ```
  */
-export const amIIn = (req: Request, allowedRoles: UserRole[] = ["ADMIN", "USER"]) => letMeIn(req, async () => { return true }, allowedRoles).catch((err) => { return false });
+export const amIIn = (req: Request, allowedRoles: UserRole[] = DEFAULT_ALLOWED) => letMeIn(req, async () => { return true }, allowedRoles).catch((err) => { return false });
 
 /**
  * # allow only certain roles
@@ -180,14 +182,15 @@ export const amIIn = (req: Request, allowedRoles: UserRole[] = ["ADMIN", "USER"]
  * });
  * ```
  */
-export const allowOnly = (allowedRoles: UserRole[] = ["ADMIN", "USER"]): RequestHandler => {
+export const allowOnly = (allowedRoles: UserRole[] = DEFAULT_ALLOWED): RequestHandler => {
     return async (req: Request, res: Response, next: NextFunction) => {
         letMeIn(req, async () => {
             next();
             return true;
         }, allowedRoles)
         .catch((err: AppError) => {
-            return res.status(err.httpCode||401).json(err);
+            res.status(err.httpCode||401).json(err);
+            return false;
         });
     }
 }
@@ -225,8 +228,9 @@ export class AuthService {
         };
     }
 
-    letMeIn = async (req: Request, action: Action<boolean> = async () => { return true }, allowedRoles: UserRole[] = ["ADMIN", "USER"]): Promise<boolean> => letMeIn(req, action, allowedRoles).catch((err) => { return false });
-
+    letMeIn = async (req: Request, action: Action<boolean> = async () => { return true }, allowedRoles: UserRole[] = DEFAULT_ALLOWED): Promise<boolean> => letMeIn(req, action, allowedRoles).catch((err) => { return false });
+    amIIn = async (req: Request, allowedRoles: UserRole[] = DEFAULT_ALLOWED) => amIIn(req, allowedRoles);
+    
     authorizeRefreshToken = async (refreshToken: string) => {
         // decrypt refreshToken and check if it is valid
         const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');

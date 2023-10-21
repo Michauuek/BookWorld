@@ -44,7 +44,6 @@ authRouter.get("/test-lambda", async (req, res) => {
             message: "Authentication failed",
             user: null,
         });
-        
     });
 });
 
