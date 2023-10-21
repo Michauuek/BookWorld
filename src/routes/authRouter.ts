@@ -28,8 +28,6 @@ authRouter.get("/test-bool", async (req, res) => {
     } else {
         console.log("I am out!");
     }
-    
-
 });
 
 authRouter.get("/test-lambda", async (req, res) => {
@@ -41,7 +39,6 @@ authRouter.get("/test-lambda", async (req, res) => {
             user: user
         });
     }).catch((err) => {
-        console.log(err)
         // something  went wrong
         return res.status(err.httpCode||500).json({
             message: "Authentication failed",
@@ -51,7 +48,7 @@ authRouter.get("/test-lambda", async (req, res) => {
     });
 });
 
-authRouter.get("/test-handler", allowOnly(["ADMIN"]), async (req, res) => {
+authRouter.get("/test-handler", allowOnly(["ADMIN", "USER"]), async (req, res) => {
     return res.status(200).json({
         message: "You are in!"
     });

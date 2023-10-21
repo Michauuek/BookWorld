@@ -99,7 +99,6 @@ type Action<T> = (user: UserResponse) => Promise<T>;
  */
 async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = ["ADMIN", "USER"]): Promise<T> {
     const token = req.headers.authorization?.split(" ")[1];
-
     if (!token) {
         throw new AppError({
             httpCode: 401,
