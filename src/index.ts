@@ -6,6 +6,7 @@ import bookRouter from "./routes/bookRouter";
 import userRouter from "./routes/userRouter";
 import ratingRouter from "./routes/ratingRouter";
 import authorRouter from "./routes/authorRouter";
+import authRouter from "./routes/authRouter";
 import dotenv from 'dotenv'; 
 
 dotenv.config()
@@ -23,7 +24,7 @@ app.use("/api/books", bookRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/ratings", ratingRouter);
 app.use("/api/users", userRouter);
-app.use("/api/auth", userRouter);
+app.use("/api/auth", authRouter);
 
 
 app.listen(PORT, () => {

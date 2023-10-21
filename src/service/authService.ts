@@ -4,6 +4,7 @@ import { UserRole } from "../model/userRole";
 import { prisma } from "../utils/prisma";
 import { UserService } from "./userService";
 import { AES } from 'crypto-ts';
+import { enc } from 'crypto-ts';
 import { Request } from "express";
 // 15 minutes
 const TOKEN_EXP_TIME = 1000 * 60 * 15;
@@ -52,7 +53,6 @@ function createRefreshToken(user: UserFullResponse): string {
 const userService = new UserService();
 
 type Action<T> = (user: UserResponse) => Promise<T>;
-type Fail<T> = (err: AppError) => Promise<T>;
 
 /**
  * # let ME IN@32123@!#$@!@!
@@ -92,11 +92,15 @@ async function letMeIn<T, F=T>(req: Request, action: Action<T> = async () => { r
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-        throw new Error("Missing token");
+        throw new AppError({
+            httpCode: 401,
+            name: "MissingToken",
+            description: "Unauthorized"
+        });
     }
 
     const decryptedToken = AES.decrypt(token, process.env.JWT_SECRET || '');
-    const payload: TokenPayload = JSON.parse(decryptedToken.toString());
+    const payload: TokenPayload = JSON.parse(decryptedToken.toString(enc.Utf8));
 
     if (payload.expAt < new Date()) {
         throw new AppError({
@@ -129,7 +133,15 @@ async function letMeIn<T, F=T>(req: Request, action: Action<T> = async () => { r
 export class AuthService {
     userService = new UserService();
 
-    authenticate = async (email: string, password: string) => {
+    authenticate = async (email?: string, password?: string) => {
+        if (!email || !password) {
+            throw new AppError({
+                httpCode: 400,
+                name: "MissingCredentials",
+                description: "Missing credentials"
+            });
+        }
+
         const user: UserFullResponse|null = await prisma.users.findUnique({
             where: { email: email }
         });
@@ -152,6 +164,22 @@ export class AuthService {
             token,
             refreshToken
         };
+    }
+
+    authorizeRefreshToken = async (refreshToken: string) => {
+        // decrypt refreshToken and check if it is valid
+        const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
+        const payload: TokenPayload = JSON.parse(decryptedToken.toString());
+
+        if (payload.expAt < new Date()) {
+            throw new AppError({
+                httpCode: 401,
+                name: "TokenExpired",
+                description: "Token expired"
+            });
+        }
+
+
     }
 }
 
