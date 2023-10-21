@@ -110,6 +110,8 @@ type Action<T> = (user: UserResponse) => Promise<T>;
  * ```
  */
 async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = DEFAULT_ALLOWED): Promise<T> {
+    // very critical code, DO NOT TOUCH
+    
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
         throw new AppError({
@@ -129,8 +131,8 @@ async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => 
             description: "Forbidden"
         });
     }
-    
-    if (payload.expAt < new Date()) {
+
+    if (payload.expAt.getTime() < new Date().getTime()) {
         throw new AppError({
             httpCode: 401,
             name: "TokenExpired",
@@ -230,7 +232,7 @@ export class AuthService {
 
     letMeIn = async (req: Request, action: Action<boolean> = async () => { return true }, allowedRoles: UserRole[] = DEFAULT_ALLOWED): Promise<boolean> => letMeIn(req, action, allowedRoles).catch((err) => { return false });
     amIIn = async (req: Request, allowedRoles: UserRole[] = DEFAULT_ALLOWED) => amIIn(req, allowedRoles);
-    
+
     authorizeRefreshToken = async (refreshToken: string) => {
         // decrypt refreshToken and check if it is valid
         const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
