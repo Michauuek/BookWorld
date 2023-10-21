@@ -61,7 +61,6 @@ const logger = globalLogger.child({class: 'AuthService'});
 
 type Action<T> = (user: UserResponse) => Promise<T>;
 
-
 /**
  * # let ME IN@32123@!#$@!@!
  * 
@@ -93,6 +92,18 @@ type Action<T> = (user: UserResponse) => Promise<T>;
  * ).catch((err) => {
  *   // error handling
  *   return res.status(err.httpCode).json(err);
+ * });
+ * ```
+ * You can also return data from lambda:
+ * ```ts
+ * const dataFromLambda = await letMeIn(req,
+ *  async (user) => {
+ *   // happy path
+ *  return "Hello world!";
+ * }
+ * ).catch((err) => {
+ *  // error handling
+ *  return "Something went wrong!";
  * });
  * ```
  */
