@@ -165,6 +165,7 @@ async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => 
  * } else {
  *  // sad path
  * }
+ * ```
  */
 export const amIIn = (req: Request, allowedRoles: UserRole[] = ["ADMIN", "USER"]) => letMeIn(req, async () => { return true }, allowedRoles).catch((err) => { return false });
 
