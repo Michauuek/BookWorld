@@ -5,7 +5,7 @@ import { prisma } from "../utils/prisma";
 import { UserService } from "./userService";
 import { AES } from 'crypto-ts';
 import { enc } from 'crypto-ts';
-import { Request } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 // 15 minutes
 const TOKEN_EXP_TIME = 1000 * 60 * 15;
 // 7 days
@@ -50,9 +50,18 @@ function createRefreshToken(user: UserFullResponse): string {
     return token.toString();
 }
 
+function tryParseJSON(jsonString: string): any {
+    try {
+        return JSON.parse(jsonString);
+    } catch (e) {
+        return null;
+    }
+}
+
 const userService = new UserService();
 
 type Action<T> = (user: UserResponse) => Promise<T>;
+
 
 /**
  * # let ME IN@32123@!#$@!@!
@@ -88,7 +97,7 @@ type Action<T> = (user: UserResponse) => Promise<T>;
  * });
  * ```
  */
-async function letMeIn<T, F=T>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = ["ADMIN", "USER"], ): Promise<T|F> {
+async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => { return true as unknown as T }, allowedRoles: UserRole[] = ["ADMIN", "USER"]): Promise<T> {
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
@@ -100,8 +109,16 @@ async function letMeIn<T, F=T>(req: Request, action: Action<T> = async () => { r
     }
 
     const decryptedToken = AES.decrypt(token, process.env.JWT_SECRET || '');
-    const payload: TokenPayload = JSON.parse(decryptedToken.toString(enc.Utf8));
+    const payload: TokenPayload | null = tryParseJSON(decryptedToken.toString(enc.Utf8));
 
+    if (!payload) {
+        throw new AppError({
+            httpCode: 401,
+            name: "Forbidden",
+            description: "Forbidden"
+        });
+    }
+    
     if (payload.expAt < new Date()) {
         throw new AppError({
             httpCode: 401,
@@ -130,18 +147,45 @@ async function letMeIn<T, F=T>(req: Request, action: Action<T> = async () => { r
     return action(user);
 }
 
+/**
+ * # am I in?
+ * Example usage:
+ * ```ts
+ * if(await amIIn(req)) {
+ *   // happy path
+ * } else {
+ *  // sad path
+ * }
+ */
+export const amIIn = (req: Request, allowedRoles: UserRole[] = ["ADMIN", "USER"]) => letMeIn(req, async () => { return true }, allowedRoles).catch((err) => { return false });
+
+/**
+ * # allow only certain roles
+ * Example usage:
+ * ```ts
+ * // this code will return 401 if user is not ADMIN or credentials are not valid
+ * router.get("/test-handler", allowOnly(["ADMIN"]), async (req, res) => {
+ *  return res.status(200).json({
+ *   message: "You are in!"
+ * });
+ * ```
+ */
+export const allowOnly = (allowedRoles: UserRole[] = ["ADMIN", "USER"]): RequestHandler => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        letMeIn(req, async () => {
+            next();
+            return true;
+        }, allowedRoles)
+        .catch((err: AppError) => {
+            return res.status(err.httpCode||401).json(err);
+        });
+    }
+}
+
 export class AuthService {
     userService = new UserService();
 
-    authenticate = async (email?: string, password?: string) => {
-        if (!email || !password) {
-            throw new AppError({
-                httpCode: 400,
-                name: "MissingCredentials",
-                description: "Missing credentials"
-            });
-        }
-
+    authenticate = async (email: string, password: string) => {
         const user: UserFullResponse|null = await prisma.users.findUnique({
             where: { email: email }
         });

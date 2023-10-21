@@ -1,14 +1,15 @@
 import { Router } from "express";
-import letMeIn, { AuthService } from "../service/authService";
+import letMeIn, { AuthService, allowOnly, amIIn } from "../service/authService";
 import { AppError } from "../exceptions/appError";
 import { plainToInstance } from "class-transformer";
 import { LoginRequest } from "../model/authDto";
+import { validationMiddleware } from "../utils/validator";
 
 
 const authRouter = Router();
 const authService = new AuthService();
 
-authRouter.get("/", async (req, res) => {
+authRouter.get("/",validationMiddleware(LoginRequest), async (req, res) => {
     const request = plainToInstance(LoginRequest, req.body);
     
     // generate token
@@ -20,7 +21,19 @@ authRouter.get("/", async (req, res) => {
     });
 });
 
-authRouter.get("/auth-test", async (req, res) => {
+authRouter.get("/test-bool", async (req, res) => {
+    // bool test
+    if(await amIIn(req)) {
+        console.log("I am in!");
+    } else {
+        console.log("I am out!");
+    }
+    
+
+});
+
+authRouter.get("/test-lambda", async (req, res) => {
+    // lambda test
     letMeIn(req, async (user) => {
         // we are in.
         return res.status(200).json({
@@ -35,6 +48,12 @@ authRouter.get("/auth-test", async (req, res) => {
             user: null,
         });
         
+    });
+});
+
+authRouter.get("/test-handler", allowOnly(["ADMIN"]), async (req, res) => {
+    return res.status(200).json({
+        message: "You are in!"
     });
 });
 
