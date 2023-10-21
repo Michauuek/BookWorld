@@ -34,13 +34,13 @@ authRouter.get("/test-lambda", async (req, res) => {
     // lambda test
     letMeIn(req, async (user) => {
         // we are in.
-        return res.status(200).json({
+        res.status(200).json({
             message: "You are in!",
             user: user
         });
     }).catch((err) => {
         // something  went wrong
-        return res.status(err.httpCode||500).json({
+        res.status(err.httpCode||500).json({
             message: "Authentication failed",
             user: null,
         });
