@@ -1,10 +1,12 @@
 import {prisma} from "../utils/prisma";
 import {RatingRequest, RatingResponse} from "../model/ratingDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
+import globalLogger from "../utils/logger";
 
 
 export class RatingService {
 
+    logger = globalLogger.child({class: 'RatingService'});
 
     async getAllForBook(bookId: number): Promise<RatingResponse[]> {
         return prisma.ratings.findMany({

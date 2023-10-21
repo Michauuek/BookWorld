@@ -3,16 +3,16 @@ import 'express-async-errors';
 import {validationMiddleware} from "../utils/validator";
 import {plainToInstance} from "class-transformer";
 import {UserService} from "../service/userService";
-import {UserRequest} from "../model/userDto";
+import {CreateUserRequest} from "../model/userDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import authorRouter from "./authorRouter";
+import { Logger } from "pino"
 
 
 const userService = new UserService();
 const userRouter = express.Router();
 
-userRouter.post("/create", validationMiddleware(UserRequest), async (req: Request, res: Response) => {
-    const user = plainToInstance(UserRequest, req.body);
+userRouter.post("/create", validationMiddleware(CreateUserRequest), async (req: Request, res: Response) => {
+    const user = plainToInstance(CreateUserRequest, req.body);
     const response = await userService.save(user);
     return res.status(201).json(response);
 });

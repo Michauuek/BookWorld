@@ -1,13 +1,17 @@
-import {UserRequest, UserResponse} from "../model/userDto";
+import {CreateUserRequest, UserResponse} from "../model/userDto";
 import {prisma} from "../utils/prisma";
 import {DEFAULT_USER_ROLE, SALT_ROUNDS} from "../utils/constants";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 import * as bcrypt from 'bcryptjs';
+import globalLogger from "../utils/logger";
+
+const logger = globalLogger.child({class: 'UserService'});
 
 export class UserService {
 
     async getAll(): Promise<UserResponse[]> {
+        logger.info(`getAll()`);
         return prisma.users.findMany({
             where: { role: DEFAULT_USER_ROLE },
             select: {
@@ -23,7 +27,7 @@ export class UserService {
     }
 
     async getById(id: string): Promise<UserResponse> {
-        console.info(`getById() - id: `, id);
+        logger.info(`getById() - id: `, id);
         const user = await prisma.users.findUnique({
             where: { id: id },
             select: {
@@ -43,7 +47,7 @@ export class UserService {
         return user;
     }
 
-    async save(userRequest: UserRequest): Promise<UserResponse> {
+    async save(userRequest: CreateUserRequest): Promise<UserResponse> {
         const hashedPassword = await this.hashPassword(userRequest.password);
         const savedUser = await prisma.users.create({
             data: {
@@ -63,7 +67,7 @@ export class UserService {
                 createdAt: true,
             }
         });
-        console.info(`save() - savedUser: `, savedUser);
+        logger.info(`save() - savedUser: `, savedUser);
         return savedUser;
     }
 

@@ -1,6 +1,6 @@
 import {UserRole} from "../model/userRole";
 
-
-export const DEFAULT_USER_ROLE = UserRole.USER;
+// todo to envs? 
+export const DEFAULT_USER_ROLE: UserRole = "USER";
 
 export const SALT_ROUNDS = 10;

@@ -5,7 +5,7 @@ import {FavouriteGenreResponse} from "./favouriteGenreDto";
 import {FavouriteBookResponse} from "./favouriteBookDto";
 import {FavouriteAuthorResponse} from "./favouriteAuthor";
 
-export class UserRequest {
+export class CreateUserRequest {
     @IsEmail()
     @IsNotEmpty()
     email: string;
@@ -32,4 +32,8 @@ export interface UserResponse {
     favouriteGenres?: FavouriteGenreResponse[];
     favouriteBooks?: FavouriteBookResponse[];
     favouriteAuthors?: FavouriteAuthorResponse[];
+}
+
+export interface UserFullResponse extends UserResponse {
+    password: string;
 }

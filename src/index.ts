@@ -6,6 +6,9 @@ import bookRouter from "./routes/bookRouter";
 import userRouter from "./routes/userRouter";
 import ratingRouter from "./routes/ratingRouter";
 import authorRouter from "./routes/authorRouter";
+import dotenv from 'dotenv'; 
+
+dotenv.config()
 
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
@@ -20,6 +23,7 @@ app.use("/api/books", bookRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/ratings", ratingRouter);
 app.use("/api/users", userRouter);
+app.use("/api/auth", userRouter);
 
 
 app.listen(PORT, () => {
