@@ -28,6 +28,19 @@ bookRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
+bookRouter.put("/:id", validationMiddleware(BookRequest), async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    const book = plainToInstance(BookRequest, req.body);
+    const response = await bookService.update(id, book);
+    return res.status(200).json(response);
+});
+
+bookRouter.delete("/:id", async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    await bookService.deleteById(id);
+    return res.status(204).send();
+});
+
 bookRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });

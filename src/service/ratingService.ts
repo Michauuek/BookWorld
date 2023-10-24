@@ -3,10 +3,9 @@ import {RatingRequest, RatingResponse} from "../model/ratingDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 
+const logger = globalLogger.child({class: 'RatingService'});
 
 export class RatingService {
-
-    logger = globalLogger.child({class: 'RatingService'});
 
     async getAllForBook(bookId: number): Promise<RatingResponse[]> {
         return prisma.ratings.findMany({
@@ -48,5 +47,12 @@ export class RatingService {
         });
         console.info(`save() - savedRating: `, savedRating);
         return savedRating;
+    }
+
+    async deleteById(id: number): Promise<void> {
+        logger.info(`deleteById() - id: ${id}`);
+        prisma.ratings.delete({
+            where: { id: id }
+        });
     }
 }

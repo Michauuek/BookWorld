@@ -27,6 +27,19 @@ authorRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
+authorRouter.put("/:id", validationMiddleware(AuthorRequest), async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    const author = plainToInstance(AuthorRequest, req.body);
+    const response = await authorService.update(id, author);
+    return res.status(200).json(response);
+});
+
+authorRouter.delete("/:id", async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    await authorService.deleteById(id);
+    return res.status(204).send();
+});
+
 authorRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });

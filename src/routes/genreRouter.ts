@@ -28,6 +28,19 @@ genreRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
+genreRouter.put("/:id", validationMiddleware(GenreRequest), async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    const genre = plainToInstance(GenreRequest, req.body);
+    const response = await genreService.update(id, genre);
+    return res.status(200).json(response);
+});
+
+genreRouter.delete("/:id", async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    await genreService.deleteById(id);
+    return res.status(204).send();
+});
+
 genreRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });

@@ -71,6 +71,36 @@ export class UserService {
         return savedUser;
     }
 
+    async update(id: string, userRequest: CreateUserRequest): Promise<UserResponse> {
+        logger.info(`update() - id: ${id}, userRequest: ${userRequest}`);
+        const user = await prisma.users.update({
+            where: { id: id },
+            data: {
+                email: userRequest.email,
+                name: userRequest.name,
+                lastName: userRequest.lastName,
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                lastName: true,
+                password: false,
+                role: true,
+                createdAt: true,
+            }
+        });
+        logger.info(`update() - user: ${user}`);
+        return user;
+    }
+
+    async deleteById(id: string): Promise<void> {
+        logger.info(`deleteById() - id: ${id}`);
+        prisma.users.delete({
+            where: { id: id }
+        });
+    }
+
     async hashPassword(password: string): Promise<string> {
         return await bcrypt.hash(password, SALT_ROUNDS);
     }

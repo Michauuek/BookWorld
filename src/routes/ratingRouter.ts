@@ -29,6 +29,12 @@ ratingRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
+ratingRouter.delete("/:id", async (req: Request, res: Response) => {
+    const id: number = parseInt(req.params.id, 10);
+    await ratingService.deleteById(id);
+    return res.status(204).send();
+});
+
 ratingRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });

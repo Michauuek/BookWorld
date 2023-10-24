@@ -28,6 +28,19 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
+userRouter.put("/:id", validationMiddleware(CreateUserRequest), async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    const user = plainToInstance(CreateUserRequest, req.body);
+    const response = await userService.update(id, user);
+    return res.status(200).json(response);
+});
+
+userRouter.delete("/:id", async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    await userService.deleteById(id);
+    return res.status(204).send();
+});
+
 userRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     errorHandler.handleError(err, res);
 });

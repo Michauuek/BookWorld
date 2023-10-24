@@ -1,7 +1,10 @@
 import {prisma} from "../utils/prisma";
 import {BookRequest, BookResponse} from "../model/bookDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
+import globalLogger from "../utils/logger";
 
+
+const logger = globalLogger.child({class: 'BookService'});
 
 export class BookService {
 
@@ -23,6 +26,7 @@ export class BookService {
 
     async save(bookRequest: BookRequest): Promise<BookResponse> {
 
+        logger.info(`save() - bookRequest: `, bookRequest);
         const savedBook: BookResponse = await prisma.books.create({
             data: {
                 title: bookRequest.title,
@@ -46,9 +50,32 @@ export class BookService {
             });
         });
 
-        console.info(`save() - savedBook: `, savedBook);
+        logger.info(`save() - savedBook: `, savedBook);
         return savedBook;
 
+    }
+
+    async update(id: number, bookRequest: BookRequest): Promise<BookResponse> {
+        logger.info(`update() - id: ${id}, bookRequest: ${bookRequest}`);
+        const book = await prisma.books.update({
+            where: { id: id },
+            data: {
+                title: bookRequest.title,
+                description: bookRequest.description,
+                authorId: bookRequest.authorId,
+                isbn: bookRequest.isbn,
+                coverUrl: bookRequest.coverUrl
+            }
+        });
+        logger.info(`update() - book: ${book}`);
+        return book;
+    }
+
+    async deleteById(id: number): Promise<void> {
+        logger.info(`deleteById() - id: ${id}`);
+        prisma.books.delete({
+            where: { id: id }
+        });
     }
 
 }

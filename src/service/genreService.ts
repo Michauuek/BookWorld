@@ -1,7 +1,9 @@
 import {GenreRequest, GenreResponse} from "../model/genreDto";
 import {prisma} from "../utils/prisma";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
+import globalLogger from "../utils/logger";
 
+const logger = globalLogger.child({class: 'GenreService'});
 
 export class GenreService {
 
@@ -15,7 +17,7 @@ export class GenreService {
     }
 
     async getById(id: number): Promise<GenreResponse> {
-        console.info(`getById() - id: `, id);
+        logger.info(`getById() - id: {$id}`);
         const genre = await prisma.genres.findUnique({
             where: { id: id }
         });
@@ -34,11 +36,26 @@ export class GenreService {
                 name: true,
             }
         });
-        console.info(`save() - savedGenre: `, savedGenre);
+        logger.info(`save() - savedGenre: ${savedGenre}`);
         return savedGenre;
     }
 
+    async update(id: number, genreRequest: GenreRequest): Promise<GenreResponse> {
+        logger.info(`update() - id: ${id}, genreRequest: ${genreRequest}`);
+        const genre = await prisma.genres.update({
+            where: { id: id },
+            data: { name: genreRequest.name },
+            select: {
+                id: true,
+                name: true,
+            }
+        });
+        logger.info(`update() - genre: ${genre}`);
+        return genre;
+    }
+
     async deleteById(id: number): Promise<void> {
+        logger.info(`deleteById() - id: ${id}`);
         prisma.genres.delete({
             where: { id: id }
         });
