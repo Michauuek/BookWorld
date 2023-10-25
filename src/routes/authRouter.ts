@@ -9,7 +9,7 @@ import { validationMiddleware } from "../utils/validator";
 const authRouter = Router();
 const authService = new AuthService();
 
-authRouter.get("/", validationMiddleware(LoginRequest), async (req, res) => {
+authRouter.post("/", validationMiddleware(LoginRequest), async (req, res) => {
     const request = plainToInstance(LoginRequest, req.body);
     
     // generate token
@@ -21,7 +21,7 @@ authRouter.get("/", validationMiddleware(LoginRequest), async (req, res) => {
     });
 });
 
-authRouter.get("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
+authRouter.post("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
     authService.refresh(req.body.refreshToken).then((token) => {
         return res.status(200).json(token);
     }).catch((err: AppError) => {
