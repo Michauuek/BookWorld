@@ -1,4 +1,4 @@
-import { randomInt, randomUUID } from "crypto";
+import { randomUUID } from "crypto";
 import { AppError } from "../exceptions/appError";
 import { UserFullResponse, UserResponse } from "../model/userDto";
 import { UserRole } from "../model/userRole";
@@ -109,7 +109,7 @@ async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => 
         });
     }
 
-    if (payload.expAt.getTime() < new Date().getTime()) {
+    if (new Date(payload.expAt).getTime() < new Date().getTime()) {
         throw new AppError({
             httpCode: 401,
             name: "TokenExpired",
@@ -133,6 +133,8 @@ async function letMeIn<T=boolean>(req: Request, action: Action<T> = async () => 
             description: "Forbidden"
         });
     });
+
+    console.log(user)
 
     return action(user);
 }
@@ -265,7 +267,7 @@ export class AuthService {
         const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
         const payload: RefreshToken = JSON.parse(decryptedToken.toString());
 
-        if (payload.expAt.getTime() < new Date().getTime()) {
+        if (new Date(payload.expAt).getTime()  < new Date().getTime()) {
             logger.info(`authorizeRefreshToken() - token expired for user `, payload.user.email);
             throw new AppError({
                 httpCode: 401,
