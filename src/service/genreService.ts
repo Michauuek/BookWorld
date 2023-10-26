@@ -56,7 +56,7 @@ export class GenreService {
 
     async deleteById(id: number): Promise<void> {
         logger.info(`deleteById() - id: ${id}`);
-        prisma.genres.delete({
+        await prisma.genres.delete({
             where: { id: id }
         });
     }

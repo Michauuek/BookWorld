@@ -6,6 +6,7 @@ import {UserService} from "../service/userService";
 import {CreateUserRequest} from "../model/userDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import { Logger } from "pino"
+import {allowOnly} from "../service/authService";
 
 
 const userService = new UserService();
@@ -28,14 +29,14 @@ userRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
-userRouter.put("/:id", validationMiddleware(CreateUserRequest), async (req: Request, res: Response) => {
+userRouter.put("/:id", allowOnly(["USER", "ADMIN"]), validationMiddleware(CreateUserRequest), async (req: Request, res: Response) => {
     const id: string = req.params.id;
     const user = plainToInstance(CreateUserRequest, req.body);
     const response = await userService.update(id, user);
     return res.status(200).json(response);
 });
 
-userRouter.delete("/:id", async (req: Request, res: Response) => {
+userRouter.delete("/:id", allowOnly(["ADMIN"]), async (req: Request, res: Response) => {
     const id: string = req.params.id;
     await userService.deleteById(id);
     return res.status(204).send();

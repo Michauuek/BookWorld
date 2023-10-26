@@ -6,12 +6,13 @@ import {RatingService} from "../service/ratingService";
 import {RatingRequest} from "../model/ratingDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import authorRouter from "./authorRouter";
+import {allowOnly} from "../service/authService";
 
 
 const ratingService = new RatingService();
 const ratingRouter = express.Router();
 
-ratingRouter.post("/create", validationMiddleware(RatingRequest), async (req: Request, res: Response) => {
+ratingRouter.post("/create", allowOnly(["USER", "ADMIN"]), validationMiddleware(RatingRequest), async (req: Request, res: Response) => {
     const rating = plainToInstance(RatingRequest, req.body);
     const response = await ratingService.save(rating);
     return res.status(201).json(response);
@@ -29,7 +30,7 @@ ratingRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
-ratingRouter.delete("/:id", async (req: Request, res: Response) => {
+ratingRouter.delete("/:id", allowOnly(["USER", "ADMIN"]), async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     await ratingService.deleteById(id);
     return res.status(204).send();

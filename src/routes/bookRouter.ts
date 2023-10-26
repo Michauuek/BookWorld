@@ -6,12 +6,13 @@ import {BookService} from "../service/bookService";
 import {BookRequest} from "../model/bookDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import authorRouter from "./authorRouter";
+import {allowOnly} from "../service/authService";
 
 
 const bookService = new BookService();
 const bookRouter = express.Router();
 
-bookRouter.post("/create", validationMiddleware(BookRequest), async (req: Request, res: Response) => {
+bookRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(BookRequest), async (req: Request, res: Response) => {
     const book = plainToInstance(BookRequest, req.body);
     const response = await bookService.save(book);
     return res.status(201).json(response);
@@ -28,14 +29,14 @@ bookRouter.get("/:id", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
-bookRouter.put("/:id", validationMiddleware(BookRequest), async (req: Request, res: Response) => {
+bookRouter.put("/:id", allowOnly(["ADMIN"]), validationMiddleware(BookRequest), async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const book = plainToInstance(BookRequest, req.body);
     const response = await bookService.update(id, book);
     return res.status(200).json(response);
 });
 
-bookRouter.delete("/:id", async (req: Request, res: Response) => {
+bookRouter.delete("/:id", allowOnly(["ADMIN"]), async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     await bookService.deleteById(id);
     return res.status(204).send();

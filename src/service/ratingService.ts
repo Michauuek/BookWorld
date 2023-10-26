@@ -15,7 +15,7 @@ export class RatingService {
 
 
     async getById(id: number): Promise<RatingResponse> {
-        console.info(`getById() - id: `, id);
+        logger.info({id}, `getById() - id: `);
         const rating = await prisma.ratings.findUnique({
             where: { id: id }
         });
@@ -45,13 +45,13 @@ export class RatingService {
                 user: false
             }
         });
-        console.info(`save() - savedRating: `, savedRating);
+        logger.info({savedRating},`save() - savedRating: `);
         return savedRating;
     }
 
     async deleteById(id: number): Promise<void> {
-        logger.info(`deleteById() - id: ${id}`);
-        prisma.ratings.delete({
+        logger.info({id}, `deleteById() - id:`);
+        await prisma.ratings.delete({
             where: { id: id }
         });
     }

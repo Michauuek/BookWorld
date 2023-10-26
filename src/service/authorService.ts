@@ -64,7 +64,7 @@ export class AuthorService {
 
     async deleteById(id: number): Promise<void> {
         logger.info(`deleteById() - id: ${id}`);
-        prisma.authors.delete({
+        await prisma.authors.delete({
             where: { id: id }
         });
     }

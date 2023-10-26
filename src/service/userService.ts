@@ -5,6 +5,7 @@ import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 
 import * as bcrypt from 'bcryptjs';
 import globalLogger from "../utils/logger";
+import {EntityAlreadyExistsException} from "../exceptions/entityAlreadyExistsException";
 
 const logger = globalLogger.child({class: 'UserService'});
 
@@ -27,7 +28,7 @@ export class UserService {
     }
 
     async getById(id: string): Promise<UserResponse> {
-        logger.info(`getById() - id: `, id);
+        logger.info({id}, `getById() - id:`);
         const user = await prisma.users.findUnique({
             where: { id: id },
             select: {
@@ -49,6 +50,10 @@ export class UserService {
 
     async save(userRequest: CreateUserRequest): Promise<UserResponse> {
         const hashedPassword = await this.hashPassword(userRequest.password);
+        const checkUser = await this.getUserByEmail(userRequest.email);
+        if (checkUser) {
+            throw new EntityAlreadyExistsException(`User with email ${userRequest.email} already exists`)
+        }
         const savedUser = await prisma.users.create({
             data: {
                 email: userRequest.email,
@@ -67,7 +72,7 @@ export class UserService {
                 createdAt: true,
             }
         });
-        logger.info(`save() - savedUser: `, savedUser);
+        logger.info({savedUser}, `save() - savedUser: `);
         return savedUser;
     }
 
@@ -90,13 +95,13 @@ export class UserService {
                 createdAt: true,
             }
         });
-        logger.info(`update() - user: ${user}`);
+        logger.info({user}, `update() - user:`);
         return user;
     }
 
     async deleteById(id: string): Promise<void> {
-        logger.info(`deleteById() - id: ${id}`);
-        prisma.users.delete({
+        logger.info({id}, `deleteById() - id:`);
+        await prisma.users.delete({
             where: { id: id }
         });
     }
@@ -107,5 +112,11 @@ export class UserService {
 
     async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
         return bcrypt.compare(password, hashedPassword);
+    }
+
+    private async getUserByEmail(email: string): Promise<UserResponse | null> {
+        return prisma.users.findUnique({
+            where: { email: email },
+        });
     }
 }

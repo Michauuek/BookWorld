@@ -24,8 +24,9 @@ class ErrorHandler {
                 .json({ message: 'Internal server error' });
         }
 
-        console.log('Application encountered a critical error. Exiting');
-        process.exit(1);
+        console.log(`Unhandled error: ${error}`);
+        // console.log('Application encountered a critical error. Exiting');
+        // process.exit(1);
     }
 
     public handleError(error: Error | AppError, response?: Response): void {

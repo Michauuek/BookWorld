@@ -5,13 +5,13 @@ import {GenreRequest} from "../model/genreDto";
 import {plainToInstance} from "class-transformer";
 import {GenreService} from "../service/genreService";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import authorRouter from "./authorRouter";
+import {allowOnly} from "../service/authService";
 
 
 const genreService = new GenreService();
 const genreRouter = express.Router();
 
-genreRouter.post("/create", validationMiddleware(GenreRequest), async (req: Request, res: Response) => {
+genreRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(GenreRequest), async (req: Request, res: Response) => {
     const genre = plainToInstance(GenreRequest, req.body);
     const response = await genreService.save(genre);
     return res.status(201).json(response);

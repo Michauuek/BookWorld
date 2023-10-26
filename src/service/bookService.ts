@@ -13,7 +13,7 @@ export class BookService {
     }
 
     async getById(id: number): Promise<BookResponse> {
-        console.info(`getById() - id: `, id);
+        console.info({id},`getById() - id: `);
         const book = await prisma.books.findUnique({
             where: { id: id }
         });
@@ -50,7 +50,7 @@ export class BookService {
             });
         });
 
-        logger.info(`save() - savedBook: `, savedBook);
+        logger.info({savedBook}, `save() - savedBook: `);
         return savedBook;
 
     }
@@ -67,13 +67,13 @@ export class BookService {
                 coverUrl: bookRequest.coverUrl
             }
         });
-        logger.info(`update() - book: ${book}`);
+        logger.info({book}, `update() - book:`);
         return book;
     }
 
     async deleteById(id: number): Promise<void> {
-        logger.info(`deleteById() - id: ${id}`);
-        prisma.books.delete({
+        logger.info({id}, `deleteById() - id:`);
+        await prisma.books.delete({
             where: { id: id }
         });
     }
