@@ -98,24 +98,24 @@ Table UserFavouriteAuthors {
   }
 }
 
-Ref: Ratings.bookId > Books.id
+Ref: Ratings.bookId > Books.id [delete: No Action]
 
-Ref: Ratings.userId > Users.id
+Ref: Ratings.userId > Users.id [delete: Cascade]
 
-Ref: Books.authorId > Authors.id
+Ref: Books.authorId > Authors.id [delete: Restrict]
 
-Ref: BookGenres.bookId > Books.id
+Ref: BookGenres.bookId > Books.id [delete: Cascade]
 
-Ref: BookGenres.genreId > Genres.id
+Ref: BookGenres.genreId > Genres.id [delete: Restrict]
 
-Ref: UserFavouriteGenres.userId > Users.id
+Ref: UserFavouriteGenres.userId > Users.id [delete: Cascade]
 
-Ref: UserFavouriteGenres.genreId > Genres.id
+Ref: UserFavouriteGenres.genreId > Genres.id [delete: Cascade]
 
-Ref: UserFavouriteBooks.userId > Users.id
+Ref: UserFavouriteBooks.userId > Users.id [delete: Cascade]
 
-Ref: UserFavouriteBooks.bookId > Books.id
+Ref: UserFavouriteBooks.bookId > Books.id [delete: Cascade]
 
-Ref: UserFavouriteAuthors.userId > Users.id
+Ref: UserFavouriteAuthors.userId > Users.id [delete: Cascade]
 
-Ref: UserFavouriteAuthors.authorId > Authors.id
+Ref: UserFavouriteAuthors.authorId > Authors.id [delete: Cascade]

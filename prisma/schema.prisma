@@ -40,9 +40,9 @@ model Authors {
 
 model Ratings {
   id        Int       @id @default(autoincrement())
-  book      Books     @relation(fields: [bookId], references: [id])
+  book      Books     @relation(fields: [bookId], references: [id], onDelete: NoAction)
   bookId    Int
-  user      Users     @relation(fields: [userId], references: [id])
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   comment   String?
   rating    Int
@@ -53,7 +53,7 @@ model Books {
   title               String
   description         String?
   isbn                String?
-  author              Authors   @relation(fields: [authorId], references: [id])
+  author              Authors   @relation(fields: [authorId], references: [id], onDelete: Restrict)
   authorId            Int
   coverUrl            String?
   ratings             Ratings[]
@@ -69,36 +69,36 @@ model Genres {
 }
 
 model BookGenres {
-  book      Books     @relation(fields: [bookId], references: [id])
+  book      Books     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
-  genre     Genres    @relation(fields: [genreId], references: [id])
+  genre     Genres    @relation(fields: [genreId], references: [id], onDelete: Restrict)
   genreId   Int
 
   @@id([bookId, genreId])
 }
 
 model UserFavouriteGenres {
-  user      Users     @relation(fields: [userId], references: [id])
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  genre     Genres    @relation(fields: [genreId], references: [id])
+  genre     Genres    @relation(fields: [genreId], references: [id], onDelete: Cascade)
   genreId   Int
 
   @@id([userId, genreId])
 }
 
 model UserFavouriteBooks {
-  user      Users     @relation(fields: [userId], references: [id])
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  book      Books     @relation(fields: [bookId], references: [id])
+  book      Books     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
 
   @@id([userId, bookId])
 }
 
 model UserFavouriteAuthors {
-  user      Users     @relation(fields: [userId], references: [id])
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  author    Authors   @relation(fields: [authorId], references: [id])
+  author    Authors   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
 
   @@id([userId, authorId])
