@@ -6,7 +6,7 @@ import {plainToInstance} from "class-transformer";
 import {GenreService} from "../service/genreService";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/ElasticRequest";
+import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
 const genreService = new GenreService();

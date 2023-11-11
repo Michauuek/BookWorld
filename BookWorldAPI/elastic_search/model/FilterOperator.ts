@@ -14,7 +14,6 @@ export enum FilterOperator {
     SEARCH = "search",
 }
 
-
 export enum FilterLogicalOperator {
     AND = "AND",
     OR = "OR",

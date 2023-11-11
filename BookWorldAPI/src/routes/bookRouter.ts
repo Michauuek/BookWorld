@@ -6,7 +6,7 @@ import {BookService} from "../service/bookService";
 import {BookRequest} from "../model/bookDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/ElasticRequest";
+import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
 const bookService = new BookService();

@@ -1,5 +1,8 @@
 import {PrismaClient} from "@prisma/client";
-import {ElasticRequest, Filter} from "./ElasticRequest";
+import {ElasticRequest} from "./model/ElasticRequest";
+import {ElasticFilterRequest} from "./model/ElasticFilterRequest";
+import {Filter} from "./model/Filter";
+import {FilterLogicalOperator} from "./model/FilterOperator";
 
 
 export abstract class ElasticService<T> {
@@ -9,19 +12,19 @@ export abstract class ElasticService<T> {
         this.model = model;
      }
 
-     async get(elasticRequest: ElasticRequest): Promise<any> {
+     async get(request: ElasticRequest): Promise<any> {
 
-         console.log(elasticRequest);
+         console.log(request);
 
-         const field = elasticRequest.filter.field
-         const operator = elasticRequest.filter.operator
-         const value = elasticRequest.filter.value
+         const field = request.filter.field
+         const operator = request.filter.operator
+         const value = request.filter.value
 
-         const sortField = elasticRequest.sort.field
-         const desc = elasticRequest.sort.desc
+         const sortField = request.sort.field
+         const desc = request.sort.desc
 
-         const skip = elasticRequest.pagination.skip
-         const take = elasticRequest.pagination.take
+         const skip = request.pagination.skip
+         const take = request.pagination.take
 
          const model = this.model as T;
 
@@ -31,6 +34,52 @@ export abstract class ElasticService<T> {
                  [field]: {
                      [operator]: value
                  }
+             },
+             orderBy: {
+                 [sortField]: desc ? "desc" : "asc"
+             },
+             take: take,
+             skip: skip
+         });
+     }
+
+     async getDoubleFilter(request: ElasticFilterRequest): Promise<any> {
+
+         console.log(request);
+
+         const fieldFirst = request.first.field
+         const operatorFirst = request.first.operator
+         const valueFirst = request.first.value
+
+         const fieldSecond = request.second.field
+         const operatorSecond = request.second.operator
+         const valueSecond = request.second.value
+
+         const sortField = request.sort.field
+         const desc = request.sort.desc
+
+         const logicalOperator = request.operator
+
+         const skip = request.pagination.skip
+         const take = request.pagination.take
+
+         const model = this.model as T;
+
+         // @ts-ignore
+         return this.prisma[model].findMany({
+             where: {
+                 [logicalOperator]: [
+                     {
+                         [fieldFirst]: {
+                             [operatorFirst]: valueFirst
+                         }
+                     },
+                     {
+                        [fieldSecond]: {
+                            [operatorSecond]: valueSecond
+                        }
+                    }
+                 ]
              },
              orderBy: {
                  [sortField]: desc ? "desc" : "asc"
