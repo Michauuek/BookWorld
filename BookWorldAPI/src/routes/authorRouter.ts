@@ -6,7 +6,7 @@ import {AuthorService} from "../service/authorService";
 import {AuthorRequest} from "../model/authorDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/ElasticRequest";
+import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
 const authorService = new AuthorService();
