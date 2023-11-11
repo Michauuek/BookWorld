@@ -1,6 +1,6 @@
 
 
 export class Sort {
-    field: string = "id";
+    column: string = "id";
     desc: boolean = false;
 }

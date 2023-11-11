@@ -7,7 +7,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'GenreService'});
 
-export class GenreService extends ElasticService<Prisma.GenresDelegate> {
+export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.GenresWhereInput> {
 
 
     constructor() {

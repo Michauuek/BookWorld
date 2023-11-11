@@ -7,7 +7,6 @@ import {RatingRequest} from "../model/ratingDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
 import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
-import {ElasticFilterRequest} from "../../elastic_search/model/ElasticFilterRequest";
 
 
 const ratingService = new RatingService();
@@ -17,12 +16,6 @@ const ratingRouter = express.Router();
 ratingRouter.post("/elastic/get", async (req: Request, res: Response) => {
     const elasticRequest = plainToInstance(ElasticRequest, req.body);
     const response = await ratingService.get(elasticRequest);
-    return res.status(200).json(response);
-});
-
-ratingRouter.post("/elastic/get/filter", async (req: Request, res: Response) => {
-    const elasticRequest = plainToInstance(ElasticFilterRequest, req.body);
-    const response = await ratingService.getDoubleFilter(elasticRequest);
     return res.status(200).json(response);
 });
 
