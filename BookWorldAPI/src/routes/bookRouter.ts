@@ -5,12 +5,19 @@ import {plainToInstance} from "class-transformer";
 import {BookService} from "../service/bookService";
 import {BookRequest} from "../model/bookDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import authorRouter from "./authorRouter";
 import {allowOnly} from "../service/authService";
+import {ElasticRequest} from "../../elastic_search/ElasticRequest";
 
 
 const bookService = new BookService();
 const bookRouter = express.Router();
+
+
+bookRouter.post("/elastic/get", async (req: Request, res: Response) => {
+    const elasticRequest = plainToInstance(ElasticRequest, req.body);
+    const response = await bookService.get(elasticRequest);
+    return res.status(200).json(response);
+});
 
 bookRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(BookRequest), async (req: Request, res: Response) => {
     const book = plainToInstance(BookRequest, req.body);

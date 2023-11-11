@@ -2,10 +2,18 @@ import {prisma} from "../utils/prisma";
 import {RatingRequest, RatingResponse} from "../model/ratingDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
+import {ElasticService} from "../../elastic_search/ElasticService";
+import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'RatingService'});
 
-export class RatingService {
+export class RatingService extends ElasticService<Prisma.RatingsDelegate> {
+
+
+    constructor() {
+        super(prisma, 'Ratings');
+    }
+
 
     async getAllForBook(bookId: number): Promise<RatingResponse[]> {
         return prisma.ratings.findMany({

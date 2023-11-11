@@ -2,10 +2,17 @@ import {GenreRequest, GenreResponse} from "../model/genreDto";
 import {prisma} from "../utils/prisma";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
+import {ElasticService} from "../../elastic_search/ElasticService";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'GenreService'});
 
-export class GenreService {
+export class GenreService extends ElasticService<Prisma.GenresDelegate> {
+
+
+    constructor() {
+        super(prisma, 'Genres');
+    }
 
     async getAll(): Promise<GenreResponse[]> {
         return prisma.genres.findMany({

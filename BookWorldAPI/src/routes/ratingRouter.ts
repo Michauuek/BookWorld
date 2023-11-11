@@ -5,12 +5,19 @@ import {plainToInstance} from "class-transformer";
 import {RatingService} from "../service/ratingService";
 import {RatingRequest} from "../model/ratingDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import authorRouter from "./authorRouter";
 import {allowOnly} from "../service/authService";
+import {ElasticRequest} from "../../elastic_search/ElasticRequest";
 
 
 const ratingService = new RatingService();
 const ratingRouter = express.Router();
+
+
+ratingRouter.post("/elastic/get", async (req: Request, res: Response) => {
+    const elasticRequest = plainToInstance(ElasticRequest, req.body);
+    const response = await ratingService.get(elasticRequest);
+    return res.status(200).json(response);
+});
 
 ratingRouter.post("/create", allowOnly(["USER", "ADMIN"]), validationMiddleware(RatingRequest), async (req: Request, res: Response) => {
     const rating = plainToInstance(RatingRequest, req.body);

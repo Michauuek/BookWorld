@@ -6,10 +6,17 @@ import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import * as bcrypt from 'bcryptjs';
 import globalLogger from "../utils/logger";
 import {EntityAlreadyExistsException} from "../exceptions/entityAlreadyExistsException";
+import { Prisma } from "@prisma/client";
+import {ElasticService} from "../../elastic_search/ElasticService";
 
 const logger = globalLogger.child({class: 'UserService'});
 
-export class UserService {
+export class UserService extends ElasticService<Prisma.UsersDelegate> {
+
+
+    constructor() {
+        super(prisma, 'Users');
+    }
 
     async getAll(): Promise<UserResponse[]> {
         logger.info(`getAll()`);
