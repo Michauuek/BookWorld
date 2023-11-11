@@ -11,7 +11,7 @@ import {ElasticService} from "../../elastic_search/ElasticService";
 
 const logger = globalLogger.child({class: 'UserService'});
 
-export class UserService extends ElasticService<Prisma.UsersDelegate, Prisma.UsersWhereInput> {
+export class UserService extends ElasticService<Prisma.UsersDelegate, Prisma.UsersWhereInput, UserResponse> {
 
 
     constructor() {
@@ -125,5 +125,16 @@ export class UserService extends ElasticService<Prisma.UsersDelegate, Prisma.Use
         return prisma.users.findUnique({
             where: { email: email },
         });
+    }
+
+    mapToResponse(item: Prisma.UsersGetPayload<any>): UserResponse {
+        return {
+            id: item.id,
+            email: item.email,
+            name: item.name,
+            lastName: item.lastName,
+            role: item.role,
+            createdAt: item.createdAt
+        };
     }
 }

@@ -1,15 +1,16 @@
 import {PrismaClient} from "@prisma/client";
 import {ElasticRequest} from "./model/ElasticRequest";
 
+export abstract class ElasticService<T, R, M> {
 
-export abstract class ElasticService<T, R> {
-
-     protected constructor(private prisma: PrismaClient, private readonly model: string) {
+    protected constructor(private prisma: PrismaClient, private readonly model: string) {
         this.prisma = prisma;
         this.model = model;
-     }
+    }
 
-    async get(request: ElasticRequest): Promise<any> {
+    abstract mapToResponse(item: any): M;
+
+    async get(request: ElasticRequest): Promise<M[]> {
         console.log(request);
 
         const {skip, take} = request.pagination;
@@ -33,7 +34,7 @@ export abstract class ElasticService<T, R> {
             where[request.operator] = filterConditions;
         }
         // @ts-ignore
-        return this.prisma[model].findMany({
+        const items = await this.prisma[model].findMany({
             where: where,
             orderBy: {
                 [column]: desc ? "desc" : "asc"
@@ -41,6 +42,8 @@ export abstract class ElasticService<T, R> {
             take: take,
             skip: skip
         });
+
+        return items.map((item: any) => this.mapToResponse(item));
     }
 
      // async get(request: ElasticRequest): Promise<any> {

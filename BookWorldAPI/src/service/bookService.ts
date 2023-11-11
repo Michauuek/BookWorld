@@ -4,10 +4,11 @@ import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import {ElasticService} from "../../elastic_search/ElasticService";
 import { Prisma } from "@prisma/client";
+import {GenreResponse} from "../model/genreDto";
 
 const logger = globalLogger.child({class: 'BookService'});
 
-export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.BooksWhereInput> {
+export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.BooksWhereInput, BookResponse> {
 
     constructor() {
         super(prisma, 'Books');
@@ -81,6 +82,44 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
         await prisma.books.delete({
             where: { id: id }
         });
+    }
+
+    async getBookGenres(bookId: number): Promise<any> {
+        return prisma.bookGenres.findMany({
+            where: { bookId: bookId },
+            select: {
+                genre: {
+                    select: {
+                        name: true,
+                        id: true,
+                        favouriteGenres: false,
+                        books: false
+                    }
+                },
+                book: false
+            }
+        });
+    }
+
+    mapToResponse(item: Prisma.BooksGetPayload<any>): BookResponse {
+        // const genres = this.getBookGenres(item.id);
+        return {
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            authorId: item.authorId,
+            isbn: item.isbn,
+            coverUrl: item.coverUrl,
+            // genres: genres.then((genres) => genres.map((genre: any) => {
+            //     return {
+            //         id: genre.genre.id,
+            //         name: genre.genre.name
+            //     }
+            // })).catch((err) => {
+            //     console.error(err);
+            //     return [];
+            // })
+        }
     }
 
 }
