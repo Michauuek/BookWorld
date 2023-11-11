@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'BookService'});
 
-export class BookService extends ElasticService<Prisma.BooksDelegate> {
+export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.BooksWhereInput> {
 
     constructor() {
         super(prisma, 'Books');

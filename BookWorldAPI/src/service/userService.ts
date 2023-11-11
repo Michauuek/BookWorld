@@ -11,7 +11,7 @@ import {ElasticService} from "../../elastic_search/ElasticService";
 
 const logger = globalLogger.child({class: 'UserService'});
 
-export class UserService extends ElasticService<Prisma.UsersDelegate> {
+export class UserService extends ElasticService<Prisma.UsersDelegate, Prisma.UsersWhereInput> {
 
 
     constructor() {

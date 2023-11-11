@@ -8,7 +8,7 @@ import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-export class AuthorService extends ElasticService<Prisma.AuthorsDelegate> {
+export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma.RatingsWhereInput> {
 
 
     constructor() {
