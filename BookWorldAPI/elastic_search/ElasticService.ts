@@ -9,7 +9,6 @@ export abstract class ElasticService<T> {
         this.model = model;
      }
 
-
      async get(elasticRequest: ElasticRequest): Promise<any> {
 
          console.log(elasticRequest);
