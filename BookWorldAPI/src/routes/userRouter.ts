@@ -5,12 +5,21 @@ import {plainToInstance} from "class-transformer";
 import {UserService} from "../service/userService";
 import {CreateUserRequest} from "../model/userDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import { Logger } from "pino"
 import {allowOnly} from "../service/authService";
+import {ElasticRequest} from "../../elastic_search/ElasticRequest";
+
 
 
 const userService = new UserService();
 const userRouter = express.Router();
+
+
+// For user model you cannot use default filters
+userRouter.post("/elastic/get", async (req: Request, res: Response) => {
+    const elasticRequest = plainToInstance(ElasticRequest, req.body);
+    const response = await userService.get(elasticRequest);
+    return res.status(200).json(response);
+});
 
 userRouter.post("/create", validationMiddleware(CreateUserRequest), async (req: Request, res: Response) => {
     const user = plainToInstance(CreateUserRequest, req.body);

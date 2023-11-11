@@ -2,11 +2,16 @@ import {prisma} from "../utils/prisma";
 import {BookRequest, BookResponse} from "../model/bookDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
-
+import {ElasticService} from "../../elastic_search/ElasticService";
+import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'BookService'});
 
-export class BookService {
+export class BookService extends ElasticService<Prisma.BooksDelegate> {
+
+    constructor() {
+        super(prisma, 'Books');
+    }
 
     async getAll(): Promise<BookResponse[]> {
         return prisma.books.findMany();
