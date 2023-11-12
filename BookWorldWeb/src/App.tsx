@@ -1,4 +1,5 @@
 import './App.css'
+import BookList from "./components/BookList.tsx";
 
 function App() {
 
@@ -7,6 +8,9 @@ function App() {
       <header className="App-header">
         <h1>BookWorld</h1>
       </header>
+        <div className="app-content">
+            <BookList />
+        </div>
     </div>
   )
 }
