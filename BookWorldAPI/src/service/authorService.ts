@@ -75,7 +75,7 @@ export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma
         });
     }
 
-    mapToResponse(item: Prisma.AuthorsGetPayload<any>): AuthorResponse {
+    async mapToResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponse> {
         return {
             id: item.id,
             name: item.name,

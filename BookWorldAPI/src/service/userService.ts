@@ -127,7 +127,7 @@ export class UserService extends ElasticService<Prisma.UsersDelegate, Prisma.Use
         });
     }
 
-    mapToResponse(item: Prisma.UsersGetPayload<any>): UserResponse {
+    async mapToResponse(item: Prisma.UsersGetPayload<any>): Promise<UserResponse> {
         return {
             id: item.id,
             email: item.email,

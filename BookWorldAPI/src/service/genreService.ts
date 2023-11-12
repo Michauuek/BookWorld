@@ -69,7 +69,7 @@ export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.G
         });
     }
 
-    mapToResponse(item: Prisma.GenresGetPayload<any>): GenreResponse {
+    async mapToResponse(item: Prisma.GenresGetPayload<any>): Promise<GenreResponse> {
         // Your mapping logic goes here
         return {
             id: item.id,

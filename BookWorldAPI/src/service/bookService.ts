@@ -84,8 +84,8 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
         });
     }
 
-    async getBookGenres(bookId: number): Promise<any> {
-        return prisma.bookGenres.findMany({
+    async getBookGenres(bookId: number): Promise<GenreResponse[]> {
+        const result = await prisma.bookGenres.findMany({
             where: { bookId: bookId },
             select: {
                 genre: {
@@ -99,27 +99,22 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
                 book: false
             }
         });
+        return result.map(item => item.genre)
     }
 
-    mapToResponse(item: Prisma.BooksGetPayload<any>): BookResponse {
-        // const genres = this.getBookGenres(item.id);
-        return {
+    async mapToResponse(item: Prisma.BooksGetPayload<any>): Promise<BookResponse> {
+        const genres = await this.getBookGenres(item.id);
+        const itemResponse = {
             id: item.id,
             title: item.title,
             description: item.description,
             authorId: item.authorId,
             isbn: item.isbn,
             coverUrl: item.coverUrl,
-            // genres: genres.then((genres) => genres.map((genre: any) => {
-            //     return {
-            //         id: genre.genre.id,
-            //         name: genre.genre.name
-            //     }
-            // })).catch((err) => {
-            //     console.error(err);
-            //     return [];
-            // })
+            genres: genres
         }
+        console.log(itemResponse)
+        return itemResponse;
     }
 
 }

@@ -64,7 +64,7 @@ export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma
         });
     }
 
-    mapToResponse(item: Prisma.RatingsGetPayload<any>): RatingResponse {
+    async mapToResponse(item: Prisma.RatingsGetPayload<any>): Promise<RatingResponse> {
         return {
             id: item.id,
             bookId: item.bookId,
