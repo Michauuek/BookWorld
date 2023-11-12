@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'RatingService'});
 
-export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma.RatingsWhereInput> {
+export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma.RatingsWhereInput, RatingResponse> {
 
 
     constructor() {
@@ -63,4 +63,16 @@ export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma
             where: { id: id }
         });
     }
+
+    async mapToResponse(item: Prisma.RatingsGetPayload<any>): Promise<RatingResponse> {
+        return {
+            id: item.id,
+            bookId: item.bookId,
+            userId: item.userId,
+            rating: item.rating,
+            comment: item.comment
+        }
+    }
+
+
 }

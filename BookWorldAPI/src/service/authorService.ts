@@ -8,13 +8,12 @@ import { Prisma } from "@prisma/client";
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma.RatingsWhereInput> {
+export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma.RatingsWhereInput, AuthorResponse> {
 
 
     constructor() {
         super(prisma, 'Authors');
     }
-
     async getAll(): Promise<AuthorResponse[]> {
         return prisma.authors.findMany({
             select: {
@@ -74,5 +73,13 @@ export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma
         await prisma.authors.delete({
             where: { id: id }
         });
+    }
+
+    async mapToResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponse> {
+        return {
+            id: item.id,
+            name: item.name,
+            lastName: item.lastName
+        }
     }
 }

@@ -5,9 +5,10 @@ import globalLogger from "../utils/logger";
 import {ElasticService} from "../../elastic_search/ElasticService";
 import { Prisma, PrismaClient } from "@prisma/client";
 
+
 const logger = globalLogger.child({class: 'GenreService'});
 
-export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.GenresWhereInput> {
+export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.GenresWhereInput, GenreResponse> {
 
 
     constructor() {
@@ -66,6 +67,14 @@ export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.G
         await prisma.genres.delete({
             where: { id: id }
         });
+    }
+
+    async mapToResponse(item: Prisma.GenresGetPayload<any>): Promise<GenreResponse> {
+        // Your mapping logic goes here
+        return {
+            id: item.id,
+            name: item.name,
+        };
     }
 
 }
