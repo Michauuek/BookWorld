@@ -1,5 +1,6 @@
 import './App.css'
 import BookList from "./components/BookList.tsx";
+import {Footer} from "./components/Footer.tsx";
 
 function App() {
 
@@ -11,6 +12,7 @@ function App() {
         <div className="app-content">
             <BookList />
         </div>
+        <Footer />
     </div>
   )
 }
