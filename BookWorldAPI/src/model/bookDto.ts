@@ -1,5 +1,6 @@
 import {IsNotEmpty, IsNumber, IsString, Max, Min} from "class-validator";
 import {GenreResponse} from "./genreDto";
+import {AuthorResponse} from "./authorDto";
 
 
 export class BookRequest {
@@ -28,7 +29,7 @@ export interface BookResponse {
     title: string;
     description: string | null;
     isbn: string | null;
-    authorId: number;
+    author: AuthorResponse;
     coverUrl: string | null;
     genres?: GenreResponse[];
 }
