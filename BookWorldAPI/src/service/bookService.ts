@@ -45,8 +45,6 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
 
         logger.info(`save() - bookRequest: `, bookRequest);
 
-        const author: AuthorResponse = await authorService.getById(bookRequest.authorId)
-
         const savedBook = await prisma.books.create({
             data: {
                 title: bookRequest.title,
@@ -80,7 +78,6 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
 
     async update(id: number, bookRequest: BookRequest): Promise<BookResponse> {
         logger.info(`update() - id: ${id}, bookRequest: ${bookRequest}`);
-        const author: AuthorResponse = await authorService.getById(bookRequest.authorId)
         const book = await prisma.books.update({
             where: { id: id },
             data: {
