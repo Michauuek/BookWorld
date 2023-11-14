@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import BookThumbnail from "../../page_elements/BookThumbnail";
 import { Link } from "react-router-dom";
+import BookThumbnail from "./BookThumbnail.tsx";
 
 export type Author = {
     id: number,
