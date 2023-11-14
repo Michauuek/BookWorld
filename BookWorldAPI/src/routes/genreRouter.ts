@@ -6,7 +6,6 @@ import {plainToInstance} from "class-transformer";
 import {GenreService} from "../service/genreService";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
 const genreService = new GenreService();
@@ -14,9 +13,8 @@ const genreRouter = express.Router();
 
 
 genreRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    const elasticRequest = plainToInstance(ElasticRequest, req.body);
-    const response = await genreService.get(elasticRequest);
-    return res.status(200).json(response);
+    // const response = await genreService.get(elasticRequest);
+    // return res.status(200).json(response);
 });
 
 genreRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(GenreRequest), async (req: Request, res: Response) => {

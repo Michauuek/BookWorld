@@ -1,85 +1,58 @@
-import {PrismaClient} from "@prisma/client";
-import {ElasticRequest} from "./model/ElasticRequest";
-import {BadRequestException} from "../src/exceptions/badRequestException";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { Sort } from "./model/Sort";
+import { Pagination } from "./model/Pagination";
 
-export abstract class ElasticService<T, R, M> {
+type Models = Prisma.TypeMap["meta"]["modelProps"];
 
-    protected constructor(private prisma: PrismaClient, private readonly model: string) {
-        this.prisma = prisma;
-        this.model = model;
-    }
+type AllFilters = Prisma.StringFilter | Prisma.IntFilter | Prisma.DateTimeFilter;
 
-    abstract mapToResponse(item: any): Promise<M>;
+export type ElasticRequestSelect<T> = {
+    AND?: Array<ElasticRequestSelect<T>>;
+    OR?: Array<ElasticRequestSelect<T>>;
+    NOT?: Array<ElasticRequestSelect<T>>;
+} & {
+    [P in keyof T]?: T[P] extends string ? AllFilters : never;
+};
 
-    async get(request: ElasticRequest): Promise<M[]> {
-        console.log(request);
+export type ElasticRequest<T> = {
+    where: ElasticRequestSelect<T>;
+    orderBy?: Sort;
+    pagination?: Pagination;
+};
 
-        const {skip, take} = request.pagination;
-        const {column, desc} = request.sort;
-
-        const model = this.model as T;
-        const where: any = {};
-        const filterConditions: R[] = [];
-
-        request.filters.forEach((filter, index) => {
-            const { field, operator, value } = filter;
-            // @ts-ignore
-            filterConditions.push({
-                [field]: {
-                    [operator]: value,
-                },
-            });
-        });
-
-        if (filterConditions.length > 0) {
-            where[request.operator.toUpperCase()] = filterConditions;
-        }
-
-        try {
-            // @ts-ignore
-            const items = await this.prisma[model].findMany({
-                where: where,
-                orderBy: {
-                    [column]: desc ? "desc" : "asc"
-                },
-                take: take,
-                skip: skip
-            });
-            return await Promise.all(items.map((item: any) => this.mapToResponse(item)));
-        } catch (error) {
-            console.error("Error executing Prisma query:", error);
-            throw new BadRequestException("Error executing Prisma query");
-        }
-    }
-
+type ExtractWhereInput<T> = T extends {
+    where: infer U;
 }
+    ? U extends Record<string, any>
+    ? U
+    : never
+    : never;
 
+type WhereInputTypes<T extends Models> = {
+    [K in keyof T]: ExtractWhereInput<T[K]>;
+};
 
+type FindManyKeys<T> = {
+    [K in keyof T]: T[K] extends { findMany: (...args: any[]) => any } ? K : never;
+}[keyof T];
 
+export class ElasticSearchService<T extends Models> {
+    modelName: FindManyKeys<PrismaClient>;
 
-// async get(request: ElasticRequest): Promise<any> {
-//
-//     console.log(request);
-//
-//     const { field, operator, value } = request.filters[0];
-//     const {skip, take} = request.pagination;
-//     const sortField = request.sort.field
-//     const desc = request.sort.desc
-//
-//     const model = this.model as T;
-//
-//     // @ts-ignore
-//     return this.prisma[model].findMany({
-//         where: {
-//             [field]: {
-//                 [operator]: value
-//             }
-//         },
-//         orderBy: {
-//             [sortField]: desc ? "desc" : "asc"
-//         },
-//         take: take,
-//         skip: skip
-//     });
-// }
+    constructor(modelName: FindManyKeys<PrismaClient>) {
+        this.modelName = modelName;
+    }
 
+    async search(request: ElasticRequest<WhereInputTypes<T>>): Promise<ReturnType<PrismaClient[FindManyKeys<PrismaClient>]['findMany']>> {
+        const prisma = new PrismaClient();
+        const model = prisma[this.modelName];
+
+        // @ts-ignore
+        return await model.findMany({
+                where: request.where,
+                orderBy: request.orderBy,
+                skip: request.pagination?.skip,
+                take: request.pagination?.take,
+            })
+    }
+}
