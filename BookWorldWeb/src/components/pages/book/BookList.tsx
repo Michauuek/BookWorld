@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import BookThumbnail from "../../page_elements/BookThumbnail";
+import BookThumbnail from "./BookThumbnail.tsx";
 
 export type Author = {
     id: number,
@@ -31,7 +31,7 @@ export default function BookList() {
         fetch('/api/books')
             .then(response => response.json())
             .then(data => setBooks(data))
-    })
+    }, [])
 
     let bookList = books.map(book => {
         return (

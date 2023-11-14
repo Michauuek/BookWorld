@@ -1,4 +1,4 @@
-import {Book} from "../pages/book/BookList.tsx";
+import {Book} from "./BookList.tsx";
 
 export default function BookThumbnail(props: {book: Book}) {
     let book = props.book
@@ -6,7 +6,6 @@ export default function BookThumbnail(props: {book: Book}) {
         <div className="book-thumbnail">
             <img src={book.coverUrl} alt={book.title} />
             <h3>{book.title}</h3>
-            <p>{book.authorId}</p>
         </div>
     )
 }
