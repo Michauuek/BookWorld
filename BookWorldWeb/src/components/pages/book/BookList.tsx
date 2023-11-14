@@ -1,13 +1,28 @@
 import {useEffect, useState} from "react";
-import BookThumbnail from "./BookThumbnail";
+import BookThumbnail from "../../page_elements/BookThumbnail";
+
+export type Author = {
+    id: number,
+    name: string,
+    lastName: string,
+}
+
+export type Genre = {
+    id: number,
+    name: string,
+}
 
 export type Book = {
     id: number,
     title: string,
     description: string,
     isbn: string,
-    authorId: number,
+    // authorId: number,
     coverUrl: string,
+    author: Author,
+    genres: Genre[],
+    ratingValue: number,
+    ratingCount: number,
 }
 
 export default function BookList() {

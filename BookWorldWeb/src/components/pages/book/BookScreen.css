@@ -1,0 +1,43 @@
+.book-screen {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .book-details {
+    display: flex;
+  }
+  
+  .book-cover {
+    max-width: 200px;
+    margin-right: 20px;
+    border-radius: 8px;
+  }
+  
+  .book-info {
+    flex: 1;
+  }
+  
+  .book-description {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .rating {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #f39c12;
+  }
+  
+  .rating span {
+    color: #f39c12;
+  }
+  
+  .book-meta{
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+  }
