@@ -24,6 +24,11 @@ export class BookRequest {
     genresIds: number[];
 }
 
+export interface BookRating {
+    value: number;
+    count: number;
+}
+
 export interface BookResponse {
     id: number;
     title: string;
@@ -31,5 +36,6 @@ export interface BookResponse {
     isbn: string | null;
     author: AuthorResponse;
     coverUrl: string | null;
+    rating: BookRating;
     genres?: GenreResponse[];
 }

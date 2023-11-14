@@ -77,11 +77,23 @@ button:focus-visible {
     width: 18rem;
     height: 45rem;
     flex-basis: 30%;
+    cursor: pointer;
 }
 
 .book-thumbnail img {
   width: 100%;
   height: auto;
+}
+
+.footer_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #242424;
+  width: 100%;
+  flex-wrap: wrap;
+  padding: 2em 1em 1em;
+  margin-top: 5rem;
 }
 
 @media (prefers-color-scheme: light) {

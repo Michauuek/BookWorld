@@ -42,6 +42,8 @@ Table Books {
   author Authors [not null]
   authorId Int [not null]
   coverUrl String
+  ratingValue Float [not null, default: 0]
+  ratingCount Int [not null, default: 0]
   ratings Ratings [not null]
   genres BookGenres [not null]
   favouriteBooks UserFavouriteBooks [not null]
