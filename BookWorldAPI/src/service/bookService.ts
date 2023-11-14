@@ -101,14 +101,13 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
 
     async updateBookRating(bookId: number, newRating: number) {
         const book = await this.getById(bookId)
-        const ratingValue = book.ratingValue;
-        const ratingCount = book.ratingCount;
-        const newRatingValue = (ratingValue * ratingCount + newRating) / (ratingCount + 1);
+        const {value, count} = book.rating;
+        const newRatingValue = (value * count + newRating) / (count + 1);
         await prisma.books.update({
             where: { id: bookId },
             data: {
                 ratingValue: newRatingValue,
-                ratingCount: ratingCount + 1
+                ratingCount: count + 1
             }
         });
     }
@@ -123,8 +122,10 @@ export class BookService extends ElasticService<Prisma.BooksDelegate, Prisma.Boo
             author: author,
             isbn: item.isbn,
             coverUrl: item.coverUrl,
-            ratingValue: item.ratingValue,
-            ratingCount: item.ratingCount,
+            rating: {
+                value: item.ratingValue,
+                count: item.ratingCount
+            },
             genres: genres
         }
         console.log(itemResponse)
