@@ -31,5 +31,7 @@ export interface BookResponse {
     isbn: string | null;
     author: AuthorResponse;
     coverUrl: string | null;
+    ratingValue: number;
+    ratingCount: number;
     genres?: GenreResponse[];
 }

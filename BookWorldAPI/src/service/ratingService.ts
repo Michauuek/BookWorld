@@ -4,8 +4,11 @@ import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import {ElasticService} from "../../elastic_search/ElasticService";
 import { Prisma } from "@prisma/client";
+import {BookService} from "./bookService";
 
 const logger = globalLogger.child({class: 'RatingService'});
+
+const bookService = new BookService();
 
 export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma.RatingsWhereInput, RatingResponse> {
 
@@ -36,25 +39,21 @@ export class RatingService extends ElasticService<Prisma.RatingsDelegate, Prisma
 
 
     async save(ratingRequest: RatingRequest): Promise<RatingResponse> {
+        logger.info({ratingRequest}, `save() - ratingRequest: `);
+        await bookService.getById(ratingRequest.bookId)
+
         const savedRating = await prisma.ratings.create({
             data: {
                 rating: ratingRequest.rating,
                 bookId: ratingRequest.bookId,
                 userId: ratingRequest.userId,
                 comment: ratingRequest.comment
-            },
-            select: {
-                id: true,
-                rating: true,
-                bookId: true,
-                userId: true,
-                comment: true,
-                book: false,
-                user: false
             }
         });
-        logger.info({savedRating},`save() - savedRating: `);
-        return savedRating;
+        await bookService.updateBookRating(ratingRequest.bookId, ratingRequest.rating)
+        const ratingResponse = await this.mapToResponse(savedRating);
+        logger.info({ratingResponse},`save() - savedRating: `);
+        return ratingResponse;
     }
 
     async deleteById(id: number): Promise<void> {

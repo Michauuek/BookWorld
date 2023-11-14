@@ -36,6 +36,25 @@ export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.G
         return genre;
     }
 
+    async getByBookId(bookId: number): Promise<GenreResponse[]> {
+        logger.info(`getByBookId() - bookId: ${bookId}`);
+        const genre = await prisma.bookGenres.findMany({
+            where: { bookId: bookId },
+            select: {
+                genre: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        });
+        if (!genre) {
+            throw new EntityNotFoundException(`Genre with bookId ${bookId} does not exist`)
+        }
+        return genre.map((item) => item.genre);
+    }
+
     async save(genreRequest: GenreRequest): Promise<GenreResponse> {
         const savedGenre = await prisma.genres.create({
             data: { name: genreRequest.name },
@@ -70,7 +89,6 @@ export class GenreService extends ElasticService<Prisma.GenresDelegate, Prisma.G
     }
 
     async mapToResponse(item: Prisma.GenresGetPayload<any>): Promise<GenreResponse> {
-        // Your mapping logic goes here
         return {
             id: item.id,
             name: item.name,

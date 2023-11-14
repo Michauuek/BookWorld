@@ -5,7 +5,7 @@ export class RatingRequest {
     @IsNumber()
     bookId: number;
 
-    @IsNumber()
+    @IsString()
     userId: string;
 
     @IsString()
