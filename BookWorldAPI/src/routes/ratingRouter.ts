@@ -6,17 +6,13 @@ import {RatingService} from "../service/ratingService";
 import {RatingRequest} from "../model/ratingDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
-const ratingService = new RatingService();
+const ratingService = new RatingService('ratings');
 const ratingRouter = express.Router();
 
 
 ratingRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    const elasticRequest = plainToInstance(ElasticRequest, req.body);
-    const response = await ratingService.get(elasticRequest);
-    return res.status(200).json(response);
 });
 
 ratingRouter.post("/create", allowOnly(["USER", "ADMIN"]), validationMiddleware(RatingRequest), async (req: Request, res: Response) => {

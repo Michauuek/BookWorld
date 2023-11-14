@@ -6,16 +6,13 @@ import {BookService} from "../service/bookService";
 import {BookRequest} from "../model/bookDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
-
-const bookService = new BookService();
+const bookService = new BookService('books');
 const bookRouter = express.Router();
 
 
 bookRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    const elasticRequest = plainToInstance(ElasticRequest, req.body);
-    const response = await bookService.get(elasticRequest);
+    const response = await bookService.search(req.body);
     return res.status(200).json(response);
 });
 

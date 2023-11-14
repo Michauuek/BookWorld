@@ -1,6 +1,5 @@
 
 
-export class Sort {
-    column: string = "id";
-    desc: boolean = false;
+export type Sort = {
+    [key: string]: 'asc' | 'desc';
 }

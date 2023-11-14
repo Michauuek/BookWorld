@@ -6,17 +6,14 @@ import {AuthorService} from "../service/authorService";
 import {AuthorRequest} from "../model/authorDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
-const authorService = new AuthorService();
+const authorService = new AuthorService('authors');
 const authorRouter = express.Router();
 
 
 authorRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    const elasticRequest = plainToInstance(ElasticRequest, req.body);
-    const response = await authorService.get(elasticRequest);
-    return res.status(200).json(response);
+
 });
 
 authorRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(AuthorRequest), async (req: Request, res: Response) => {

@@ -2,18 +2,14 @@ import {AuthorRequest, AuthorResponse} from "../model/authorDto";
 import {prisma} from "../utils/prisma";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
-import {ElasticService} from "../../elastic_search/ElasticService";
 import { Prisma } from "@prisma/client";
+import { ElasticSearchService } from "../../elastic_search/ElasticService";
 
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-export class AuthorService extends ElasticService<Prisma.AuthorsDelegate, Prisma.RatingsWhereInput, AuthorResponse> {
+export class AuthorService extends ElasticSearchService<'authors'> {
 
-
-    constructor() {
-        super(prisma, 'Authors');
-    }
     async getAll(): Promise<AuthorResponse[]> {
         return prisma.authors.findMany({
             select: {

@@ -1,7 +1,7 @@
 
 
 
-export class Pagination {
-    skip: number = 0;
-    take: number = 10000;
+export type Pagination = {
+    skip: number;
+    take: number;
 }
