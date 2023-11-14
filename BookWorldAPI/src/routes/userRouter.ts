@@ -6,7 +6,6 @@ import {UserService} from "../service/userService";
 import {CreateUserRequest} from "../model/userDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
-import {ElasticRequest} from "../../elastic_search/model/ElasticRequest";
 
 
 
