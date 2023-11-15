@@ -1,5 +1,3 @@
-/* Update your search_field.css */
-
 .search-field {
     position: relative;
 }
@@ -7,10 +5,10 @@
 .search-field input[type="text"] {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 2px solid #deb887;
     outline: none;
     font-size: 16px;
+    background-color: #fefefe;
 }
 
 .search-field ul {

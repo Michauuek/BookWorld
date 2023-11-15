@@ -1,7 +1,5 @@
-/* Update your navbar.css */
-
 .navbar {
-  background-color: #333;
+  background-color: #d2681e;
   padding: 5px;
   margin-bottom: 1rem;
   width: 100%;
@@ -18,7 +16,7 @@
 }
 
 .nav-item {
-  margin-right: 15px;
+  margin-right: 2.5rem;
   margin-top: auto;
   margin-bottom: auto;
 }
@@ -26,15 +24,15 @@
 .nav-list a {
   text-decoration: none;
   color: white;
+  font-size: 1.5rem;
 }
 
 .spacer {
   width: 10%;
 }
 
-.app-header {
-  font-size: 34px;
-  font-weight: bold;
+.app-header a {
+  font-size: 2.2rem;
 }
 
 /* Add this style to push the SearchField to the right */
