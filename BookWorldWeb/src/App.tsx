@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BookScreen from './components/pages/book/BookScreen.tsx';
 import Navbar from './components/page_elements/Navbar.tsx';
 import NotFoundScreen from './components/page_elements/NotFoundScreen.tsx';
+import AuthorScreen from './components/pages/author/AuthorScreen.tsx';
+import RegisterScreen from './components/pages/register/RegisterScreen.tsx';
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
           <Routes>
             <Route path="/" element={<BookList />}></Route>
             <Route path="/book/:bookId" element={<BookScreen />}></Route>
+            <Route path="/author/:authorId" element={<AuthorScreen />}></Route>
+            <Route path="/register/" element={<RegisterScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />

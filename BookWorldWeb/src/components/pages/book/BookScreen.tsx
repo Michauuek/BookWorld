@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Book } from './BookList';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import './book_screen.css';
-import Navbar from '../../page_elements/Navbar';
+import "../../page_elements/default_style.css";
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -48,7 +48,7 @@ const BookScreen = () => {
   };
 
   return (
-    <div className="book-screen">
+    <div className="screen">
       <h1>{book.title}</h1>
       <div className="book-details">
         <img src={book.coverUrl} alt={`${book.title} cover`} className="book-cover" />

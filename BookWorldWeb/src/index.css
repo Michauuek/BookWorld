@@ -75,13 +75,16 @@ button:focus-visible {
     background-color: #1a1a1a;
     box-sizing: border-box;
     width: 18rem;
-    height: 45rem;
+    /* height: 45rem; */
     flex-basis: 30%;
     cursor: pointer;
+    border-radius: 8px;
 }
 
 .book-thumbnail img {
   width: 100%;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   height: auto;
 }
 

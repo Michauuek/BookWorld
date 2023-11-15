@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import BookThumbnail from "./BookThumbnail.tsx";
+import "../../page_elements/default_style.css";
 
 export type Author = {
     id: number,
@@ -30,12 +31,13 @@ export type Book = {
 }
 
 export default function BookList() {
+    const location = useLocation();
     const [books, setBooks] = useState<Book[]>([])
     useEffect(() => {
         fetch('/api/books')
             .then(response => response.json())
             .then(data => setBooks(data))
-    })
+    }, [location])
 
     let bookList = books.map(book => {
         return (
@@ -46,8 +48,10 @@ export default function BookList() {
     })
 
     return (
+        <div className="screen">
         <div className="book-list">
             {bookList}
+        </div>
         </div>
     )
 }

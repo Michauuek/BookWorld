@@ -1,30 +1,44 @@
-.navbar {
-    background-color: #333;
-    padding: 10px;
-    margin-bottom: 1rem;
-  }
-  
-  .nav-list {
-    list-style-type: none;
-    display: flex;
-  }
-  
-  .nav-item {
-    margin-right: 15px;
-    margin-top: auto;
-    margin-bottom: auto;
-  }
-  
-  .nav-item a {
-    text-decoration: none;
-    color: white;
-  }
+/* Update your navbar.css */
 
-  .spacer {
-    width: 10%;
-  }
-  
-  .app-header {
-    font-size: 34px;
-    font-weight: bold;
-  }
+.navbar {
+  background-color: #333;
+  padding: 5px;
+  margin-bottom: 1rem;
+  width: 100%;
+  display: flex; /* Use flex display to arrange children */
+  justify-content: space-between; /* Add this to push the search field to the right */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.nav-list {
+  list-style-type: none;
+  display: flex;
+  align-items: center; /* Align items vertically in the center */
+  width: 100%;
+}
+
+.nav-item {
+  margin-right: 15px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.nav-list a {
+  text-decoration: none;
+  color: white;
+}
+
+.spacer {
+  width: 10%;
+}
+
+.app-header {
+  font-size: 34px;
+  font-weight: bold;
+}
+
+/* Add this style to push the SearchField to the right */
+.search-field-container {
+  margin-left: auto;
+  margin-right: 2rem;
+}

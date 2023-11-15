@@ -1,0 +1,50 @@
+/* Update your search_field.css */
+
+.search-field {
+    position: relative;
+}
+
+.search-field input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-field ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    z-index: 1;
+    display: none;
+}
+
+.search-field li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.search-field li:last-child {
+    border-bottom: none;
+}
+
+.search-field li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Show the results when input is focused */
+.search-field input[type="text"]:focus+ul {
+    display: block;
+}
