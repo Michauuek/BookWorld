@@ -11,11 +11,16 @@ import {GenreService} from "./genreService";
 
 const logger = globalLogger.child({class: 'BookService'});
 
-const authorService = new AuthorService('authors');
+const authorService = new AuthorService();
+const genreService = new GenreService();
 
-export class BookService extends ElasticSearchService<'books'> {
+export class BookService extends ElasticSearchService<'books', BookResponse> {
 
-    async getAll() {
+    constructor() {
+        super('books');
+    }
+
+    async getAll(): Promise<BookResponse[]> {
         const books = await prisma.books.findMany();
         return Promise.all(books.map(async (book) => {
             return await this.mapToResponse(book);
@@ -123,7 +128,7 @@ export class BookService extends ElasticSearchService<'books'> {
             },
             genres: genres
         }
-        console.log(itemResponse)
+        logger.info({itemResponse}, `mapToResponse() - itemResponse: `);
         return itemResponse;
     }
 

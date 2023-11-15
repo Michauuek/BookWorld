@@ -7,46 +7,36 @@ import * as bcrypt from 'bcryptjs';
 import globalLogger from "../utils/logger";
 import {EntityAlreadyExistsException} from "../exceptions/entityAlreadyExistsException";
 import { Prisma } from "@prisma/client";
+import {ElasticSearchService} from "../../elastic_search/ElasticService";
 
 const logger = globalLogger.child({class: 'UserService'});
 
-export class UserService {
+export class UserService extends ElasticSearchService<'users', UserResponse> {
+
+
+    constructor() {
+        super('users');
+    }
+
 
     async getAll(): Promise<UserResponse[]> {
         logger.info(`getAll()`);
-        return prisma.users.findMany({
-            where: { role: DEFAULT_USER_ROLE },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                lastName: true,
-                password: false,
-                role: true,
-                createdAt: true,
-            }
-        });
+        const users = await prisma.users.findMany();
+        return Promise.all(users.map(async (user) => {
+            return await this.mapToResponse(user);
+        }));
     }
 
     async getById(id: string): Promise<UserResponse> {
         logger.info({id}, `getById() - id:`);
         const user = await prisma.users.findUnique({
-            where: { id: id },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                lastName: true,
-                password: false,
-                role: true,
-                createdAt: true,
-            }
+            where: { id: id }
         });
 
         if (!user) {
             throw new EntityNotFoundException(`User with id ${id} does not exist`)
         }
-        return user;
+        return this.mapToResponse(user);
     }
 
     async save(userRequest: CreateUserRequest): Promise<UserResponse> {
@@ -62,19 +52,10 @@ export class UserService {
                 lastName: userRequest.lastName,
                 password: hashedPassword,
                 role: DEFAULT_USER_ROLE
-            },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                lastName: true,
-                password: false,
-                role: true,
-                createdAt: true,
             }
         });
         logger.info({savedUser}, `save() - savedUser: `);
-        return savedUser;
+        return this.mapToResponse(savedUser);
     }
 
     async update(id: string, userRequest: CreateUserRequest): Promise<UserResponse> {
@@ -85,19 +66,10 @@ export class UserService {
                 email: userRequest.email,
                 name: userRequest.name,
                 lastName: userRequest.lastName,
-            },
-            select: {
-                id: true,
-                email: true,
-                name: true,
-                lastName: true,
-                password: false,
-                role: true,
-                createdAt: true,
             }
         });
         logger.info({user}, `update() - user:`);
-        return user;
+        return this.mapToResponse(user);
     }
 
     async deleteById(id: string): Promise<void> {

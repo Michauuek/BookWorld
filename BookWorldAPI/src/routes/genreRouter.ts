@@ -13,8 +13,8 @@ const genreRouter = express.Router();
 
 
 genreRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    // const response = await genreService.get(elasticRequest);
-    // return res.status(200).json(response);
+    const response = await genreService.get(req.body);
+    return res.status(200).json(response);
 });
 
 genreRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(GenreRequest), async (req: Request, res: Response) => {
