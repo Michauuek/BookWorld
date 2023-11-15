@@ -8,17 +8,18 @@ import { ElasticSearchService } from "../../elastic_search/ElasticService";
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-export class AuthorService extends ElasticSearchService<'authors'> {
+export class AuthorService extends ElasticSearchService<'authors', AuthorResponse> {
+
+
+    constructor() {
+        super('authors');
+    }
 
     async getAll(): Promise<AuthorResponse[]> {
-        return prisma.authors.findMany({
-            select: {
-                id: true,
-                name: true,
-                lastName: true,
-                books: false
-            }
-        });
+        const authors = await prisma.authors.findMany();
+        return Promise.all(authors.map(async (author) => {
+            return await this.mapToResponse(author);
+        }));
     }
 
     async getById(id: number): Promise<AuthorResponse> {
@@ -30,38 +31,26 @@ export class AuthorService extends ElasticSearchService<'authors'> {
         if (!author) {
             throw new EntityNotFoundException(`Author with id ${id} does not exist`)
         }
-        return author;
+        return this.mapToResponse(author);
     }
 
     async save(authorRequest: AuthorRequest): Promise<AuthorResponse> {
         logger.info(`save() - authorRequest: ${authorRequest}`);
         const savedAuthor = await prisma.authors.create({
-            data: { name: authorRequest.name, lastName: authorRequest.lastName },
-            select: {
-                id: true,
-                name: true,
-                lastName: true,
-                books: false
-            }
+            data: { name: authorRequest.name, lastName: authorRequest.lastName }
         });
         logger.info(`save() - savedAuthor: ${savedAuthor}`);
-        return savedAuthor;
+        return this.mapToResponse(savedAuthor);
     }
 
     async update(id: number, authorRequest: AuthorRequest): Promise<AuthorResponse> {
         logger.info(`update() - id: ${id}, authorRequest: ${authorRequest}`);
         const author = await prisma.authors.update({
             where: { id: id },
-            data: { name: authorRequest.name, lastName: authorRequest.lastName },
-            select: {
-                id: true,
-                name: true,
-                lastName: true,
-                books: false
-            }
+            data: { name: authorRequest.name, lastName: authorRequest.lastName }
         });
         logger.info(`update() - author: ${author}`);
-        return author;
+        return this.mapToResponse(author);
     }
 
     async deleteById(id: number): Promise<void> {

@@ -5,12 +5,19 @@ import globalLogger from "../utils/logger";
 import { Prisma } from "@prisma/client";
 
 import { ElasticSearchService } from "../../elastic_search/ElasticService";
+import {BookService} from "./bookService";
 
-    const logger = globalLogger.child({class: 'RatingService'});
-
-    export class RatingService extends ElasticSearchService<'ratings'>{
+const logger = globalLogger.child({class: 'RatingService'});
 
 
+const bookService = new BookService();
+
+export class RatingService extends ElasticSearchService<'ratings', RatingResponse> {
+
+
+    constructor() {
+        super('ratings');
+    }
 
     async getAllForBook(bookId: number): Promise<RatingResponse[]> {
         return prisma.ratings.findMany({
