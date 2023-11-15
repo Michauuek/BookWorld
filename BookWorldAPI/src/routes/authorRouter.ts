@@ -8,12 +8,13 @@ import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
 
 
-const authorService = new AuthorService('authors');
+const authorService = new AuthorService();
 const authorRouter = express.Router();
 
 
 authorRouter.post("/elastic/get", async (req: Request, res: Response) => {
-
+    const response = await authorService.get(req.body);
+    return res.status(200).json(response);
 });
 
 authorRouter.post("/create", allowOnly(["ADMIN"]), validationMiddleware(AuthorRequest), async (req: Request, res: Response) => {

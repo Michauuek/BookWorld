@@ -7,12 +7,12 @@ import {BookRequest} from "../model/bookDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
 
-const bookService = new BookService('books');
+const bookService = new BookService();
 const bookRouter = express.Router();
 
 
 bookRouter.post("/elastic/get", async (req: Request, res: Response) => {
-    const response = await bookService.search(req.body);
+    const response = await bookService.get(req.body);
     return res.status(200).json(response);
 });
 

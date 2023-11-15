@@ -3,19 +3,22 @@ import {prisma} from "../utils/prisma";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import { Prisma, PrismaClient } from "@prisma/client";
+import {ElasticSearchService} from "../../elastic_search/ElasticService";
 
 
 const logger = globalLogger.child({class: 'GenreService'});
 
-export class GenreService {
+export class GenreService extends ElasticSearchService<'genres', GenreResponse> {
+
+    constructor() {
+        super('genres');
+    }
 
     async getAll(): Promise<GenreResponse[]> {
-        return prisma.genres.findMany({
-            select: {
-                id: true,
-                name: true,
-            }
-        });
+        const genres = await prisma.genres.findMany();
+        return Promise.all(genres.map(async (genre) => {
+            return await this.mapToResponse(genre);
+        }));
     }
 
     async getById(id: number): Promise<GenreResponse> {
@@ -27,26 +30,25 @@ export class GenreService {
         if (!genre) {
             throw new EntityNotFoundException(`Genre with id ${id} does not exist`)
         }
-        return genre;
+        return this.mapToResponse(genre);
     }
 
     async getByBookId(bookId: number): Promise<GenreResponse[]> {
         logger.info(`getByBookId() - bookId: ${bookId}`);
-        const genre = await prisma.bookGenres.findMany({
-            where: { bookId: bookId },
-            select: {
-                genre: {
-                    select: {
-                        id: true,
-                        name: true
-                    }
-                }
-            }
+        const bookGenres = await prisma.bookGenres.findMany({
+            where: { bookId: bookId }
         });
-        if (!genre) {
+
+        const genres = await prisma.genres.findMany({
+            where: { id: { in: bookGenres.map((item) => item.genreId) } },
+        });
+
+        if (!genres) {
             throw new EntityNotFoundException(`Genre with bookId ${bookId} does not exist`)
         }
-        return genre.map((item) => item.genre);
+        return Promise.all(genres.map(async (genre) => {
+            return await this.mapToResponse(genre);
+        }));
     }
 
     async save(genreRequest: GenreRequest): Promise<GenreResponse> {
@@ -58,7 +60,7 @@ export class GenreService {
             }
         });
         logger.info(`save() - savedGenre: ${savedGenre}`);
-        return savedGenre;
+        return this.mapToResponse(savedGenre);
     }
 
     async update(id: number, genreRequest: GenreRequest): Promise<GenreResponse> {
@@ -72,7 +74,7 @@ export class GenreService {
             }
         });
         logger.info(`update() - genre: ${genre}`);
-        return genre;
+        return this.mapToResponse(genre);
     }
 
     async deleteById(id: number): Promise<void> {

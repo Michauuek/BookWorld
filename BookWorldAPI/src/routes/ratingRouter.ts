@@ -8,11 +8,13 @@ import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
 
 
-const ratingService = new RatingService('ratings');
+const ratingService = new RatingService();
 const ratingRouter = express.Router();
 
 
 ratingRouter.post("/elastic/get", async (req: Request, res: Response) => {
+    const response = await ratingService.get(req.body);
+    return res.status(200).json(response);
 });
 
 ratingRouter.post("/create", allowOnly(["USER", "ADMIN"]), validationMiddleware(RatingRequest), async (req: Request, res: Response) => {
