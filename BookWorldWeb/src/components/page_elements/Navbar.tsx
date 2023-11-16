@@ -1,7 +1,7 @@
 // Navbar.tsx
 
 import React from 'react';
-import { Link } from 'react-router-dom'; // If using React Router for navigation
+import { Link } from 'react-router-dom';
 import './navbar.css';
 import { SearchField } from './SearchField';
 

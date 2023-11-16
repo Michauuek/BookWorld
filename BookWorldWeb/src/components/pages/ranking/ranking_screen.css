@@ -1,0 +1,68 @@
+/* RankingCard.module.css */
+
+.ranking-card {
+  display: flex;
+  border: 0px solid #e0e0e0;
+  background-color: bisque;
+  color: black;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative; /* To position rank */
+}
+
+.ranking-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /*add hue to the backround make it darker*/
+
+}
+
+.rank-number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #333;
+  color: white;
+  font-size: 1.5rem;
+  padding: 8px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.ranking-card img {
+  width: 12rem;
+  height: auto;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.ranking-card-details {
+  padding: 20px;
+  flex: 1;
+  margin-left: 6rem;
+  text-align: left;
+}
+
+.ranking-card-details h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.detail-text {
+  color: gray;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.detail-text a {
+  color: gray
+}
+
+.rating {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  /* color: gold; */
+}
