@@ -13,7 +13,7 @@ export class RatingRequest {
 
     @IsNumber()
     @Min(0)
-    @Max(10)
+    @Max(5)
     rating: number;
 }
 
