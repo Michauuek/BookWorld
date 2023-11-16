@@ -7,6 +7,7 @@ import Navbar from './components/page_elements/Navbar.tsx';
 import NotFoundScreen from './components/page_elements/NotFoundScreen.tsx';
 import AuthorScreen from './components/pages/author/AuthorScreen.tsx';
 import RegisterScreen from './components/pages/register/RegisterScreen.tsx';
+import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/book/:bookId" element={<BookScreen />}></Route>
             <Route path="/author/:authorId" element={<AuthorScreen />}></Route>
             <Route path="/register/" element={<RegisterScreen />}></Route>
+            <Route path="/ranking/" element={<RankingScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />
