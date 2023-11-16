@@ -25,7 +25,7 @@ export const SearchField = () => {
         AND: [
           {
             title: {
-              startsWith: newSearchTerm
+              contains: newSearchTerm
             }
           }
         ]
