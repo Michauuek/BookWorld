@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // If using React Router for navigation
 import './navbar.css';
-import { SearchField } from './SearchField';
+import { SearchField } from './search_field/SearchField';
 
 
 interface NavbarProps {
