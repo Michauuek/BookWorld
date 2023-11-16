@@ -60,19 +60,19 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
             where: { id: { in: bookRequest.genresIds } }
         });
 
-        genres.map(async (genre) => {
-            await prisma.bookGenres.create({
+        const createBookGenresPromises = genres.map((genre) =>
+            prisma.bookGenres.create({
                 data: {
                     bookId: savedBook.id,
-                    genreId: genre.id
-                }
-            });
-        });
+                    genreId: genre.id,
+                },
+            })
+        );
+        await Promise.all(createBookGenresPromises);
 
         const bookResponse = await this.mapToResponse(savedBook);
-        logger.info({bookResponse}, `save() - savedBook: `);
+        logger.info({ bookResponse }, `save() - savedBook: `);
         return bookResponse;
-
     }
 
     async update(id: number, bookRequest: BookRequest): Promise<BookResponse> {
