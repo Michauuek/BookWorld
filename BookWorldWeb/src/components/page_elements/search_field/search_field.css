@@ -8,6 +8,7 @@
     border: 2px solid #deb887;
     outline: none;
     font-size: 16px;
+    color:black;
     background-color: #fefefe;
 }
 
@@ -20,6 +21,7 @@
     left: 0;
     width: 100%;
     background-color: #fff;
+    color:black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -28,7 +30,7 @@
 }
 
 .search-field li {
-    padding: 10px;
+    padding: 4px;
     border-bottom: 1px solid #eee;
     font-size: 14px;
     cursor: pointer;
@@ -46,3 +48,35 @@
 .search-field input[type="text"]:focus+ul {
     display: block;
 }
+
+.search-field ul:hover {
+    display: block;
+}
+
+.search-entry {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+  
+  .thumbnail {
+    width: 2rem;
+    max-height: 3rem;
+    margin-right: 12px;
+  }
+  
+  .details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .name {
+    font-weight: bold;
+  }
+  
+  .under-string {
+    color: #888;
+    font-size: 0.9em;
+  }
