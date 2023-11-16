@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import { Link, useLocation } from "react-router-dom";
-import BookThumbnail from "./BookThumbnail.tsx";
+import BookThumbnail from "../../page_elements/BookThumbnail.tsx";
 import "../../page_elements/default_style.css";
 
 export type Author = {
@@ -39,7 +39,7 @@ export default function BookList() {
             .then(data => setBooks(data))
     }, [location])
 
-    let bookList = books.map(book => {
+    const bookList = books.map(book => {
         return (
             <Link to={`/book/${book.id}`} key={book.id}>
             <BookThumbnail book={book} key={book.id}/>

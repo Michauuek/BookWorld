@@ -1,7 +1,7 @@
-import {Book} from "./BookList.tsx";
+import {Book} from "../pages/book/BookList.tsx";
 
 export default function BookThumbnail(props: {book: Book}) {
-    let book = props.book
+    const book = props.book
     return (
         <div className="book-thumbnail">
             <img src={book.coverUrl} alt={book.title} />
