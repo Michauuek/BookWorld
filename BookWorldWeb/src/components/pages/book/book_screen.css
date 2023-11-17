@@ -10,7 +10,9 @@
   }
   
   .book-info {
-    flex: 1;
+    /* flex: 1; */
+    margin-left: 2rem;
+    text-align: left;
   }
   
   .book-description {
@@ -18,18 +20,29 @@
     color: #333;
   }
   
-  .rating {
-    margin-top: 10px;
-    font-size: 18px;
-    color: #f39c12;
+  .book-rating {
+    font-size: 24px;
+    color: black;
   }
   
-  .rating span {
-    color: #f39c12;
+  .book-star {
+    color: gold;
+    font-size: 32px;
+  }
+  
+  .book-rating-container {
+    display: ruby;
+    align-items: center;
   }
   
   .book-meta{
     margin-top: 10px;
     font-size: 14px;
     color: #777;
+  }
+  
+  .book-rating-section {
+    align-items: center;
+    color: black;
+    margin-left: 2rem;
   }

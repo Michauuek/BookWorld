@@ -1,0 +1,16 @@
+.interactive-rating{
+    font-size: 40px;
+    font-weight: bold;
+}
+
+/* Define basic styles for the star */
+.star {
+    margin-right: 5px; /* Spacing between stars */
+    cursor: pointer;
+    color: gray; /* Color of the unfilled star */
+  }
+  
+  /* Define styles for filled star */
+  .star.filled {
+    color: gold; /* Color of the filled star */
+  }
