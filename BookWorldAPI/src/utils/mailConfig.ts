@@ -6,12 +6,10 @@ export const SENDER = process.env.SENDER_MAIL!;
 
 
 //TODO: add mail_template database table
-export const SUBJECT = "BookWorld";
-export const BODY = '<h1>BookWorld</h1><p>Witaj w BookWorld!<br/> Cieszymy się, że jesteś z nami.</p>';
-
+// templateID, requiredDynamicData
 
 const dynamicData = {
-    name: 'John Doe',
+    app_user_name: 'Michał',
 };
 
 
@@ -19,8 +17,8 @@ export function createMail(mail: string) {
     return {
         to: mail,
         from: SENDER,
-        templateId: process.env.SENDGRID_TEMPLATE_ID!,
-        dynamic_template_data: dynamicData,
+        templateId: "d-191427bcc5954fc8a4f061985e7b2684",
+        dynamicTemplateData: dynamicData,
     }
 }
 

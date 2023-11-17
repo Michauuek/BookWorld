@@ -8,12 +8,13 @@ export class MailService {
 
     async sendMail(mailRequest: EmailRequest) {
         const msg = createMail(mailRequest.email);
+        console.log(mailRequest, msg);
         try {
             const response = await sgMail.send(msg);
             console.log(response[0].statusCode);
             console.log(response[0].headers);
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
+            console.error((e as Error).message);
         }
     }
 
