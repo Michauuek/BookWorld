@@ -10,13 +10,17 @@ export const SUBJECT = "BookWorld";
 export const BODY = '<h1>BookWorld</h1><p>Witaj w BookWorld!<br/> Cieszymy się, że jesteś z nami.</p>';
 
 
+const dynamicData = {
+    name: 'John Doe',
+};
+
 
 export function createMail(mail: string) {
     return {
         to: mail,
         from: SENDER,
-        subject: SUBJECT,
-        html: BODY,
+        templateId: process.env.SENDGRID_TEMPLATE_ID!,
+        dynamic_template_data: dynamicData,
     }
 }
 
