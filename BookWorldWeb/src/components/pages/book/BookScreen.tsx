@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import './book_screen.css';
 import "../../page_elements/default_style.css";
 import RatingInteractive from './rating/RatingInteractive';
+import { Opinions } from './opinions/Opinions';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -62,8 +63,12 @@ const BookScreen = () => {
             <div className="book-rating">{book.rating.value.toFixed(2)}/5</div>
           </div>
           <br></br>Rate book:
-          <RatingInteractive presetRating={0} onClick={(number) => console.log(`ocenka ${number}`)} />
+          <RatingInteractive presetRating={0} onClick={(number, comment) => console.log(`ocenka ${number} komentarz "${comment}"`)} />
         </div>
+      </div>
+      <div className='book-opinions'>
+        <h3>Opinions:</h3>
+        <Opinions bookId={book.id} />
       </div>
     </div>
   );

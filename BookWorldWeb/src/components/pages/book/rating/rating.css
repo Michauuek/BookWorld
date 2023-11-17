@@ -14,3 +14,15 @@
   .star.filled {
     color: gold; /* Color of the filled star */
   }
+
+  .comment-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+    resize: vertical; /* Allow vertical resizing */
+    height: 80px; /* Set the height of the input field */
+  }

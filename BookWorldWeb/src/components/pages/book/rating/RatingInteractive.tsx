@@ -2,18 +2,19 @@ import { useState } from "react";
 import "./rating.css";
 
 type RatingInteractiveProps =
-{
-  presetRating: number;
-  onClick: (rating: number) => void;
-};
+  {
+    presetRating: number;
+    onClick: (rating: number, comment: string) => void;
+  };
 
-const RatingInteractive = (props:RatingInteractiveProps) => {
+const RatingInteractive = (props: RatingInteractiveProps) => {
   const [rating, setRating] = useState(props.presetRating);
+  const [comment, setComment] = useState('');
 
   const handleClick = (index: number) => {
     setRating(index + 1);
     console.log(`rated value is: ${rating}`);
-    props.onClick(index + 1);
+    props.onClick(index + 1, comment);
   };
 
   const handleHover = (index: number) => {
@@ -36,7 +37,23 @@ const RatingInteractive = (props:RatingInteractiveProps) => {
     </span>
   ));
 
-  return <div className="interactive-rating" onMouseLeave={handleMouseLeave}>{stars}</div>;
+  const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(event.target.value);
+  };
+
+
+  return (
+    <div className="interactive-rating-container">
+      <div className="interactive-rating" onMouseLeave={handleMouseLeave}>{stars}</div>
+      <textarea
+        className="comment-input" // Apply the newly created class
+        value={comment}
+        onChange={handleCommentChange}
+        placeholder="Leave a comment"
+        rows={4} // Set the number of visible lines
+      />
+    </div>
+  );
 };
 
 export default RatingInteractive;
