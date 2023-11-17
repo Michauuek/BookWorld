@@ -1,21 +1,19 @@
-.interactive-rating{
-    font-size: 40px;
+.interactive-rating {
+    font-size: 3rem;
     font-weight: bold;
 }
 
-/* Define basic styles for the star */
 .star {
-    margin-right: 5px; /* Spacing between stars */
+    margin-right: 5px;
     cursor: pointer;
-    color: gray; /* Color of the unfilled star */
-  }
-  
-  /* Define styles for filled star */
-  .star.filled {
-    color: gold; /* Color of the filled star */
-  }
+    color: gray;
+}
 
-  .comment-input {
+.star.filled {
+    color: gold;
+}
+
+.comment-input {
     width: 100%;
     padding: 8px;
     margin-top: 10px;
@@ -23,6 +21,6 @@
     border-radius: 4px;
     background-color: white;
     color: black;
-    resize: vertical; /* Allow vertical resizing */
-    height: 80px; /* Set the height of the input field */
-  }
+    resize: vertical;
+    height: 7rem;
+}
