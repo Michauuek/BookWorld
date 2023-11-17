@@ -12,7 +12,6 @@ const dynamicData = {
     app_user_name: 'Michał',
 };
 
-
 export function createMail(mail: string) {
     return {
         to: mail,
@@ -20,16 +19,4 @@ export function createMail(mail: string) {
         templateId: "d-191427bcc5954fc8a4f061985e7b2684",
         dynamicTemplateData: dynamicData,
     }
-}
-
-export function sendMail(to: string, subject: string, text: string, html: string) {
-    const msg = {
-        to: to,
-        from: SENDER,
-        subject: subject,
-        text: text,
-        html: html,
-    }
-
-    return sgMail.send(msg);
 }
