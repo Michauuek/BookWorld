@@ -7,7 +7,8 @@ import userRouter from "./routes/userRouter";
 import ratingRouter from "./routes/ratingRouter";
 import authorRouter from "./routes/authorRouter";
 import authRouter from "./routes/authRouter";
-import dotenv from 'dotenv'; 
+import dotenv from 'dotenv';
+import mailRouter from "./routes/mailRouter";
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.use("/api/authors", authorRouter);
 app.use("/api/ratings", ratingRouter);
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/mail", mailRouter);
 
 
 app.listen(PORT, () => {
