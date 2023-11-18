@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 import { ElasticSearchService } from "../../elastic_search/ElasticService";
 import {BookService} from "./bookService";
+import {UserResponse} from "../model/userDto";
 
 const logger = globalLogger.child({class: 'RatingService'});
 
@@ -39,21 +40,32 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
     }
 
 
-    async save(ratingRequest: RatingRequest): Promise<RatingResponse> {
-        logger.info({ratingRequest}, `save() - ratingRequest: `);
-        await bookService.getById(ratingRequest.bookId)
+    async saveOrUpdate(user: UserResponse, ratingRequest: RatingRequest): Promise<RatingResponse> {
+        logger.info({ ratingRequest }, 'save() - ratingRequest: ');
 
-        const savedRating = await prisma.ratings.create({
-            data: {
-                rating: ratingRequest.rating,
-                bookId: ratingRequest.bookId,
-                userId: ratingRequest.userId,
-                comment: ratingRequest.comment
+        const { bookId, rating, comment, userId } = ratingRequest;
+        await bookService.getById(bookId);
+
+        const existingRating = await prisma.ratings.findFirst({
+            where: {
+                bookId,
+                userId: user.id,
             }
         });
-        await bookService.updateBookRating(ratingRequest.bookId, ratingRequest.rating)
+
+        const savedRating = existingRating
+            ? await prisma.ratings.update({
+                where: { id: existingRating.id },
+                data: { rating, comment },
+            })
+            : await prisma.ratings.create({
+                data: { rating, bookId, userId, comment },
+            });
+
+        await bookService.updateBookRating(bookId, rating);
         const ratingResponse = await this.mapToResponse(savedRating);
-        logger.info({ratingResponse},`save() - savedRating: `);
+
+        logger.info({ ratingResponse }, 'save() - savedRating: ');
         return ratingResponse;
     }
 

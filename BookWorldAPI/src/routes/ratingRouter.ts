@@ -5,7 +5,7 @@ import {plainToInstance} from "class-transformer";
 import {RatingService} from "../service/ratingService";
 import {RatingRequest} from "../model/ratingDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
-import {allowOnly} from "../service/authService";
+import letMeIn, {allowOnly} from "../service/authService";
 
 
 const ratingService = new RatingService();
@@ -18,9 +18,11 @@ ratingRouter.post("/elastic/get", async (req: Request, res: Response) => {
 });
 
 ratingRouter.post("/create", allowOnly(["USER", "ADMIN"]), validationMiddleware(RatingRequest), async (req: Request, res: Response) => {
-    const rating = plainToInstance(RatingRequest, req.body);
-    const response = await ratingService.save(rating);
-    return res.status(201).json(response);
+    await letMeIn(req, async (user) => {
+        const rating = plainToInstance(RatingRequest, req.body);
+        const response = await ratingService.saveOrUpdate(user, rating);
+        return res.status(201).json(response);
+    })
 });
 
 ratingRouter.get("/book/:id", async (req: Request, res: Response) => {
