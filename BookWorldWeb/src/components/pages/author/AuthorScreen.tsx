@@ -4,6 +4,7 @@ import "../../page_elements/default_style.css";
 import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
 import './author_screen.css';
+import axios from 'axios';
 
 // Define the props interface
 type AuthorScreenProps =
@@ -26,9 +27,7 @@ const AuthorScreen = () => {
   const [bestRated, setBestRated] = useState<Book[]>([])
 
   useEffect(() => {
-    fetch(`/api/authors/${authorId!}`)
-      .then(response => response.json())
-      .then(data => setAuthor(data))
+    axios.get<AuthorScreenProps>(`/api/authors/${authorId!}`)
   }, [authorId])
 
   const bestRatedPayload = {
@@ -51,15 +50,7 @@ const AuthorScreen = () => {
   }
 
   useEffect(() => {
-    fetch(`/api/books/elastic/get/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(bestRatedPayload)
-    })
-      .then(response => response.json())
-      .then(data => setBestRated(data))
+    axios.post<Book[]>('/api/books/elastic/get', bestRatedPayload)
   }, [authorId])
 
 
