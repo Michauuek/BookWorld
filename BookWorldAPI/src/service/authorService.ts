@@ -4,11 +4,11 @@ import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import { Prisma } from "@prisma/client";
 import { ElasticSearchService } from "../../elastic_search/ElasticService";
-import {BookService} from "./bookService";
+import {BookAuthorService} from "./bookAuthorService";
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-const bookService = new BookService();
+const bookAuthorService = new BookAuthorService();
 
 export class AuthorService extends ElasticSearchService<'authors', AuthorResponseWithBooks> {
 
@@ -63,7 +63,7 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
     }
 
     async mapToResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponseWithBooks> {
-        const books = await bookService.getByAuthorId(item.id);
+        const books = await bookAuthorService.getByAuthorId(item.id);
         return {
             id: item.id,
             name: item.name,

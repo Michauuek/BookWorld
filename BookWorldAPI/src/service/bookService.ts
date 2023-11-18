@@ -3,7 +3,7 @@ import {BookRequest, BookResponse} from "../model/bookDto";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import {ElasticSearchService} from "../../elastic_search/ElasticService";
-import { Prisma } from "@prisma/client";
+import {Prisma} from "@prisma/client";
 import {GenreResponse} from "../model/genreDto";
 import {AuthorResponse} from "../model/authorDto";
 import {AuthorService} from "./authorService";
@@ -41,18 +41,6 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
         const bookResponse = await this.mapToResponse(book);
         logger.info({bookResponse}, `getById() - bookResponse: `);
         return bookResponse;
-    }
-
-    async getByAuthorId(authorId: number): Promise<BookResponse[]> {
-        logger.info(`getByAuthorId() - authorId: `, authorId);
-
-        const books = await prisma.books.findMany({
-            where: { authorId: authorId }
-        });
-
-        return Promise.all(books.map(async (book) => {
-            return await this.mapToResponse(book);
-        }));
     }
 
     async save(bookRequest: BookRequest): Promise<BookResponse> {
@@ -125,9 +113,13 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
     }
 
     async mapToResponse(item: Prisma.BooksGetPayload<any>): Promise<BookResponse> {
+        return BookService.toResponse(item);
+    }
+
+    static async toResponse(item: Prisma.BooksGetPayload<any>): Promise<BookResponse> {
         const genres: GenreResponse[] = await genreService.getByBookId(item.id);
         const author: AuthorResponse = await authorService.getById(item.authorId);
-        const itemResponse = {
+        return {
             id: item.id,
             title: item.title,
             description: item.description,
@@ -139,9 +131,7 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
                 count: item.ratingCount
             },
             genres: genres
-        }
-        logger.info({itemResponse}, `mapToResponse() - itemResponse: `);
-        return itemResponse;
+        };
     }
 
 }
