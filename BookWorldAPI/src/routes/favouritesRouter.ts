@@ -1,11 +1,13 @@
 import letMeIn, {allowOnly} from "../service/authService";
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import {FavouritesService} from "../service/favouritesService";
 import {plainToInstance} from "class-transformer";
 import {FavouriteAuthorRequest} from "../model/favouriteAuthor";
 import {FavouriteBookRequest} from "../model/favouriteBookDto";
 import {FavouriteGenreRequest} from "../model/favouriteGenreDto";
 import {validationMiddleware} from "../utils/validator";
+import {errorHandler} from "../exceptions/customExceptionHandler";
+import bookRouter from "./bookRouter";
 
 
 
@@ -57,6 +59,10 @@ favouritesRouter.get("/genre", allowOnly(["USER", "ADMIN"]), async (req: Request
         const response = await favouritesService.getFavouritesGenres(user);
         return res.status(200).json(response);
     })
+});
+
+favouritesRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    errorHandler.handleError(err, res);
 });
 
 export default favouritesRouter;

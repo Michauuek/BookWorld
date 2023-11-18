@@ -10,6 +10,7 @@ import authRouter from "./routes/authRouter";
 import dotenv from 'dotenv';
 import mailRouter from "./routes/mailRouter";
 import favouritesRouter from "./routes/favouritesRouter";
+import bookGenresRouter from "./routes/bookGenresRouter";
 
 dotenv.config()
 
@@ -29,6 +30,7 @@ app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/mail", mailRouter);
 app.use("/api/favourites", favouritesRouter);
+app.use("/api/book-genres", bookGenresRouter);
 
 
 app.listen(PORT, () => {
