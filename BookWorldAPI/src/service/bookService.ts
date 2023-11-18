@@ -43,6 +43,18 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
         return bookResponse;
     }
 
+    async getByAuthorId(authorId: number): Promise<BookResponse[]> {
+        logger.info(`getByAuthorId() - authorId: `, authorId);
+
+        const books = await prisma.books.findMany({
+            where: { authorId: authorId }
+        });
+
+        return Promise.all(books.map(async (book) => {
+            return await this.mapToResponse(book);
+        }));
+    }
+
     async save(bookRequest: BookRequest): Promise<BookResponse> {
         logger.info(`save() - bookRequest: `, bookRequest);
 

@@ -1,14 +1,16 @@
-import {AuthorRequest, AuthorResponse} from "../model/authorDto";
+import {AuthorRequest, AuthorResponse, AuthorResponseWithBooks} from "../model/authorDto";
 import {prisma} from "../utils/prisma";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
 import globalLogger from "../utils/logger";
 import { Prisma } from "@prisma/client";
 import { ElasticSearchService } from "../../elastic_search/ElasticService";
-
+import {BookService} from "./bookService";
 
 const logger = globalLogger.child({class: 'AuthorService'});
 
-export class AuthorService extends ElasticSearchService<'authors', AuthorResponse> {
+const bookService = new BookService();
+
+export class AuthorService extends ElasticSearchService<'authors', AuthorResponseWithBooks> {
 
 
     constructor() {
@@ -18,7 +20,7 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
     async getAll(): Promise<AuthorResponse[]> {
         const authors = await prisma.authors.findMany();
         return Promise.all(authors.map(async (author) => {
-            return await this.mapToResponse(author);
+            return await this.toResponse(author);
         }));
     }
 
@@ -31,7 +33,7 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
         if (!author) {
             throw new EntityNotFoundException(`Author with id ${id} does not exist`)
         }
-        return this.mapToResponse(author);
+        return this.toResponse(author);
     }
 
     async save(authorRequest: AuthorRequest): Promise<AuthorResponse> {
@@ -40,7 +42,7 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
             data: { name: authorRequest.name, lastName: authorRequest.lastName }
         });
         logger.info(`save() - savedAuthor: ${savedAuthor}`);
-        return this.mapToResponse(savedAuthor);
+        return this.toResponse(savedAuthor);
     }
 
     async update(id: number, authorRequest: AuthorRequest): Promise<AuthorResponse> {
@@ -50,7 +52,7 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
             data: { name: authorRequest.name, lastName: authorRequest.lastName }
         });
         logger.info(`update() - author: ${author}`);
-        return this.mapToResponse(author);
+        return this.toResponse(author);
     }
 
     async deleteById(id: number): Promise<void> {
@@ -60,11 +62,21 @@ export class AuthorService extends ElasticSearchService<'authors', AuthorRespons
         });
     }
 
-    async mapToResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponse> {
+    async mapToResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponseWithBooks> {
+        const books = await bookService.getByAuthorId(item.id);
         return {
             id: item.id,
             name: item.name,
-            lastName: item.lastName
+            lastName: item.lastName,
+            books: books
+        }
+    }
+
+    async toResponse(item: Prisma.AuthorsGetPayload<any>): Promise<AuthorResponse> {
+        return {
+            id: item.id,
+            name: item.name,
+            lastName: item.lastName,
         }
     }
 }

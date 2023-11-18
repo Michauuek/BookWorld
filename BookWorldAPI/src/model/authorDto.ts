@@ -1,4 +1,5 @@
 import {IsNotEmpty, IsString} from "class-validator";
+import {BookResponse} from "./bookDto";
 
 
 export class AuthorRequest {
@@ -18,4 +19,8 @@ export interface AuthorResponse {
     id: number;
     name: string;
     lastName: string | null;
+}
+
+export interface AuthorResponseWithBooks extends AuthorResponse {
+    books: BookResponse[];
 }
