@@ -8,8 +8,13 @@ import globalLogger from "../utils/logger";
 import {EntityAlreadyExistsException} from "../exceptions/entityAlreadyExistsException";
 import { Prisma } from "@prisma/client";
 import {ElasticSearchService} from "../../elastic_search/ElasticService";
+import {SEND_EMAIL_ENABLED} from "../utils/mailUtils";
+import {MailService} from "./mailService";
 
 const logger = globalLogger.child({class: 'UserService'});
+
+
+const mailService = new MailService();
 
 export class UserService extends ElasticSearchService<'users', UserResponse> {
 
@@ -54,6 +59,17 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
                 role: DEFAULT_USER_ROLE
             }
         });
+
+        if (SEND_EMAIL_ENABLED) {
+            await mailService.sendMail({
+                email: savedUser.email,
+                templateAliasName: 'welcome',
+                requiredDynamicData: {
+                    app_user_name: savedUser.name + ' ' + savedUser.lastName,
+                }
+            });
+        }
+
         logger.info({savedUser}, `save() - savedUser: `);
         return this.mapToResponse(savedUser);
     }
