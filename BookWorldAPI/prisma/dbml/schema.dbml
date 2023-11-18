@@ -100,6 +100,13 @@ Table UserFavouriteAuthors {
   }
 }
 
+Table MailTemplates {
+  id String [pk]
+  aliasName String [unique, not null]
+  templateName String [not null]
+  dynamicVariables String [not null]
+}
+
 Ref: Ratings.bookId > Books.id [delete: No Action]
 
 Ref: Ratings.userId > Users.id [delete: Cascade]

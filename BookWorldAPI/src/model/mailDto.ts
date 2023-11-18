@@ -7,4 +7,12 @@ export class EmailRequest {
     @IsEmail()
     email: string;
 
+    @IsNotEmpty()
+    @IsString()
+    templateAliasName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    requiredDynamicData: object;
+
 }

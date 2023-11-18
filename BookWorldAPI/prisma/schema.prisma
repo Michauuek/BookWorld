@@ -107,6 +107,12 @@ model UserFavouriteAuthors {
   @@id([userId, authorId])
 }
 
+model MailTemplates {
+  id                    String    @unique @id
+  aliasName             String    @unique
+  templateName          String
+  dynamicVariables      String
+}
 
 
 
