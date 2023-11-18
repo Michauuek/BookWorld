@@ -3,6 +3,8 @@ import { Book } from './BookList';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import './book_screen.css';
 import "../../page_elements/default_style.css";
+import RatingInteractive from './rating/RatingInteractive';
+import { Opinions } from './opinions/Opinions';
 import axios from 'axios';
 
 // Define the props interface
@@ -10,7 +12,7 @@ type BookScreenProps = Book;
 
 // Define the BookScreen functional component
 const BookScreen = () => {
-    const { bookId } = useParams();
+  const { bookId } = useParams();
 
     const defaultBook: BookScreenProps = {
         id: 0,
@@ -58,17 +60,15 @@ const BookScreen = () => {
         <img src={book.coverUrl} alt={`${book.title} cover`} className="book-cover" />
         <div className="book-info">
           <p className="book-description">{book.description}</p>
-          <div className="rating">
-            <p>Rating: {renderStars(book.rating.value)}</p>
-          </div>
+
           <div className='book-meta'>
-          <p>
+            <p>
               Author:{' '}
               <Link to={`/author/${book.author.id}`}>
                 {`${book.author.name} ${book.author.lastName}`}
               </Link>
             </p>
-            <p>ISBN: {book.isbn}</p>    
+            <p>ISBN: {book.isbn}</p>
             <p>
               Genres:{' '}
               {book.genres.map((genre) => (
@@ -77,8 +77,21 @@ const BookScreen = () => {
                 </Link>
               ))}
             </p>
-            </div>
+          </div>
         </div>
+        <div className='book-rating-section'>
+          {book.rating.count} ratings<br></br>
+          <div className='book-rating-container'>
+            <div className='book-star'>{'\u2605'}</div>
+            <div className="book-rating">{book.rating.value.toFixed(2)}/5</div>
+          </div>
+          <br></br>Rate book:
+          <RatingInteractive presetRating={0} onClick={(number, comment) => console.log(`ocenka ${number} komentarz "${comment}"`)} />
+        </div>
+      </div>
+      <div className='book-opinions'>
+        <h3>Opinions:</h3>
+        <Opinions bookId={book.id} />
       </div>
     </div>
   );

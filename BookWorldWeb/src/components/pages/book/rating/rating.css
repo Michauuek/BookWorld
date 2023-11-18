@@ -1,0 +1,26 @@
+.interactive-rating {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.star {
+    margin-right: 5px;
+    cursor: pointer;
+    color: gray;
+}
+
+.star.filled {
+    color: gold;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    color: black;
+    resize: vertical;
+    height: 7rem;
+}
