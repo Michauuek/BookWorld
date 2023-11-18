@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import "../../page_elements/default_style.css";
-import { get_token } from '../../auth';
+import { getToken } from '../../auth';
 import axios from 'axios';
 
 type RegisterRequest = {
@@ -66,7 +66,7 @@ const RegisterScreen = () => {
         </form>
         <button
             onClick={() => {
-                get_token('zlot@gmail.com', 'Abc12345')
+                getToken('zlot@gmail.com', 'Abc12345')
             }}
         >test
         </button>
