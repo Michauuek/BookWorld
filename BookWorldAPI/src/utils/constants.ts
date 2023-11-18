@@ -1,4 +1,5 @@
 import {UserRole} from "../model/userRole";
+import {BookService} from "../service/bookService";
 
 // todo to envs? 
 export const DEFAULT_USER_ROLE: UserRole = "USER";
