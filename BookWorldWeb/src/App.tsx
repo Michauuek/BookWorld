@@ -11,7 +11,7 @@ import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
 import { setUpAxios } from './components/auth.ts';
 
 function App() {
-  setUpAxios();
+  setUpAxios()
   
   return (
     <div className="App">
