@@ -3,6 +3,7 @@ import { Book } from './BookList';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import './book_screen.css';
 import "../../page_elements/default_style.css";
+import axios from 'axios';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -23,9 +24,12 @@ const BookScreen = () => {
     }
     const [book, setBook] = useState<BookScreenProps>(defaultBook)
     useEffect(() => {
-        fetch(`/api/books/${bookId || 1}`)
-            .then(response => response.json())
-            .then(data => setBook(data))
+        // fetch(`/api/books/${bookId || 1}`)
+        //     .then(response => response.json())
+        //     .then(data => setBook(data))
+        axios.get<BookScreenProps>(`/api/books/${bookId!}`)
+          .then(response => response.data)
+          .then(data => setBook(data))
     },[bookId])
   // Helper function to generate star icons based on the rating
   const renderStars = (rating: number) => {
