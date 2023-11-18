@@ -8,9 +8,11 @@ import NotFoundScreen from './components/page_elements/NotFoundScreen.tsx';
 import AuthorScreen from './components/pages/author/AuthorScreen.tsx';
 import RegisterScreen from './components/pages/register/RegisterScreen.tsx';
 import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
+import { setUpAxios } from './components/auth.ts';
 
 function App() {
-
+  setUpAxios()
+  
   return (
     <div className="App">
       <div className="app-content">
