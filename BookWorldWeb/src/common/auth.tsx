@@ -1,24 +1,27 @@
 import axios from "axios";
+import { createContext, useContext, useState } from "react";
 
 
-export function getToken(email: string, password: string) {
+function getToken(email: string, password: string) {
   return axios.post("/api/auth", {
     email,
     password,
   }).then((response) => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("refreshToken", response.data.refreshToken);
+    localStorage.setItem("user", JSON.stringify({role: response.data.role, userId: response.data.id}));
     setUpAxios();
     return response;
   });
 }
 
-export function refreshToken() {
+function refreshToken() {
   return axios.post("/api/auth/refresh", {
     refreshToken: localStorage.getItem("refreshToken"),
   }).then((response) => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("refreshToken", response.data.refreshToken);
+    localStorage.setItem("user", JSON.stringify({role: response.data.role, userId: response.data.id}));
     setUpAxios();
     return response;
   });
@@ -48,6 +51,7 @@ export function setUpAxios() {
           if (originalRequest._retryCount > 3) {
             localStorage.removeItem("token");
             localStorage.removeItem("refresh_token");
+            localStorage.removeItem("user");
             window.location.href = "/login";
             return Promise.reject(error);
           }
@@ -74,3 +78,63 @@ export function setUpAxios() {
   axios.defaults.headers.post["Content-Type"] = "application/json";
 }
 
+type User = {
+  role: "USER"
+  email: string
+  userId: string
+} | {
+  role: "ADMIN"
+  email: string
+  userId: string
+} | {
+  role: null
+  email: null
+  userId: null
+}
+
+interface AuthContextProps {
+  user: User;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
+
+export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User>({
+    role: null,
+    email: null,
+    userId: null,
+  });
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    setUser({
+      role: null,
+      email: null,
+      userId: null,
+    });
+  };
+
+  const login = async (email: string, password: string) => {
+    const response = await getToken(email, password);
+    setUser({
+      role: response.data.role,
+      email: email,
+      userId: response.data.userId,
+    });
+  };
+
+
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

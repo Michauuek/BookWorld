@@ -43,13 +43,14 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
     async saveOrUpdate(user: UserResponse, ratingRequest: RatingRequest): Promise<RatingResponse> {
         logger.info({ ratingRequest }, 'save() - ratingRequest: ');
 
-        const { bookId, rating, comment, userId } = ratingRequest;
+        const { bookId, rating, comment } = ratingRequest;
+        const userId = user.id;
         await bookService.getById(bookId);
 
         const existingRating = await prisma.ratings.findFirst({
             where: {
                 bookId,
-                userId: user.id,
+                userId,
             }
         });
 
