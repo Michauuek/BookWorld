@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState, useRef } from 'react';
-import { Book } from './BookList';
 import "../../page_elements/default_style.css";
 import RankingCard from './RankingCard';
 import axios from 'axios';
+import { Book } from '../book/BookList';
 
 const RankingScreen: FC = () => {
   const [books, setBooks] = useState<Book[]>([]);

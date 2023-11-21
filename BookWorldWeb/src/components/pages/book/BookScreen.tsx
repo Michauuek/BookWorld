@@ -6,6 +6,8 @@ import "../../page_elements/default_style.css";
 import RatingInteractive from './rating/RatingInteractive';
 import { Opinions } from './opinions/Opinions';
 import axios from 'axios';
+import { AddRating, RatingRequest } from '../../../common/booksAPI';
+import { AllowLoged } from '../../../common/allowOnly';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -26,10 +28,7 @@ const BookScreen = () => {
     }
     const [book, setBook] = useState<BookScreenProps>(defaultBook)
     useEffect(() => {
-        // fetch(`/api/books/${bookId || 1}`)
-        //     .then(response => response.json())
-        //     .then(data => setBook(data))
-        axios.get<BookScreenProps>(`/api/books/${bookId!}`)
+       axios.get<BookScreenProps>(`/api/books/${bookId!}`)
           .then(response => response.data)
           .then(data => setBook(data))
     },[bookId])
@@ -79,14 +78,25 @@ const BookScreen = () => {
             </p>
           </div>
         </div>
+
         <div className='book-rating-section'>
           {book.rating.count} ratings<br></br>
           <div className='book-rating-container'>
             <div className='book-star'>{'\u2605'}</div>
             <div className="book-rating">{book.rating.value.toFixed(2)}/5</div>
           </div>
+          <AllowLoged>
           <br></br>Rate book:
-          <RatingInteractive presetRating={0} onClick={(number, comment) => console.log(`ocenka ${number} komentarz "${comment}"`)} />
+          <RatingInteractive presetRating={0} onClick={(number, comment) => { 
+              const request: RatingRequest = {
+                bookId: book.id,
+                rating: number,
+                comment: comment,
+              }
+              AddRating(request);
+              console.log(`ocenka ${number} komentarz "${comment}"`)
+            }} />
+          </AllowLoged>
         </div>
       </div>
       <div className='book-opinions'>

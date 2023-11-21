@@ -252,7 +252,9 @@ export class AuthService {
 
         return {
             token,
-            refreshToken
+            refreshToken,
+            role: user.role,
+            userId: user.id,
         };
     }
 
@@ -266,7 +268,6 @@ export class AuthService {
         const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
         const payload: RefreshToken = tryParseJSON(decryptedToken.toString(enc.Utf8));
 
-        console.log(payload)
         
         if (new Date(payload.expAt).getTime()  < new Date().getTime()) {
             logger.info(`authorizeRefreshToken() - token expired for user `, payload.user.email);
@@ -301,7 +302,9 @@ export class AuthService {
 
         return {
             token: newToken,
-            refreshToken: newRefreshToken
+            refreshToken: newRefreshToken,
+            role: payload.user.role,
+            userId: payload.user.id,
         };
     }
 }

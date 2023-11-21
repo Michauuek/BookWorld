@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import "../../page_elements/default_style.css";
-import { getToken } from '../../auth';
+import { useAuth } from '../../../common/auth';
 import axios from 'axios';
 
 type RegisterRequest = {
@@ -21,6 +21,7 @@ type UserResponse = {
   }
 
 const RegisterScreen = () => {
+    const { login } = useAuth();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -66,7 +67,7 @@ const RegisterScreen = () => {
         </form>
         <button
             onClick={() => {
-                getToken('zlot@gmail.com', 'Abc12345')
+                login('zlot@gmail.com', 'Abc12345')
             }}
         >test
         </button>

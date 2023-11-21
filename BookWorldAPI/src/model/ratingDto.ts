@@ -6,9 +6,6 @@ export class RatingRequest {
     bookId: number;
 
     @IsString()
-    userId: string;
-
-    @IsString()
     comment?: string;
 
     @IsNumber()
