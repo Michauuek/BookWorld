@@ -1,15 +1,24 @@
 import axios from "axios";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
+
+function setLocalStorage(token: string, refreshToken: string, role: string, userId: string) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem("user", JSON.stringify({role, userId}));
+}
+
+function cleanLocalStorage() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("user");
+}
 
 function getToken(email: string, password: string) {
   return axios.post("/api/auth", {
     email,
     password,
   }).then((response) => {
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem("refreshToken", response.data.refreshToken);
-    localStorage.setItem("user", JSON.stringify({role: response.data.role, userId: response.data.id}));
     setUpAxios();
     return response;
   });
@@ -19,9 +28,7 @@ function refreshToken() {
   return axios.post("/api/auth/refresh", {
     refreshToken: localStorage.getItem("refreshToken"),
   }).then((response) => {
-    localStorage.setItem("token", response.data.token);
-    localStorage.setItem("refreshToken", response.data.refreshToken);
-    localStorage.setItem("user", JSON.stringify({role: response.data.role, userId: response.data.id}));
+    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId);
     setUpAxios();
     return response;
   });
@@ -49,9 +56,7 @@ export function setUpAxios() {
           }
 
           if (originalRequest._retryCount > 3) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("refresh_token");
-            localStorage.removeItem("user");
+            cleanLocalStorage();
             window.location.href = "/login";
             return Promise.reject(error);
           }
@@ -107,10 +112,24 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
     userId: null,
   });
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const user = localStorage.getItem("user");
+
+    if (token && refreshToken && user) {
+      const parsedUser = JSON.parse(user);
+      setUser({
+        role: parsedUser.role,
+        email: null,
+        userId: null,
+      });
+      setUpAxios();
+    }
+  }, []);
+
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+    cleanLocalStorage();
     setUser({
       role: null,
       email: null,
@@ -120,6 +139,16 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     const response = await getToken(email, password);
+
+    if (response.data == null) {
+      setUser({
+        role: null,
+        email: null,
+        userId: null,
+      });
+      throw new Error("Login failed");
+    }
+
     setUser({
       role: response.data.role,
       email: email,
