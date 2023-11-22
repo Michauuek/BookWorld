@@ -1,7 +1,14 @@
-import {IsNumber} from "class-validator";
+import {IsNotEmpty, IsNumber} from "class-validator";
 
 
-export class FavouriteAuthorRequest {
+
+export class FavouriteRequest {
+
+    @IsNotEmpty()
+    like: boolean = true;
+}
+
+export class FavouriteAuthorRequest extends FavouriteRequest {
 
     @IsNumber()
     authorId: number;

@@ -9,6 +9,7 @@ import { UserService } from "./userService";
 import { AES } from 'crypto-ts';
 import { enc } from 'crypto-ts';
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import {BadRequestException} from "../exceptions/badRequestException";
 
 const DEFAULT_ALLOWED: UserRole[] = ["ADMIN", "USER"];
 
@@ -233,14 +234,14 @@ export class AuthService {
         
         if (!user) {
             logger.info(`authenticate() - user does not exists `, email);
-            return null;
+            throw new BadRequestException("User does not exists");
         }
 
         const isPasswordValid = await this.userService.verifyPassword(password, user.password);
 
         if (!isPasswordValid) {
             logger.info(`authenticate() - auth failed for user `, user.email);
-            return null;
+            throw new BadRequestException("Invalid credentials");
         }
 
         const token = this.createToken(user);
