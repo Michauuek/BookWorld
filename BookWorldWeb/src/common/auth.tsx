@@ -3,15 +3,15 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 
 function setLocalStorage(token: string, refreshToken: string, role: string, userId: string) {
-  localStorage.setItem("token", token);
-  localStorage.setItem("refreshToken", refreshToken);
-  localStorage.setItem("user", JSON.stringify({role, userId}));
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("refreshToken", refreshToken);
+  sessionStorage.setItem("user", JSON.stringify({role, userId}));
 }
 
 function cleanLocalStorage() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("refreshToken");
+  sessionStorage.removeItem("user");
 }
 
 function getToken(email: string, password: string) {
@@ -27,7 +27,7 @@ function getToken(email: string, password: string) {
 
 function refreshToken() {
   return axios.post("/api/auth/refresh", {
-    refreshToken: localStorage.getItem("refreshToken"),
+    refreshToken: sessionStorage.getItem("refreshToken"),
   }).then((response) => {
     setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId);
     setUpAxios();
@@ -37,14 +37,24 @@ function refreshToken() {
 
 export function setUpAxios() {
   // set default header (Beaer token)
-  if (localStorage.getItem("token")){
-    axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
+  if (sessionStorage.getItem("token")){
+    axios.defaults.headers.common["Authorization"] = `Bearer ${sessionStorage.getItem("token")}`;
   }
 
   // set error handler
   axios.interceptors.response.use(
     (response) => response,
     (error) => {
+      const rejectPromise = (dontRedirect = false) => {
+        const url = window.location.href;
+        if (!dontRedirect) {
+          window.location.href = `/login${url !== "/login" ? `?redirect=${url}` : ""}`;
+        }
+        return Promise.reject(error);
+      }
+
+      if(error.response === undefined) return rejectPromise();
+
       if (error.response.status === 401 && error.response.data.name === "TokenExpired") {
         return refreshToken().then(() => {
           const originalRequest = error.config;
@@ -57,20 +67,25 @@ export function setUpAxios() {
           }
 
           if (originalRequest._retryCount > 3) {
-            cleanLocalStorage();
-            window.location.href = "/login";
-            return Promise.reject(error);
+            return rejectPromise();
           }
 
-          originalRequest.headers["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
+          originalRequest.headers["Authorization"] = `Bearer ${sessionStorage.getItem("token")}`;
+
           return axios(originalRequest);
         })
-        .catch((error) => {
-          cleanLocalStorage();
-          window.location.href = "/login";
-          return Promise.reject(error);
+        .catch(() => {
+          return rejectPromise(true);
         });
       }
+      if (error.response.status === 401 && error.response.data.name === "MissingToken") {
+        if (sessionStorage.getItem("token")) {
+          setUpAxios();
+          return axios(error.config);
+        }
+        return rejectPromise();
+      }
+      return rejectPromise(true);
     }
   );
 
@@ -119,9 +134,9 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const refreshToken = localStorage.getItem("refreshToken");
-    const user = localStorage.getItem("user");
+    const token = sessionStorage.getItem("token");
+    const refreshToken = sessionStorage.getItem("refreshToken");
+    const user = sessionStorage.getItem("user");
 
     if (token && refreshToken && user) {
       const parsedUser = JSON.parse(user);
@@ -170,6 +185,12 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
         userId: response.data.userId,
       });
       return response;
+    })
+    .then(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirect = urlParams.get("redirect");
+
+      window.location.href = redirect ? redirect : "/";
     })
   };
 
