@@ -6,6 +6,7 @@ import {FavouriteGenreRequest} from "../model/favouriteGenreDto";
 import {BookService} from "./bookService";
 import {AuthorService} from "./authorService";
 import {GenreService} from "./genreService";
+import {BadRequestException} from "../exceptions/badRequestException";
 
 
 const bookService = new BookService();
@@ -15,30 +16,94 @@ const genreService = new GenreService();
 export class FavouritesService {
 
     async addBookToFavourites(user: UserResponse, request: FavouriteBookRequest) {
-        return prisma.userFavouriteBooks.create({
-            data: {
-                bookId: request.bookId,
-                userId: user.id
+
+        if (request.like) {
+
+            const liked = await prisma.userFavouriteBooks.findMany({
+                where: {
+                    bookId: request.bookId,
+                    userId: user.id
+                }
+            });
+
+            if (liked.length > 0) {
+                throw new BadRequestException("Book already liked");
             }
-        });
+
+            return prisma.userFavouriteBooks.create({
+                data: {
+                    bookId: request.bookId,
+                    userId: user.id
+                }
+            });
+        } else {
+            return prisma.userFavouriteBooks.deleteMany({
+                where: {
+                    bookId: request.bookId,
+                    userId: user.id
+                }
+            });
+        }
     }
 
     async addAuthorToFavourites(user: UserResponse, request: FavouriteAuthorRequest) {
-        return prisma.userFavouriteAuthors.create({
-            data: {
-                authorId: request.authorId,
-                userId: user.id
+        if (request.like) {
+
+            const liked = await prisma.userFavouriteAuthors.findMany({
+                where: {
+                    authorId: request.authorId,
+                    userId: user.id
+                }
+            });
+
+            if (liked.length > 0) {
+                throw new BadRequestException("Book already liked");
             }
-        });
+
+            return prisma.userFavouriteAuthors.create({
+                data: {
+                    authorId: request.authorId,
+                    userId: user.id
+                }
+            });
+        } else {
+            return prisma.userFavouriteAuthors.deleteMany({
+                where: {
+                    authorId: request.authorId,
+                    userId: user.id
+                }
+            });
+        }
     }
 
     async addGenreToFavourites(user: UserResponse, request: FavouriteGenreRequest) {
-        return prisma.userFavouriteGenres.create({
-            data: {
+
+        const liked = await prisma.userFavouriteGenres.findMany({
+            where: {
                 genreId: request.genreId,
                 userId: user.id
             }
         });
+
+        if (liked.length > 0) {
+            throw new BadRequestException("Book already liked");
+        }
+
+        if (request.like) {
+            return prisma.userFavouriteGenres.create({
+                data: {
+                    genreId: request.genreId,
+                    userId: user.id
+                }
+            });
+        } else {
+            return prisma.userFavouriteGenres.deleteMany({
+                where: {
+                    genreId: request.genreId,
+                    userId: user.id
+                }
+            });
+        }
     }
 
     async getFavouritesBooks(user: UserResponse) {
