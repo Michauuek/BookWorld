@@ -37,8 +37,13 @@ favouritesRouter.post("/genre/elastic/get", async (req: Request, res: Response) 
 favouritesRouter.post("/book", allowOnly(["USER", "ADMIN"]), validationMiddleware(FavouriteBookRequest), async (req: Request, res: Response) => {
     const request = plainToInstance(FavouriteBookRequest, req.body);
     await letMeIn(req, async (user) => {
-        const response = await favouriteBookService.addBookToFavourites(user, request);
-        return res.status(201).json(response);
+        if (request.like) {
+            const response = await favouriteBookService.addBookToFavourites(user, request);
+            return res.status(201).json(response);
+        } else {
+            const response = await favouriteBookService.deleteBookFromFavourites(user, request);
+            return res.status(204).json(response);
+        }
     })
 });
 
@@ -52,8 +57,13 @@ favouritesRouter.get("/book", allowOnly(["USER", "ADMIN"]), async (req: Request,
 favouritesRouter.post("/author", allowOnly(["USER", "ADMIN"]), validationMiddleware(FavouriteAuthorRequest), async (req: Request, res: Response) => {
     const request = plainToInstance(FavouriteAuthorRequest, req.body);
     await letMeIn(req, async (user) => {
-        const response = await favouriteAuthorService.addAuthorToFavourites(user, request);
-        return res.status(201).json(response);
+        if (request.like) {
+            const response = await favouriteAuthorService.addAuthorToFavourites(user, request);
+            return res.status(201).json(response);
+        } else {
+            const response = await favouriteAuthorService.deleteAuthorFromFavourites(user, request);
+            return res.status(204).json(response);
+        }
     })
 });
 
@@ -68,8 +78,13 @@ favouritesRouter.get("/author", allowOnly(["USER", "ADMIN"]), async (req: Reques
 favouritesRouter.post("/genre", allowOnly(["USER", "ADMIN"]), validationMiddleware(FavouriteGenreRequest), async (req: Request, res: Response) => {
     const request = plainToInstance(FavouriteGenreRequest, req.body);
     await letMeIn(req, async (user) => {
-        const response = await favouriteGenreService.addGenreToFavourites(user, request);
-        return res.status(201).json(response);
+        if (request.like){
+            const response = await favouriteGenreService.addGenreToFavourites(user, request);
+            return res.status(201).json(response);
+        } else {
+            const response = await favouriteGenreService.deleteGenreFromFavourites(user, request);
+            return res.status(204).json(response);
+        }
     })
 });
 
