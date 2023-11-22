@@ -70,7 +70,19 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
         return ratingResponse;
     }
 
-    async deleteById(id: number): Promise<void> {
+    async deleteById(user: UserResponse, id: number): Promise<void> {
+
+        const rating = await prisma.ratings.findUnique({
+            where: {
+                id: id,
+                userId: user.id
+            }
+        });
+
+        if (!rating) {
+            throw new EntityNotFoundException(`Rating with id ${id} does not exist`)
+        }
+
         logger.info({id}, `deleteById() - id:`);
         await prisma.ratings.delete({
             where: { id: id }
