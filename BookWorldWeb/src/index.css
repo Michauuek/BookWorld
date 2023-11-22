@@ -17,6 +17,11 @@
   box-sizing: border-box;
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 a {
   font-weight: 500;
   color: #333333;
@@ -31,6 +36,8 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  flex-direction: column;
+  background-color: #fff8dc;
 }
 
 h1 {
@@ -59,8 +66,8 @@ button:focus-visible {
 
 .app-content {
   width: 100%;
-  margin: auto;
-  background-color: #fff8dc;
+  margin: auto 0 10rem;
+  flex-grow: 1;
 }
 
 .book-list {
@@ -109,6 +116,8 @@ button:focus-visible {
   flex-wrap: wrap;
   padding: 2em 1em;
   margin-top: 5rem;
+  position: absolute;
+  bottom: 0;
 }
 
 .footer_container p {

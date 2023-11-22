@@ -1,0 +1,49 @@
+.reg-log-form {
+    width: 40rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5rem auto;
+}
+
+.reg-log-form label {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #333333;
+    width: 100%;
+    line-height: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+label input {
+    margin-left: 1rem;
+    height: 3rem;
+    width: 50%;
+    border: 2px solid #deb887;
+    outline: none;
+    color:black;
+    background-color: #fefefe;
+    font-size: 1.5rem;
+    padding: 0 1rem;
+    border-radius: 5px;
+}
+
+.reg-log-form button {
+    width: 40%;
+    background-color: #d2681e;
+    color: #fff8dc;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    cursor: pointer;
+    line-height: 2rem;
+}
+
+.reg-log-form button:hover {
+    background-color: #f39c12;
+}
