@@ -4,7 +4,6 @@ import {FavouriteGenreRequest} from "../model/favouriteGenreDto";
 import {GenreService} from "./genreService";
 import {BadRequestException} from "../exceptions/badRequestException";
 import {ElasticSearchService} from "../../elastic_search/ElasticService";
-import {BookResponse} from "../model/bookDto";
 import {GenreResponse} from "../model/genreDto";
 import {Prisma} from "@prisma/client";
 
@@ -30,21 +29,21 @@ export class FavouriteGenreService extends ElasticSearchService<'userFavouriteGe
             throw new BadRequestException("Book already liked");
         }
 
-        if (request.like) {
-            return prisma.userFavouriteGenres.create({
-                data: {
-                    genreId: request.genreId,
-                    userId: user.id
-                }
-            });
-        } else {
-            return prisma.userFavouriteGenres.deleteMany({
-                where: {
-                    genreId: request.genreId,
-                    userId: user.id
-                }
-            });
-        }
+        return prisma.userFavouriteGenres.create({
+            data: {
+                genreId: request.genreId,
+                userId: user.id
+            }
+        });
+    }
+
+    async deleteGenreFromFavourites(user: UserResponse, request: FavouriteGenreRequest) {
+        return prisma.userFavouriteGenres.deleteMany({
+            where: {
+                genreId: request.genreId,
+                userId: user.id
+            }
+        });
     }
 
 

@@ -19,33 +19,33 @@ export class FavouriteAuthorService extends ElasticSearchService<'userFavouriteA
     }
 
     async addAuthorToFavourites(user: UserResponse, request: FavouriteAuthorRequest) {
-        if (request.like) {
 
-            const liked = await prisma.userFavouriteAuthors.findMany({
-                where: {
-                    authorId: request.authorId,
-                    userId: user.id
-                }
-            });
-
-            if (liked.length > 0) {
-                throw new BadRequestException("Book already liked");
+        const liked = await prisma.userFavouriteAuthors.findMany({
+            where: {
+                authorId: request.authorId,
+                userId: user.id
             }
+        });
 
-            return prisma.userFavouriteAuthors.create({
-                data: {
-                    authorId: request.authorId,
-                    userId: user.id
-                }
-            });
-        } else {
-            return prisma.userFavouriteAuthors.deleteMany({
-                where: {
-                    authorId: request.authorId,
-                    userId: user.id
-                }
-            });
+        if (liked.length > 0) {
+            throw new BadRequestException("Book already liked");
         }
+
+        return prisma.userFavouriteAuthors.create({
+            data: {
+                authorId: request.authorId,
+                userId: user.id
+            }
+        });
+    }
+
+    async deleteAuthorFromFavourites(user: UserResponse, request: FavouriteAuthorRequest) {
+        return prisma.userFavouriteAuthors.deleteMany({
+            where: {
+                authorId: request.authorId,
+                userId: user.id
+            }
+        });
     }
 
 
