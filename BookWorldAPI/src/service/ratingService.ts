@@ -54,6 +54,7 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
             }
         });
 
+        const isUpdate: boolean = existingRating !== null;
         const savedRating = existingRating
             ? await prisma.ratings.update({
                 where: { id: existingRating.id },
@@ -63,7 +64,7 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
                 data: { rating, bookId, userId, comment },
             });
 
-        await bookService.updateBookRating(bookId, rating);
+        await bookService.updateBookRating(bookId, rating, isUpdate);
         const ratingResponse = await this.mapToResponse(savedRating);
 
         logger.info({ ratingResponse }, 'save() - savedRating: ');
