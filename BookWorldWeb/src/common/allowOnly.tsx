@@ -8,9 +8,7 @@ interface AllowOnlyProps {
 
 export const AllowOnly = (props: AllowOnlyProps) => {
     const { user } = useAuth();
-
-    console.log(user);
-    
+        
     if (props.allowed.includes(user?.role)) {
         return props.children;
     }
