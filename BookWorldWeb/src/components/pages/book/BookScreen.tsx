@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Book } from './BookList';
 import { Link, useParams } from 'react-router-dom';
 import './book_screen.css';
 import "../../page_elements/default_style.css";
 import RatingInteractive from './rating/RatingInteractive';
-import { Opinions } from './opinions/Opinions';
+import { Opinions, RatingResponse } from './opinions/Opinions';
 import axios from 'axios';
-import { AddRating, RatingRequest } from '../../../common/booksAPI';
+import { AddRating, BookRatingResponse, GetRating, RatingRequest } from '../../../common/booksAPI';
 import { AllowLoged } from '../../../common/allowOnly';
+import { AuthContext, useAuth } from '../../../common/auth';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -15,6 +16,7 @@ type BookScreenProps = Book;
 // Define the BookScreen functional component
 const BookScreen = () => {
   const { bookId } = useParams();
+  const { user } = useAuth();
 
     const defaultBook: BookScreenProps = {
         id: 0,
@@ -26,31 +28,34 @@ const BookScreen = () => {
         coverUrl: '',
         rating: {value:0, count:0},
     }
+    const defaultRating: RatingResponse = {
+      id: 0,
+      bookId: 0,
+      userId: '',
+      comment: '',
+      rating: 0,
+    }
     const [book, setBook] = useState<BookScreenProps>(defaultBook)
+    const [rating, setRating] = useState<RatingResponse>(defaultRating)
+
     useEffect(() => {
        axios.get<BookScreenProps>(`/api/books/${bookId!}`)
           .then(response => response.data)
-          .then(data => setBook(data))
+          .then(data => setBook(data));
+          
+
+          GetRating(parseInt(bookId!), user.userId!)
+          .then(response => response.data)
+          .then(data => {
+            if (data.length > 0) {
+              setRating(data[0]); // Set the first element of the list as the rating
+              // console.log(data[0]);
+            }
+          });
+
+        console.log(rating);
+
     },[bookId])
-  // Helper function to generate star icons based on the rating
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const fractionalPart = rating % 1;
-    const stars = [];
-    console.log(rating);
-
-    for (let i = 1; i < fullStars; i++) {
-      stars.push(<span key={i}>&#9733;</span>); // Full star
-      console.log(stars);
-    }
-
-    if (fractionalPart > 0) {
-      const width = `${fractionalPart * 100}%`;
-      stars.push(<span key={fullStars} style={{ position: 'relative' }}>&#9733;<span style={{ position: 'absolute', width, overflow: 'hidden' }}>&#9733;</span></span>);
-    }
-
-    return stars;
-  };
 
   return (
     <div className="screen">
@@ -87,7 +92,7 @@ const BookScreen = () => {
           </div>
           <AllowLoged>
           <br></br>Rate book:
-          <RatingInteractive presetRating={0} onClick={(number, comment) => { 
+          <RatingInteractive key={rating.rating} presetRating={rating.rating} presentComment={rating.comment ?? ""} onClick={(number, comment) => { 
               const request: RatingRequest = {
                 bookId: book.id,
                 rating: number,

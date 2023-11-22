@@ -4,12 +4,13 @@ import "./rating.css";
 type RatingInteractiveProps =
   {
     presetRating: number;
+    presentComment: string;
     onClick: (rating: number, comment: string) => void;
   };
 
 const RatingInteractive = (props: RatingInteractiveProps) => {
   const [rating, setRating] = useState(props.presetRating);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState(props.presentComment);
 
   const handleClick = (index: number) => {
     setRating(index + 1);
