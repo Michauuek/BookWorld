@@ -4,7 +4,9 @@ import "../../page_elements/default_style.css";
 import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
 import './author_screen.css';
+import { LikeButton } from '../../page_elements/like_button/LikeButton';
 import axios from 'axios';
+
 
 // Define the props interface
 type AuthorScreenProps =
@@ -58,6 +60,9 @@ const AuthorScreen = () => {
     <div className="screen">
       <h1>{author.name} {author.lastName}</h1>
       <h2 className='title'>Best rated books</h2>
+      <div>
+        <LikeButton liked={true} onClick={(liked) => console.log(`liked ${liked}`)}/>
+      </div>
       <div className="book-list">
       {
         bestRated.map((book, index) => (
