@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import BookThumbnail from "../../page_elements/BookThumbnail.tsx";
 import "../../page_elements/default_style.css";
 import axios from "axios";
+import { RangeSearch, Sort, Sorting, TextSearch } from "../../searchComponents/search.tsx";
 
 export type Author = {
     id: number,
@@ -34,11 +35,62 @@ export type Book = {
 export default function BookList() {
     const location = useLocation();
     const [books, setBooks] = useState<Book[]>([])
+    const [filter, setFilter] = useState<Map<string, object>>(new Map());
+    const [sortings, setSortings] = useState<Sort[]>([])
+
+
+    const filters =  [
+        // title
+        <TextSearch placeholder="Search titles..." value={""} onChange={(value) => {
+            // set filter title to value {AND: [{title: {equals: value}}]}
+            let newFilter = new Map(filter);
+            newFilter.set("title", {contains: value});
+            setFilter(newFilter);
+        }} />,
+    ]
+
+    const sorting = <Sorting avalibleColumns={["title", "author"]} onChange={(value) => {
+        // set sorting to value {title: ASC}
+        console.log(value)
+        setSortings(value);
+    }} />
+
+
+
     useEffect(() => {
-        axios.get<Book[]>('/api/books')
+        let filters = Array.from(filter.entries()).map(([key, value]) => {
+            return {
+                [key]: value
+            }
+        })
+
+    
+
+        // transform sortings into orderBy (object with keys as columns and values as order)
+        let orderBy = sortings.reduce((acc, sort) => {
+            return {...acc, ...sort}
+        }, {})
+
+
+        let where = {
+            AND: [
+                ...filters
+            ]
+        }
+
+        let request = {
+            where: where,
+            orderBy: orderBy,
+        }
+
+        console.log(request)
+
+        //call elastic get
+        axios.post<Book[]>(`/api/books/elastic/get`, request)
             .then(response => response.data)
             .then(data => setBooks(data))
-    }, [location])
+            .catch(error => console.log(error))
+    }, [location, filter, sortings])
 
     const bookList = books.map(book => {
         return (
@@ -48,8 +100,16 @@ export default function BookList() {
         )
     })
 
+    
+
     return (
         <div className="screen">
+        <div className="search">
+            {filters}
+        </div>
+        <div className="sorting">
+            {sorting}
+        </div>
         <div className="book-list">
             {bookList}
         </div>
