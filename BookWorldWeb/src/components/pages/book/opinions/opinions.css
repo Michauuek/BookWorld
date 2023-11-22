@@ -1,0 +1,36 @@
+.opinions-list {
+    width: 65%;
+    margin: auto;
+}
+
+.opinion-card {
+    background-color: bisque;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Align items vertically */
+  }
+  
+  .opinion-card-rating {
+    display: flex;
+    align-items: center;
+    margin-right: 8px; /* Adjust spacing between rating and comment */
+  }
+  
+  .opinion-card-rating-value {
+    font-size: 18px;
+    margin-right: 4px;
+  }
+  
+  .opinion-card-rating-star {
+    font-size: 18px;
+    color: #f39c12;
+  }
+  
+  .opinion-card-comment {
+    font-size: 14px;
+    color: #333;
+    flex-grow: 1; /* Allow the comment to take up remaining space */
+  }

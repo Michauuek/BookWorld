@@ -30,7 +30,7 @@ const RankingCard: React.FC<RankingCardProps> = ({ book, rank }) => {
             </Link>
           ))
         }</p>
-        <div className='rating'>{'\u2605'} {book.rating.value.toFixed(2)}/5</div>
+        <div className='ranking-rating'>{'\u2605'} {book.rating.value.toFixed(2)}/5</div>
       </div>
     </div>
   );

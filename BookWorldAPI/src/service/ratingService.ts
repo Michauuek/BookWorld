@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 import { ElasticSearchService } from "../../elastic_search/ElasticService";
 import {BookService} from "./bookService";
+import {UserResponse} from "../model/userDto";
 
 const logger = globalLogger.child({class: 'RatingService'});
 
@@ -39,25 +40,49 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
     }
 
 
-    async save(ratingRequest: RatingRequest): Promise<RatingResponse> {
-        logger.info({ratingRequest}, `save() - ratingRequest: `);
-        await bookService.getById(ratingRequest.bookId)
+    async saveOrUpdate(user: UserResponse, ratingRequest: RatingRequest): Promise<RatingResponse> {
+        logger.info({ ratingRequest }, 'save() - ratingRequest: ');
 
-        const savedRating = await prisma.ratings.create({
-            data: {
-                rating: ratingRequest.rating,
-                bookId: ratingRequest.bookId,
-                userId: ratingRequest.userId,
-                comment: ratingRequest.comment
+        const { bookId, rating, comment } = ratingRequest;
+        const userId = user.id;
+        await bookService.getById(bookId);
+
+        const existingRating = await prisma.ratings.findFirst({
+            where: {
+                bookId,
+                userId,
             }
         });
-        await bookService.updateBookRating(ratingRequest.bookId, ratingRequest.rating)
+
+        const savedRating = existingRating
+            ? await prisma.ratings.update({
+                where: { id: existingRating.id },
+                data: { rating, comment },
+            })
+            : await prisma.ratings.create({
+                data: { rating, bookId, userId, comment },
+            });
+
+        await bookService.updateBookRating(bookId, rating);
         const ratingResponse = await this.mapToResponse(savedRating);
-        logger.info({ratingResponse},`save() - savedRating: `);
+
+        logger.info({ ratingResponse }, 'save() - savedRating: ');
         return ratingResponse;
     }
 
-    async deleteById(id: number): Promise<void> {
+    async deleteById(user: UserResponse, id: number): Promise<void> {
+
+        const rating = await prisma.ratings.findUnique({
+            where: {
+                id: id,
+                userId: user.id
+            }
+        });
+
+        if (!rating) {
+            throw new EntityNotFoundException(`Rating with id ${id} does not exist`)
+        }
+
         logger.info({id}, `deleteById() - id:`);
         await prisma.ratings.delete({
             where: { id: id }

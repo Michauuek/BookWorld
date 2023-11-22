@@ -3,6 +3,7 @@ import "./search_field.css";
 import { Book } from "../../pages/book/BookList";
 import { Link, useNavigate } from "react-router-dom";
 import SearchEntry from "./SearchEntry";
+import axios from "axios";
 
 type SearchResult = Book;
 
@@ -39,23 +40,13 @@ export const SearchField = () => {
       }
     };
 
-    // send request to server with current search term
-    // Make a POST request to the desired endpoint
-    const response = await fetch('http://localhost:8000/api/books/elastic/get', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (response.ok) {
-      const results = await response.json();
-      setSearchResults(results);
-    } else {
-      // Handle the error if the response is not okay
-      console.error('Failed to fetch data');
-    }
+    axios.post<Book[]>('/api/books/elastic/get', payload)
+      .then(response => {
+        setSearchResults(response.data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   const handleEntryClick = (resultId: number) => {

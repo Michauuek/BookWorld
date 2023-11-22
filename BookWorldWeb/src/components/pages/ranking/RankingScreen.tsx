@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState, useRef } from 'react';
-import { Book } from './BookList';
 import "../../page_elements/default_style.css";
 import RankingCard from './RankingCard';
+import axios from 'axios';
+import { Book } from '../book/BookList';
 
 const RankingScreen: FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -26,31 +27,21 @@ const RankingScreen: FC = () => {
         }
       };
 
-      try {
-        const response = await fetch(`/api/books/elastic/get`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
+      axios.post<Book[]>('/api/books/elastic/get', payload)
+        .then(response => {
+          if (response.data.length === 0) {
+            setHasMore(false);
+          } else {
+            setBooks(prevBooks => [...prevBooks, ...response.data]);
+            pageRef.current++;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        if (data.length === 0) {
-          setHasMore(false);
-        } else {
-          setBooks(prevBooks => [...prevBooks, ...data]);
-          pageRef.current++;
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
     };
 
     const observer = new IntersectionObserver((entries) => {

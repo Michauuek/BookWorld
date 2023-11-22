@@ -18,15 +18,22 @@ authRouter.post("/", validationMiddleware(LoginRequest), async (req, res) => {
     }).catch((err: AppError) => {
         console.log(err);
         return res.status(err.httpCode).json(err);
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
     });
 });
 
 authRouter.post("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
-    authService.refresh(req.body.refreshToken).then((token) => {
+    const request = plainToInstance(RefreshTokenRequest, req.body);
+    authService.refresh(request.refreshToken).then((token) => {
         return res.status(200).json(token);
     }).catch((err: AppError) => {
         console.log(err);
         return res.status(err.httpCode).json(err);
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
     });
 })
 

@@ -224,7 +224,6 @@ export class AuthService {
         return refreshToken.toString();
     }
 
-
     authenticate = async (email: string, password: string) => {
         await new Promise(resolve => setTimeout(resolve, Math.random() * RANDOM_TIME));
 
@@ -253,7 +252,9 @@ export class AuthService {
 
         return {
             token,
-            refreshToken
+            refreshToken,
+            role: user.role,
+            userId: user.id,
         };
     }
 
@@ -265,8 +266,9 @@ export class AuthService {
         this.removeExpiredTokens()
 
         const decryptedToken = AES.decrypt(refreshToken, process.env.JWT_SECRET || '');
-        const payload: RefreshToken = JSON.parse(decryptedToken.toString());
+        const payload: RefreshToken = tryParseJSON(decryptedToken.toString(enc.Utf8));
 
+        
         if (new Date(payload.expAt).getTime()  < new Date().getTime()) {
             logger.info(`authorizeRefreshToken() - token expired for user `, payload.user.email);
             throw new AppError({
@@ -300,7 +302,9 @@ export class AuthService {
 
         return {
             token: newToken,
-            refreshToken: newRefreshToken
+            refreshToken: newRefreshToken,
+            role: payload.user.role,
+            userId: payload.user.id,
         };
     }
 }

@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import "../../page_elements/default_style.css";
+import { useAuth } from '../../../common/auth';
+import axios from 'axios';
 
 type RegisterRequest = {
     email: string,
@@ -19,6 +21,7 @@ type UserResponse = {
   }
 
 const RegisterScreen = () => {
+    const { login } = useAuth();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -28,22 +31,10 @@ const RegisterScreen = () => {
             name,
             lastName,
         };
-        fetch('/api/users/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        })  .then((response) => response.json() as Promise<UserResponse>)
-        .then((responseData) => {
-          // Handle the response data here
-          console.log('Response:', responseData);
-  
-          // Now you can use responseData as a UserResponse type
-          // For example, you might want to update state or navigate to another page
-        })
-        .catch((error) => {
-          // Handle any errors that occurred during the fetch
-          console.error('Error:', error);
-        });
+
+        axios.post<UserResponse>('/api/users/create', data)
+        .then(response => response.data)
+        .then(data => console.log(data))
     };
 
     const [email, setEmail] = useState('');
@@ -74,7 +65,14 @@ const RegisterScreen = () => {
             </label>
             <button type="submit">Register</button>
         </form>
+        <button
+            onClick={() => {
+                login('zlot@gmail.com', 'Abc12345')
+            }}
+        >test
+        </button>
         </div>
+
     );
 };
 

@@ -8,9 +8,12 @@ import NotFoundScreen from './components/page_elements/NotFoundScreen.tsx';
 import AuthorScreen from './components/pages/author/AuthorScreen.tsx';
 import RegisterScreen from './components/pages/register/RegisterScreen.tsx';
 import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
+import { setUpAxios } from './common/auth.tsx';
+import LoginScreen from './components/pages/register/LoginScreen.tsx';
 
 function App() {
-
+  setUpAxios()
+  
   return (
     <div className="App">
       <div className="app-content">
@@ -22,6 +25,7 @@ function App() {
             <Route path="/author/:authorId" element={<AuthorScreen />}></Route>
             <Route path="/register/" element={<RegisterScreen />}></Route>
             <Route path="/ranking/" element={<RankingScreen />}></Route>
+            <Route path="/login" element={<LoginScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />

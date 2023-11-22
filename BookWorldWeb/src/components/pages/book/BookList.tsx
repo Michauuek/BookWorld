@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import { Link, useLocation } from "react-router-dom";
 import BookThumbnail from "../../page_elements/BookThumbnail.tsx";
 import "../../page_elements/default_style.css";
+import axios from "axios";
 
 export type Author = {
     id: number,
@@ -34,8 +35,8 @@ export default function BookList() {
     const location = useLocation();
     const [books, setBooks] = useState<Book[]>([])
     useEffect(() => {
-        fetch('/api/books')
-            .then(response => response.json())
+        axios.get<Book[]>('/api/books')
+            .then(response => response.data)
             .then(data => setBooks(data))
     }, [location])
 
