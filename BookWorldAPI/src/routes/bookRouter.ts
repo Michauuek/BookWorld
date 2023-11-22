@@ -27,7 +27,7 @@ bookRouter.get("/", async (req: Request, res: Response) => {
     return res.status(200).json(response);
 });
 
-bookRouter.get("/:id", allowOnly(["USER"]), async (req: Request, res: Response) => {
+bookRouter.get("/:id", async (req: Request, res: Response) => {
     const id: number = parseInt(req.params.id, 10);
     const response = await bookService.getById(id);
     return res.status(200).json(response);
