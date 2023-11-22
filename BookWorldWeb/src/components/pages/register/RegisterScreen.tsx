@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import "../../page_elements/default_style.css";
 import { useAuth } from '../../../common/auth';
 import axios from 'axios';
+import "./login_screen.css";
 
 type RegisterRequest = {
     email: string,
@@ -46,22 +47,22 @@ const RegisterScreen = () => {
 
     return (
         <div className="screen">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={'reg-log-form'}>
             <label>
                 Email:
-                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="text" value={email} placeholder="email@example.com" onChange={(e) => setEmail(e.target.value)} />
             </label>
             <label>
                 Password:
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="password" value={password} placeholder="password" onChange={(e) => setPassword(e.target.value)} />
             </label>
             <label>
                 Name:
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                <input type="text" value={name} placeholder="name" onChange={(e) => setName(e.target.value)} />
             </label>
             <label>
                 Last name:
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                <input type="text" value={lastName} placeholder="last name" onChange={(e) => setLastName(e.target.value)} />
             </label>
             <button type="submit">Register</button>
         </form>

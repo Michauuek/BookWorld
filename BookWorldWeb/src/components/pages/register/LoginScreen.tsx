@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import "../../page_elements/default_style.css";
 import { useAuth } from '../../../common/auth';
 import { useNavigate } from 'react-router-dom';
+import "./login_screen.css";
 
 
 const LoginScreen = () => {
@@ -30,14 +31,14 @@ const LoginScreen = () => {
 
     return (
         <div className="screen">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={'reg-log-form'}>
             <label>
                 Email:
-                <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="text" placeholder="email@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </label>
             <label>
                 Password:
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="password" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </label>
             <button type="submit">Login</button>
         </form>
