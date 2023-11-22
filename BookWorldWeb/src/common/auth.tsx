@@ -19,6 +19,7 @@ function getToken(email: string, password: string) {
     email,
     password,
   }).then((response) => {
+    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId);
     setUpAxios();
     return response;
   });
@@ -63,6 +64,11 @@ export function setUpAxios() {
 
           originalRequest.headers["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
           return axios(originalRequest);
+        })
+        .catch((error) => {
+          cleanLocalStorage();
+          window.location.href = "/login";
+          return Promise.reject(error);
         });
       }
     }
@@ -121,8 +127,8 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
       const parsedUser = JSON.parse(user);
       setUser({
         role: parsedUser.role,
-        email: null,
-        userId: null,
+        email: parsedUser.email,
+        userId: parsedUser.userId,
       });
       setUpAxios();
     }
@@ -138,22 +144,33 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await getToken(email, password);
-
-    if (response.data == null) {
+    await getToken(email, password)
+    .then((response) => {
+      if(response.status !== 200) {
+        setUser({
+          role: null,
+          email: null,
+          userId: null,
+        });
+        throw new Error("Login failed");
+      }
+  
+      if (response.data == null) {
+        setUser({
+          role: null,
+          email: null,
+          userId: null,
+        });
+        throw new Error("Login failed");
+      }
+  
       setUser({
-        role: null,
-        email: null,
-        userId: null,
+        role: response.data.role,
+        email: email,
+        userId: response.data.userId,
       });
-      throw new Error("Login failed");
-    }
-
-    setUser({
-      role: response.data.role,
-      email: email,
-      userId: response.data.userId,
-    });
+      return response;
+    })
   };
 
 
