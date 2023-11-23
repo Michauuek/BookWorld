@@ -36,13 +36,15 @@ export abstract class ElasticSearchService<T extends Models, R> {
 
     abstract mapToResponse(model: object): Promise<R>;
 
-    protected constructor(modelName: FindManyKeys<PrismaClient>) {
+    protected constructor(modelName: FindManyKeys<PrismaClient>,
+                          private joins: Array<any> = []) {
         this.modelName = modelName;
     }
 
     async get(request: ElasticRequest<WhereInputTypes<T>>): Promise<R[]> {
         console.log(request);
         const result = await this.search(request);
+        console.log(result);
 
         return Promise.all(result.map(async (model) => {
             return this.mapToResponse(model);
@@ -51,17 +53,30 @@ export abstract class ElasticSearchService<T extends Models, R> {
 
     private async search(request: ElasticRequest<WhereInputTypes<T>>): Promise<ReturnType<PrismaClient[FindManyKeys<PrismaClient>]['findMany']>> {
         const model = prisma[this.modelName];
-
+        const include = this.buildInclude();
         try {
             // @ts-ignore
             return await model.findMany({
+                include: include,
                 where: request.where,
                 orderBy: request.orderBy,
                 skip: request.pagination?.skip,
                 take: request.pagination?.take,
             })
         } catch (e) {
+            console.error(e);
             throw new BadRequestException(`Bad request body: ${(e as Error).name}`)
         }
+    }
+
+    private buildInclude() {
+
+        const include = {};
+        this.joins.forEach(join => {
+            // @ts-ignore
+            include[join] = true;
+        });
+        console.log(include);
+        return include;
     }
 }

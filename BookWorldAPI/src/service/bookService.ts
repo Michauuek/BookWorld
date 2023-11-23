@@ -17,7 +17,7 @@ const genreService = new GenreService();
 export class BookService extends ElasticSearchService<'books', BookResponse> {
 
     constructor() {
-        super('books');
+        super('books', ['author', 'genres', 'ratings']);
     }
 
     async getAll(): Promise<BookResponse[]> {
