@@ -4,6 +4,9 @@ import "../../page_elements/default_style.css";
 import { useAuth } from '../../../common/auth';
 import { useNavigate } from 'react-router-dom';
 import "./login_screen.css";
+import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify';
+
 
 
 const LoginScreen = () => {
@@ -13,16 +16,18 @@ const LoginScreen = () => {
     
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        
-        login(email, password)
-        .then(() => {
-            console.log("logged in");
+        login(email, password).then(response => {
+            console.log(response);
+            toast(`Logged in as ${email}`, { type: 'success' })
             nav('/');
         }
         )
         .catch((error) => {
             console.log(error);
-        })
+            toast(error.message, { type: 'error' })
+        }
+        )
+        return false;
     };
 
     const [email, setEmail] = useState('');
@@ -42,7 +47,6 @@ const LoginScreen = () => {
             </label>
             <button type="submit">Login</button>
         </form>
-        
         </div>
 
     );

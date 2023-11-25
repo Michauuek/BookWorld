@@ -4,6 +4,8 @@ import "../../page_elements/default_style.css";
 import { useAuth } from '../../../common/auth';
 import axios from 'axios';
 import "./login_screen.css";
+import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify';
 
 type RegisterRequest = {
     email: string,
@@ -34,8 +36,18 @@ const RegisterScreen = () => {
         };
 
         axios.post<UserResponse>('/api/users/create', data)
-        .then(response => response.data)
-        .then(data => console.log(data))
+        .then(response => {
+            toast(`User ${response.data.name} ${response.data.lastName} created`, { type: 'success' })
+            console.log(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+            for (const e of error.response.data.errors) {
+                for (const o of Object.values(e.constraints)) {
+                    toast(String(o), { type: 'error' })
+                }
+            }
+        })
     };
 
     const [email, setEmail] = useState('');

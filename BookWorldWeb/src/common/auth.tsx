@@ -186,12 +186,6 @@ export const AuthProvider = ({ children } : { children: React.ReactNode }) => {
       });
       return response;
     })
-    .then(() => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirect = urlParams.get("redirect");
-
-      window.location.href = redirect ? redirect : "/";
-    })
   };
 
 
