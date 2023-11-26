@@ -17,7 +17,6 @@ type LikeAuthorRequest = {
 }
 
 
-
 export const LikeBook = (bookId: number, like: boolean) => {
     const re: LikeBookRequest = {
         bookId: bookId,
@@ -40,4 +39,53 @@ export const LikeAuthor = (authorId: number, like: boolean) => {
         like: like,
     }
     return axios.post('/api/favourites/author', re)
+}
+
+
+export const GetBookLike = (bookId: number, userId: string) => {
+    const payload = {
+        where: {
+          AND: [
+            {
+              bookId: {
+                equals: bookId
+              }
+            },
+            {
+                userId: {
+                  equals: userId
+                }
+              },
+          ]
+        },
+        pagination: {
+          take: 1,
+          skip: 0
+        },
+      }
+    return axios.post('/api/favourites/book/elastic/get', payload)
+}
+
+export const GetAuthorLike = (authorId: number, userId: string) => {
+    const payload = {
+        where: {
+          AND: [
+            {
+              authorId: {
+                equals: authorId
+              }
+            },
+            {
+                userId: {
+                  equals: userId
+                }
+              },
+          ]
+        },
+        pagination: {
+          take: 1,
+          skip: 0
+        },
+      }
+    return axios.post('/api/favourites/author/elastic/get', payload)
 }

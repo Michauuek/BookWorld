@@ -43,7 +43,8 @@ const BookScreen = () => {
           .then(response => response.data)
           .then(data => setBook(data));
           
-
+          if(user.userId !== undefined)
+          {
           GetRating(parseInt(bookId!), user.userId!)
           .then(response => response.data)
           .then(data => {
@@ -52,6 +53,7 @@ const BookScreen = () => {
               // console.log(data[0]);
             }
           });
+        }
 
         console.log(rating);
 
@@ -98,7 +100,17 @@ const BookScreen = () => {
                 rating: number,
                 comment: comment,
               }
-              AddRating(request);
+              AddRating(request).then(() => {
+                GetRating(parseInt(bookId!), user.userId!)
+                .then(response => response.data)
+                .then(data => {
+                  if (data.length > 0) {
+                    setRating(data[0]); // Set the first element of the list as the rating
+                    // console.log(data[0]);
+                  }
+                });
+              }
+              );
               console.log(`ocenka ${number} komentarz "${comment}"`)
             }} />
           </AllowLoged>
@@ -106,7 +118,7 @@ const BookScreen = () => {
       </div>
       <div className='book-opinions'>
         <h3>Opinions:</h3>
-        <Opinions bookId={book.id} />
+        <Opinions bookId={book.id}/>
       </div>
     </div>
   );
