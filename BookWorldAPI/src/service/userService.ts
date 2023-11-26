@@ -1,4 +1,10 @@
-import {ChangeUserRoleRequest, ChangeUserStatusRequest, CreateUserRequest, UserResponse} from "../model/userDto";
+import {
+    ChangeUserRoleRequest,
+    ChangeUserStatusRequest,
+    CreateUserRequest,
+    UserChangePasswordRequest,
+    UserResponse
+} from "../model/userDto";
 import {prisma} from "../utils/prisma";
 import {DEFAULT_USER_ROLE, SALT_ROUNDS} from "../utils/constants";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
@@ -132,7 +138,7 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
         logger.info(`changeStatus() - user status changed`);
     }
 
-    async changePassword(id: string): Promise<void> {
+    async resetPassword(id: string): Promise<void> {
         return prisma.$transaction(async (prisma) => {
             logger.info({ id }, `changePassword() - id:`);
 
@@ -152,6 +158,31 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
                 templateAliasName: 'reset_password',
                 requiredDynamicData: {
                     new_password: randomString,
+                },
+            });
+        });
+    }
+
+    async changePassword(request: UserChangePasswordRequest): Promise<void> {
+        return prisma.$transaction(async (prisma) => {
+            const user = await prisma.users.findUnique({
+                where: { email: request.email },
+            });
+
+            if (!user) {
+                throw new BadRequestException(`User with email ${request.email} does not exist`);
+            }
+
+            const isPasswordValid = await this.verifyPassword(request.oldPassword, user.password);
+            if (!isPasswordValid) {
+                throw new BadRequestException(`Old password is not valid`);
+            }
+
+            const hashedPassword = await this.hashPassword(request.newPassword);
+            await prisma.users.update({
+                where: { email: request.email },
+                data: {
+                    password: hashedPassword,
                 },
             });
         });
@@ -183,7 +214,7 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
     }
 
     private generateRandomString(length: number): string {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*()+';
         return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
     }
 }
