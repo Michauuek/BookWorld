@@ -25,7 +25,7 @@ authRouter.post("/", validationMiddleware(LoginRequest), async (req, res) => {
     });
 });
 
-authRouter.post("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
+authRouter.post("/refresh", validationMiddleware(RefreshTokenRequest), async (req, res) => {
     const request = plainToInstance(RefreshTokenRequest, req.body);
     authService.refresh(request.refreshToken).then((token) => {
         return res.status(200).json(token);
