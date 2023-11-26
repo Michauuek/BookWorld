@@ -9,6 +9,7 @@ import axios from 'axios';
 import { AddRating, BookRatingResponse, GetRating, RatingRequest } from '../../../common/booksAPI';
 import { AllowLoged } from '../../../common/allowOnly';
 import { AuthContext, useAuth } from '../../../common/auth';
+import { toast } from 'react-toastify';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -50,7 +51,7 @@ const BookScreen = () => {
           .then(data => {
             if (data.length > 0) {
               setRating(data[0]); // Set the first element of the list as the rating
-              // console.log(data[0]);
+
             }
           });
         }
@@ -106,7 +107,7 @@ const BookScreen = () => {
                 .then(data => {
                   if (data.length > 0) {
                     setRating(data[0]); // Set the first element of the list as the rating
-                    // console.log(data[0]);
+                    toast(`Book ${book.title} rated ${number}`, { type: 'success' })
                   }
                 });
               }

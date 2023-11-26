@@ -52,7 +52,7 @@ const AuthorScreen = () => {
       ratingValue: "desc"
     },
     pagination: {
-      take: 10,
+      take: 5,
       skip: 0
     },
   }
