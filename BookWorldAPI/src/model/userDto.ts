@@ -4,6 +4,7 @@ import {RatingResponse} from "./ratingDto";
 import {FavouriteGenreResponse} from "./favouriteGenreDto";
 import {FavouriteBookResponse} from "./favouriteBookDto";
 import {FavouriteAuthorResponse} from "./favouriteAuthor";
+import {UserRole} from "./userRole";
 
 export class CreateUserRequest {
     @IsEmail()
@@ -19,6 +20,24 @@ export class CreateUserRequest {
     @IsString()
     @Length(8)
     password: string;
+}
+
+export class UpdateUserRequest {
+    @IsString()
+    @IsNotEmpty()
+    userId: string;
+}
+
+export class ChangeUserRoleRequest extends UpdateUserRequest {
+
+    @IsNotEmpty()
+    role: UserRole;
+}
+
+export class ChangeUserStatusRequest extends UpdateUserRequest {
+
+    @IsNotEmpty()
+    active: boolean;
 }
 
 export interface UserResponse {

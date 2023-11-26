@@ -11,6 +11,7 @@ Table Users {
   createdAt DateTime [default: `now()`, not null]
   ratings Ratings [not null]
   role String [not null, default: 'USER']
+  active Boolean [not null, default: true]
   favouriteGenres UserFavouriteGenres [not null]
   favouriteBooks UserFavouriteBooks [not null]
   favouriteAuthors UserFavouriteAuthors [not null]
