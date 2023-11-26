@@ -72,5 +72,6 @@ export interface UserResponse {
 }
 
 export interface UserFullResponse extends UserResponse {
+    active: boolean;
     password: string;
 }
