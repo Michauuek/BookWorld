@@ -1,4 +1,10 @@
-import {CreateUserRequest, UserResponse} from "../model/userDto";
+import {
+    ChangeUserRoleRequest,
+    ChangeUserStatusRequest,
+    CreateUserRequest,
+    UserChangePasswordRequest,
+    UserResponse
+} from "../model/userDto";
 import {prisma} from "../utils/prisma";
 import {DEFAULT_USER_ROLE, SALT_ROUNDS} from "../utils/constants";
 import {EntityNotFoundException} from "../exceptions/entityNotFoundException";
@@ -10,6 +16,7 @@ import { Prisma } from "@prisma/client";
 import {ElasticSearchService} from "../../elastic_search/ElasticService";
 import {SEND_EMAIL_ENABLED} from "../utils/mailUtils";
 import {MailService} from "./mailService";
+import {BadRequestException} from "../exceptions/badRequestException";
 
 const logger = globalLogger.child({class: 'UserService'});
 
@@ -95,6 +102,92 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
         });
     }
 
+    async changeRole(request: ChangeUserRoleRequest): Promise<void> {
+        logger.info({request}, `changeRole() - request:`);
+
+        const user = await this.getById(request.userId)
+
+        if (!user || user.role === "ADMIN" || user.role === request.role) {
+            throw new BadRequestException(`User with id ${request.userId} does not exist or is already ${request.role}`)
+        }
+
+        await prisma.users.update({
+            where: { id: request.userId },
+            data: {
+                role: request.role
+            }
+        });
+        logger.info(`changeRole() - user role changed`);
+    }
+
+    async changeStatus(request: ChangeUserStatusRequest): Promise<void> {
+        logger.info({request}, `changeStatus() - request:`);
+
+        const user = await this.getById(request.userId)
+
+        if (!user || user.role === "ADMIN") {
+            throw new BadRequestException(`User with id ${request.userId} does not exist or is admin`)
+        }
+
+        await prisma.users.update({
+            where: { id: request.userId },
+            data: {
+                active: request.active
+            }
+        });
+        logger.info(`changeStatus() - user status changed`);
+    }
+
+    async resetPassword(id: string): Promise<void> {
+        return prisma.$transaction(async (prisma) => {
+            logger.info({ id }, `changePassword() - id:`);
+
+            const user = await this.getById(id)
+            const randomString = this.generateRandomString(20);
+            const hashedPassword = await this.hashPassword(randomString);
+
+            await prisma.users.update({
+                where: { id: id },
+                data: {
+                    password: hashedPassword,
+                },
+            });
+
+            await mailService.sendMail({
+                email: user.email,
+                templateAliasName: 'reset_password',
+                requiredDynamicData: {
+                    new_password: randomString,
+                },
+            });
+        });
+    }
+
+    async changePassword(request: UserChangePasswordRequest): Promise<void> {
+        return prisma.$transaction(async (prisma) => {
+            const user = await prisma.users.findUnique({
+                where: { email: request.email },
+            });
+
+            if (!user) {
+                throw new BadRequestException(`User with email ${request.email} does not exist`);
+            }
+
+            const isPasswordValid = await this.verifyPassword(request.oldPassword, user.password);
+            if (!isPasswordValid) {
+                throw new BadRequestException(`Old password is not valid`);
+            }
+
+            const hashedPassword = await this.hashPassword(request.newPassword);
+            await prisma.users.update({
+                where: { email: request.email },
+                data: {
+                    password: hashedPassword,
+                },
+            });
+        });
+    }
+
     async hashPassword(password: string): Promise<string> {
         return await bcrypt.hash(password, SALT_ROUNDS);
     }
@@ -118,5 +211,10 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
             role: item.role,
             createdAt: item.createdAt
         };
+    }
+
+    private generateRandomString(length: number): string {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*()+';
+        return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
     }
 }

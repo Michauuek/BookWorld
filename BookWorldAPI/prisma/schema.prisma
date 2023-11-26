@@ -26,6 +26,7 @@ model Users {
   createdAt          DateTime @default(now())
   ratings            Ratings[]
   role               String     @default("USER")
+  active             Boolean    @default(true)
   favouriteGenres    UserFavouriteGenres[]
   favouriteBooks     UserFavouriteBooks[]
   favouriteAuthors   UserFavouriteAuthors[]

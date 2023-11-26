@@ -232,9 +232,9 @@ export class AuthService {
             where: { email: email }
         });
         
-        if (!user) {
+        if (!user || !user.active) {
             logger.info(`authenticate() - user does not exists `, email);
-            throw new BadRequestException("User does not exists");
+            throw new BadRequestException("User account is not active or does not exists");
         }
 
         const isPasswordValid = await this.userService.verifyPassword(password, user.password);
