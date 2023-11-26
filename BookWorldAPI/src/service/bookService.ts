@@ -99,15 +99,15 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
         });
     }
 
-    async updateBookRating(bookId: number, newRating: number, isUpdate: boolean) {
+    async updateBookRating(bookId: number, newRating: number, oldRating: number, isUpdate: boolean) {
         const book = await this.getById(bookId)
         const {value, count} = book.rating;
         const newCount = isUpdate ? count : count + 1;
-        const newRatingValue = (value * count + newRating) / (newCount);
+        const rating = isUpdate ? (value * count - oldRating + newRating) / (newCount) : (value * count + newRating) / (newCount);
         await prisma.books.update({
             where: { id: bookId },
             data: {
-                ratingValue: newRatingValue,
+                ratingValue: rating,
                 ratingCount: newCount
             }
         });

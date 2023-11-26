@@ -55,18 +55,22 @@ export class RatingService extends ElasticSearchService<'ratings', RatingRespons
         });
 
         const isUpdate: boolean = existingRating !== null;
-        const savedRating = existingRating
-            ? await prisma.ratings.update({
+        let savedRating
+
+        if (existingRating) {
+            savedRating = await prisma.ratings.update({
                 where: { id: existingRating.id },
                 data: { rating, comment },
-            })
-            : await prisma.ratings.create({
+            });
+            await bookService.updateBookRating(bookId, rating, existingRating.rating, isUpdate);
+        } else {
+            savedRating = await prisma.ratings.create({
                 data: { rating, bookId, userId, comment },
             });
+            await bookService.updateBookRating(bookId, rating, 0, isUpdate);
+        }
 
-        await bookService.updateBookRating(bookId, rating, isUpdate);
         const ratingResponse = await this.mapToResponse(savedRating);
-
         logger.info({ ratingResponse }, 'save() - savedRating: ');
         return ratingResponse;
     }
