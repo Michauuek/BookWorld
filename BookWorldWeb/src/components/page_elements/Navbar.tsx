@@ -1,9 +1,11 @@
 // Navbar.tsx
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './navbar.css';
 import { SearchField } from './search_field/SearchField';
+import { useAuth } from '../../common/auth';
+import { toast } from 'react-toastify';
 
 
 interface NavbarProps {
@@ -11,6 +13,29 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = () => {
+  const { user, logout } = useAuth();
+
+  const navigate = useNavigate();
+
+  const [loggedIn, setLoggedIn] = useState<boolean>(user.userId !== null);
+  
+  useEffect(() => { setLoggedIn(user.userId !== null); }
+  , [user]);
+
+  const handleLogout = () => {
+    logout();
+    setLoggedIn(false);
+    toast(`Logged out`, { type: 'success' })
+  };
+
+  const handleLogin= () => {
+    navigate('/login');
+  };
+
+  const handleRegister = () => {
+    navigate('/register');
+  };
+
   return (
     <nav className="navbar">
       <ul className="nav-list">
@@ -27,14 +52,24 @@ const Navbar: React.FC<NavbarProps> = () => {
         <li className="nav-item">
           <Link to="/contact">Contact</Link>
         </li>
-        <li className="nav-item">
-          <Link to="/login">Log in</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/register">Register</Link>
-        </li>
         {/* Add more navigation links as needed */}
         <div className='search-field-container'><SearchField/></div>
+        {loggedIn ? (
+          <>
+            <li className="nav-item" onClick={handleLogout}>
+              Logout
+            </li>
+          </>
+        ) : (
+          <>
+            <li className="nav-item" onClick={handleLogin}>
+              Log in
+            </li>
+            <li className="nav-item" onClick={handleRegister}>
+              Register
+            </li>
+          </>
+        )}
       </ul>
     </nav>
   );

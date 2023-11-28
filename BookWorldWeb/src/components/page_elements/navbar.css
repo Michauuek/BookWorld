@@ -19,6 +19,7 @@
   margin-right: 2.5rem;
   margin-top: auto;
   margin-bottom: auto;
+  cursor: pointer;
 }
 
 .nav-list a {

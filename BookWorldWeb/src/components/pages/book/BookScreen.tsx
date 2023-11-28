@@ -9,6 +9,7 @@ import axios from 'axios';
 import { AddRating, BookRatingResponse, GetRating, RatingRequest } from '../../../common/booksAPI';
 import { AllowLoged } from '../../../common/allowOnly';
 import { AuthContext, useAuth } from '../../../common/auth';
+import { toast } from 'react-toastify';
 
 // Define the props interface
 type BookScreenProps = Book;
@@ -43,15 +44,17 @@ const BookScreen = () => {
           .then(response => response.data)
           .then(data => setBook(data));
           
-
+          if(user.userId !== undefined)
+          {
           GetRating(parseInt(bookId!), user.userId!)
           .then(response => response.data)
           .then(data => {
             if (data.length > 0) {
               setRating(data[0]); // Set the first element of the list as the rating
-              // console.log(data[0]);
+
             }
           });
+        }
 
         console.log(rating);
 
@@ -98,7 +101,17 @@ const BookScreen = () => {
                 rating: number,
                 comment: comment,
               }
-              AddRating(request);
+              AddRating(request).then(() => {
+                GetRating(parseInt(bookId!), user.userId!)
+                .then(response => response.data)
+                .then(data => {
+                  if (data.length > 0) {
+                    setRating(data[0]); // Set the first element of the list as the rating
+                    toast(`Book ${book.title} rated ${number}`, { type: 'success' })
+                  }
+                });
+              }
+              );
               console.log(`ocenka ${number} komentarz "${comment}"`)
             }} />
           </AllowLoged>
@@ -106,7 +119,7 @@ const BookScreen = () => {
       </div>
       <div className='book-opinions'>
         <h3>Opinions:</h3>
-        <Opinions bookId={book.id} />
+        <Opinions bookId={book.id}/>
       </div>
     </div>
   );
