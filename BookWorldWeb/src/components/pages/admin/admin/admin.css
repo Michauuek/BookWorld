@@ -1,0 +1,41 @@
+
+
+.admin-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: bisque;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #333333;
+  }
+  
+  .admin-button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .admin-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    background-color: rgb(211, 119, 15);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+  }
+  
+  .admin-button:hover {
+    background-color: rgb(190, 123, 46);
+  }
+  
