@@ -95,7 +95,7 @@ export const GetGenreLike = (genreId: number, userId: string) => {
       where: {
         AND: [
           {
-            authorId: {
+            genreId: {
               equals: genreId
             }
           },

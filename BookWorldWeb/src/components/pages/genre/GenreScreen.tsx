@@ -39,11 +39,11 @@ const GenreScreen = () => {
   const bestRatedPayload = {
     where: {
       genres: {
-          some: {
-              genreId: parseInt(genreId!)
-          }
+        some: {
+          genreId: parseInt(genreId!)
+        }
       }
-  },
+    },
     orderBy: {
       ratingValue: "desc"
     },
@@ -57,22 +57,22 @@ const GenreScreen = () => {
     axios.post<Book[]>('/api/books/elastic/get', bestRatedPayload).then(response => response.data).then(data => setBestRated(data));
     axios.get<GenreScreenProps>(`/api/genres/${genreId!}`).then(response => response.data).then(data => setGenre(data));
 
-    if(user.userId !== null)
-    {
-    GetGenreLike(parseInt(genreId!), user.userId!)
-    .then(response => response.data)
-    .then(data => {
-      console.log(data);
-      if (data.length > 0) {
-        setLiked(true);
-        console.log("liked set")
-         // Set the first element of the list as the rating
-      } else {
-        setLiked(false);
-        console.log("liked unset")
-      }
-    });
-  }
+    if (user.userId !== null) {
+      console.log("user is logged in, requesting likes")
+      GetGenreLike(parseInt(genreId!), user.userId!)
+        .then(response => response.data)
+        .then(data => {
+          console.log(data);
+          if (data.length > 0) {
+            setLiked(true);
+            console.log("liked set")
+            // Set the first element of the list as the rating
+          } else {
+            setLiked(false);
+            console.log("liked unset")
+          }
+        });
+    }
   }, [genreId])
 
 
@@ -80,22 +80,23 @@ const GenreScreen = () => {
     <div className="screen">
       <h1>{genre.name}</h1>
       <div>
-      <AllowLoged >
-        <LikeButton liked={liked} onClick={(liked) => {
-          console.log(`liked ${liked}`);
-          LikeGenre(parseInt(genreId!), liked).then(() => {
-            setLiked(liked)})
+        <AllowLoged >
+          <LikeButton liked={liked} onClick={(liked) => {
+            console.log(`liked ${liked}`);
+            LikeGenre(parseInt(genreId!), liked).then(() => {
+              setLiked(liked)
+            })
           }}
           />
-      </AllowLoged>
+        </AllowLoged>
       </div>
       <h2 className='title'>Best rated books</h2>
       <div className="book-list">
-      {
-        bestRated.map((book, index) => (
-          <BookThumbnail book={book} key={index} />
-        ))
-      }
+        {
+          bestRated.map((book, index) => (
+            <BookThumbnail book={book} key={index} />
+          ))
+        }
       </div>
     </div>
   );
