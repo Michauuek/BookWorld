@@ -4,13 +4,14 @@ import {plainToInstance} from "class-transformer";
 import {EmailRequest} from "../model/mailDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import bookRouter from "./bookRouter";
+import {allowOnly} from "../service/authService";
 
 
 const mailRouter = express.Router();
 const mailService = new MailService();
 
 
-mailRouter.get("/", async (req: Request, res: Response) => {
+mailRouter.get("/", allowOnly(["ADMIN"]), async (req: Request, res: Response) => {
     const request = plainToInstance(EmailRequest, req.body);
     await mailService.sendMail(request);
     return res.status(200).json({message: "Mail sent!"});

@@ -1,9 +1,10 @@
-import { Router } from "express";
+import {NextFunction, Request, Response, Router} from "express";
 import letMeIn, { AuthService, allowOnly, amIIn } from "../service/authService";
 import { AppError } from "../exceptions/appError";
 import { plainToInstance } from "class-transformer";
 import { LoginRequest, RefreshTokenRequest } from "../model/authDto";
 import { validationMiddleware } from "../utils/validator";
+import {errorHandler} from "../exceptions/customExceptionHandler";
 
 
 const authRouter = Router();
@@ -17,14 +18,14 @@ authRouter.post("/", validationMiddleware(LoginRequest), async (req, res) => {
         return res.status(200).json(token);
     }).catch((err: AppError) => {
         console.log(err);
-        return res.status(err.httpCode).json(err);
+        return res.status(err.httpCode).json(err.message);
     }).catch((err) => {
         console.log(err);
         return res.status(500).json(err);
     });
 });
 
-authRouter.post("/refresh",validationMiddleware(RefreshTokenRequest), async (req, res) => {
+authRouter.post("/refresh", validationMiddleware(RefreshTokenRequest), async (req, res) => {
     const request = plainToInstance(RefreshTokenRequest, req.body);
     authService.refresh(request.refreshToken).then((token) => {
         return res.status(200).json(token);
@@ -67,6 +68,10 @@ authRouter.get("/test-handler", allowOnly(["ADMIN", "USER"]), async (req, res) =
     return res.status(200).json({
         message: "You are in!"
     });
+});
+
+authRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    errorHandler.handleError(err, res);
 });
 
 export default authRouter;

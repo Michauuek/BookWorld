@@ -3,7 +3,13 @@ import 'express-async-errors';
 import {validationMiddleware} from "../utils/validator";
 import {plainToInstance} from "class-transformer";
 import {UserService} from "../service/userService";
-import {CreateUserRequest} from "../model/userDto";
+import {
+    ChangeUserRoleRequest,
+    ChangeUserStatusRequest,
+    CreateUserRequest,
+    UpdateUserRequest,
+    UserChangePasswordRequest
+} from "../model/userDto";
 import {errorHandler} from "../exceptions/customExceptionHandler";
 import {allowOnly} from "../service/authService";
 
@@ -46,6 +52,30 @@ userRouter.delete("/:id", allowOnly(["ADMIN"]), async (req: Request, res: Respon
     const id: string = req.params.id;
     await userService.deleteById(id);
     return res.status(204).send();
+});
+
+userRouter.patch("/role", allowOnly(["ADMIN"]), validationMiddleware(ChangeUserRoleRequest), async (req: Request, res: Response) => {
+    const request = plainToInstance(ChangeUserRoleRequest, req.body);
+    await userService.changeRole(request)
+    return res.status(200).send();
+});
+
+userRouter.patch("/status", allowOnly(["ADMIN"]), validationMiddleware(ChangeUserStatusRequest), async (req: Request, res: Response) => {
+    const request = plainToInstance(ChangeUserStatusRequest, req.body);
+    await userService.changeStatus(request)
+    return res.status(200).send();
+});
+
+userRouter.patch("/password/reset", allowOnly(["ADMIN"]), validationMiddleware(UpdateUserRequest), async (req: Request, res: Response) => {
+    const request = plainToInstance(UpdateUserRequest, req.body);
+    await userService.resetPassword(request.userId)
+    return res.status(200).send();
+});
+
+userRouter.patch("/password/change", validationMiddleware(UserChangePasswordRequest), async (req: Request, res: Response) => {
+    const request = plainToInstance(UserChangePasswordRequest, req.body);
+    await userService.changePassword(request)
+    return res.status(200).send();
 });
 
 userRouter.use((err: Error, req: Request, res: Response, next: NextFunction) => {
