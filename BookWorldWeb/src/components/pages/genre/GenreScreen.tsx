@@ -1,53 +1,49 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import "../../page_elements/default_style.css";
-import { Author, Book } from '../book/BookList';
+import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
-import './author_screen.css';
+import './genre_screen.css';
 import { LikeButton } from '../../page_elements/like_button/LikeButton';
 import axios from 'axios';
 import { useAuth } from '../../../common/auth';
-import { GetAuthorLike, LikeAuthor } from '../../../common/favouriteAPI';
+import { GetAuthorLike, GetGenreLike, LikeAuthor, LikeGenre } from '../../../common/favouriteAPI';
 import { AllowLoged } from '../../../common/allowOnly';
 
 
 // Define the props interface
-type AuthorScreenProps =
+type GenreScreenProps =
   {
     id: number,
     name: string,
-    lastName: string,
   }
 
 // Define the BookScreen functional component
-const AuthorScreen = () => {
-  const { authorId } = useParams();
+const GenreScreen = () => {
+  const { genreId } = useParams();
   const { user } = useAuth();
 
-  const defaultAuthor: AuthorScreenProps = {
+  const defaultGenre: GenreScreenProps = {
     id: 0,
     name: '',
-    lastName: '',
   }
-  const [author, setAuthor] = useState<AuthorScreenProps>(defaultAuthor)
+  const [genre, setGenre] = useState<GenreScreenProps>(defaultGenre)
   const [bestRated, setBestRated] = useState<Book[]>([])
   const [liked, setLiked] = useState<boolean>(false)
 
   // useEffect(() => {
-  //   axios.get<AuthorScreenProps>(`/api/authors/${authorId!}`)
-  // }, [authorId])
+  //   axios.get<GenreScreenProps>(`/api/genres/${genreId!}`)
+  // }, [genreId])
 
 
   const bestRatedPayload = {
     where: {
-      AND: [
-        {
-          authorId: {
-            equals: parseInt(authorId!)
+      genres: {
+          some: {
+              genreId: parseInt(genreId!)
           }
-        }
-      ]
-    },
+      }
+  },
     orderBy: {
       ratingValue: "desc"
     },
@@ -59,11 +55,11 @@ const AuthorScreen = () => {
 
   useEffect(() => {
     axios.post<Book[]>('/api/books/elastic/get', bestRatedPayload).then(response => response.data).then(data => setBestRated(data));
-    axios.get<AuthorScreenProps>(`/api/authors/${authorId!}`).then(response => response.data).then(data => setAuthor(data));
+    axios.get<GenreScreenProps>(`/api/genres/${genreId!}`).then(response => response.data).then(data => setGenre(data));
 
     if(user.userId !== null)
     {
-    GetAuthorLike(parseInt(authorId!), user.userId!)
+    GetGenreLike(parseInt(genreId!), user.userId!)
     .then(response => response.data)
     .then(data => {
       console.log(data);
@@ -77,19 +73,20 @@ const AuthorScreen = () => {
       }
     });
   }
-  }, [authorId])
+  }, [genreId])
 
 
   return (
     <div className="screen">
-      <h1>{author.name} {author.lastName}</h1>
+      <h1>{genre.name}</h1>
       <div>
       <AllowLoged >
         <LikeButton liked={liked} onClick={(liked) => {
           console.log(`liked ${liked}`);
-          LikeAuthor(parseInt(authorId!), liked).then(() => {
+          LikeGenre(parseInt(genreId!), liked).then(() => {
             setLiked(liked)})
-          }}/>
+          }}
+          />
       </AllowLoged>
       </div>
       <h2 className='title'>Best rated books</h2>
@@ -104,5 +101,5 @@ const AuthorScreen = () => {
   );
 };
 
-export default AuthorScreen;
+export default GenreScreen;
 

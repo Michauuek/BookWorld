@@ -89,3 +89,27 @@ export const GetAuthorLike = (authorId: number, userId: string) => {
       }
     return axios.post('/api/favourites/author/elastic/get', payload)
 }
+
+export const GetGenreLike = (genreId: number, userId: string) => {
+  const payload = {
+      where: {
+        AND: [
+          {
+            authorId: {
+              equals: genreId
+            }
+          },
+          {
+              userId: {
+                equals: userId
+              }
+            },
+        ]
+      },
+      pagination: {
+        take: 1,
+        skip: 0
+      },
+    }
+  return axios.post('/api/favourites/genre/elastic/get', payload)
+}

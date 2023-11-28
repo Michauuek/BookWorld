@@ -10,6 +10,7 @@ import RegisterScreen from './components/pages/register/RegisterScreen.tsx';
 import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
 import { setUpAxios } from './common/auth.tsx';
 import LoginScreen from './components/pages/register/LoginScreen.tsx';
+import GenreScreen from './components/pages/genre/GenreScreen.tsx';
 
 function App() {
   setUpAxios()
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<BookList />}></Route>
             <Route path="/book/:bookId" element={<BookScreen />}></Route>
             <Route path="/author/:authorId" element={<AuthorScreen />}></Route>
+            <Route path="/genre/:genreId" element={<GenreScreen />}></Route>
             <Route path="/register/" element={<RegisterScreen />}></Route>
             <Route path="/ranking/" element={<RankingScreen />}></Route>
             <Route path="/login" element={<LoginScreen />}></Route>
