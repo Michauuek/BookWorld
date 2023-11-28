@@ -65,6 +65,7 @@ export interface UserResponse {
     lastName: string | null;
     role: string;
     createdAt: Date;
+    active: boolean;
     ratings?: RatingResponse[];
     favouriteGenres?: FavouriteGenreResponse[];
     favouriteBooks?: FavouriteBookResponse[];
@@ -72,6 +73,5 @@ export interface UserResponse {
 }
 
 export interface UserFullResponse extends UserResponse {
-    active: boolean;
     password: string;
 }

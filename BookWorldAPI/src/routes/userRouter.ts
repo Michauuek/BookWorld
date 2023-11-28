@@ -19,7 +19,7 @@ const userService = new UserService();
 const userRouter = express.Router();
 
 
-userRouter.post("/elastic/get", async (req: Request, res: Response) => {
+userRouter.post("/elastic/get", allowOnly(["ADMIN"]), async (req: Request, res: Response) => {
     const response = await userService.get(req.body);
     return res.status(200).json(response);
 });
@@ -30,7 +30,7 @@ userRouter.post("/create", validationMiddleware(CreateUserRequest), async (req: 
     return res.status(201).json(response);
 });
 
-userRouter.get("/", async (req: Request, res: Response) => {
+userRouter.get("/", allowOnly(["ADMIN"]), async (req: Request, res: Response) => {
     const response = await userService.getAll();
     return res.status(200).json(response);
 });

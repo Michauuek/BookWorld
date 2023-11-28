@@ -209,7 +209,8 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
             name: item.name,
             lastName: item.lastName,
             role: item.role,
-            createdAt: item.createdAt
+            createdAt: item.createdAt,
+            active: item.active
         };
     }
 
