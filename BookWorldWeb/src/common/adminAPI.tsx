@@ -1,6 +1,16 @@
 import axios from "axios";
 
 
+export type BookRequest = {
+
+  title: string;
+  description?: string;
+  isbn?: string;
+  authorId: number;
+  coverUrl?: string;
+  genresIds: number[];
+}
+
 export type User = {
     id: string;
     email: string;
@@ -34,4 +44,10 @@ const payload = {
   };
 
   return axios.post<User[]>('/api/users/elastic/get', payload)
+}
+
+
+
+export const AddBook = (request: BookRequest) => {
+    return axios.post('/api/books/create', request)
 }

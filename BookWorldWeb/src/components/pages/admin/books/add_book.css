@@ -1,0 +1,61 @@
+.add-book {
+    color: black;
+    width: 60rem;
+    margin: auto;
+}
+
+.add-book form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-book div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.add-book label {
+    width: 20%;
+    text-align: right;
+    margin-right: 1rem;
+}
+
+.add-book input,
+.add-book select,
+.add-book textarea {
+    flex: 1;
+    height: 3rem;
+    border: 2px solid #deb887;
+    outline: none;
+    color: black;
+    background-color: #fefefe;
+    font-size: 1.5rem;
+    padding: 0 1rem;
+    border-radius: 5px;
+}
+
+.add-book textarea {
+    height: 10rem;
+}
+
+.add-book .genres-select {
+    height: 10rem;
+}
+
+
+.add-book button {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: #deb887;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-book button:hover {
+    background-color: #d2a066;
+}

@@ -13,6 +13,7 @@ import LoginScreen from './components/pages/register/LoginScreen.tsx';
 import GenreScreen from './components/pages/genre/GenreScreen.tsx';
 import AdminScreen from './components/pages/admin/admin/AdminScreen.tsx';
 import { UsersScreen } from './components/pages/admin/users/UsersScreen.tsx';
+import { AddBookScreen } from './components/pages/admin/books/AddBookScreen.tsx';
 
 function App() {
   setUpAxios()
@@ -32,6 +33,7 @@ function App() {
             <Route path="/login" element={<LoginScreen />}></Route>
             <Route path="/admin" element={<AdminScreen />}></Route>
             <Route path="/admin/users" element={<UsersScreen />}></Route>
+            <Route path="/admin/add-book" element={<AddBookScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />

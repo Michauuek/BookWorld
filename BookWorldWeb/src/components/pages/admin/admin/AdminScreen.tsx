@@ -23,8 +23,8 @@ const AdminScreen = () => {
                 <button className="admin-button" onClick={handleUserManagement}>
                     User Management
                 </button>
-                <button className="admin-button" onClick={handleOtherOption}>
-                    Other Option
+                <button className="admin-button" onClick={() => navigate("/admin/add-book")}>
+                    Add Books
                 </button>
             </div>
             {/* You can add more components or elements here */}
