@@ -1,59 +1,91 @@
+import { Slider, TextField } from "@mui/material";
 import { useState } from "react";
 
 
-interface TextSearchProps {
-    value: string;
-    placeholder?: string;
-    onChange: (value: string) => void;
+interface DeleteButtonProps {
+    onClick: () => void;
+    children: React.ReactNode;
 }
 
-
-export const TextSearch = (props: TextSearchProps) => {
-    const [value, setValue] = useState(props.value);
-
+const DeleteButton = (props: DeleteButtonProps) => {
     return (
-        <div className="text-search">
-            <input
-                type="text"
-                placeholder={props.placeholder}
-                value={value}
-                onChange={(e) => {
-                    setValue(e.target.value);
-                    props.onChange(e.target.value);
-                }}
-            />
+        <div className="delete-button">
+        {props.children}
+        <button onClick={props.onClick}>
+            x
+        </button>
         </div>
     );
 }
 
+interface TextSearchProps {
+    value: string;
+    placeholder?: string;
+    onChange: (value: string|undefined) => void;
+}
+
+    
+
+export const TextSearch = (props: TextSearchProps) => {
+    const [value, setValue] = useState<string|undefined>(props.value);
+    
+    return (
+        <DeleteButton
+            onClick={() => {
+                setValue(undefined);
+                props.onChange(undefined);
+            }}
+        >
+        <TextField
+            placeholder={props.placeholder}
+            value={value}
+            onChange={(e) => {
+                setValue(e.target.value);
+                props.onChange(e.target.value);
+            }}
+        />
+        </DeleteButton>
+    );
+}
+
 interface RangeSearchProps {
-    value: number;
+    valuelow: number;
+    valuehigh: number;
     min: number;
     max: number;
-    onChange: (value: number) => void;
+    onChange: (l: number|undefined, h: number|undefined) => void;
 }
 
 
 // slider
 export const RangeSearch = (props: RangeSearchProps) => {
-    const [value, setValue] = useState(props.value);
+    const [value, setValue] = useState([props.valuelow, props.valuehigh]);
+
+    const handleChange = (event: any, newValue: number|number[]) => {
+        let [low, high] = newValue as number[];
+        setValue([low, high]);
+        props.onChange(low, high);
+    };
 
     return (
-        <div className="range-search">
-            <input
-                type="range"
-                min={props.min}
-                max={props.max}
-                value={value}
-                onChange={(e) => {
-                    setValue(Number(e.target.value));
-                    props.onChange(Number(e.target.value));
-                }}
-                />
-        </div>
+        <DeleteButton
+        onClick={() => {
+            setValue([1,5]);
+            props.onChange(undefined, undefined);
+        }}
+        >
+        <Slider
+            value={value}
+            onChange={(e) => {}}
+            onChangeCommitted={handleChange}
+            valueLabelDisplay="auto"
+            aria-labelledby="range-slider"
+            min={props.min}
+            max={props.max}
+        />
+        </DeleteButton>
     );
-}
-
+};
 
 interface SelectSearchProps {
     value: string;
