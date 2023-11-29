@@ -40,6 +40,18 @@ export class ChangeUserStatusRequest extends UpdateUserRequest {
     active: boolean;
 }
 
+export class ChangeUserDataRequest extends UpdateUserRequest {
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    name: string;
+
+    @IsString()
+    lastName: string;
+}
+
 export class UserChangePasswordRequest {
     @IsString()
     @IsNotEmpty()

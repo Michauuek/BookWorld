@@ -1,4 +1,5 @@
 import {
+    ChangeUserDataRequest,
     ChangeUserRoleRequest,
     ChangeUserStatusRequest,
     CreateUserRequest,
@@ -136,6 +137,38 @@ export class UserService extends ElasticSearchService<'users', UserResponse> {
             }
         });
         logger.info(`changeStatus() - user status changed`);
+    }
+
+    async changeUserData(request: ChangeUserDataRequest): Promise<void> {
+        logger.info({request}, `changeUserData() - request:`);
+
+        const user = await this.getById(request.userId)
+
+        if (!user) {
+            throw new BadRequestException(`User with id ${request.userId} does not exist`)
+        }
+
+        await prisma.users.update({
+            where: { id: request.userId },
+            data: {
+                email: request.email,
+                name: request.name,
+                lastName: request.lastName,
+            }
+        });
+        logger.info(`changeUserData() - user data changed`);
+    }
+
+    async getStatus(id: string): Promise<boolean> {
+        logger.info({id}, `getStatus() - id:`);
+
+        const user = await this.getById(id)
+
+        if (!user) {
+            throw new BadRequestException(`User with id ${id} does not exist`)
+        }
+
+        return user.active;
     }
 
     async resetPassword(id: string): Promise<void> {

@@ -32,6 +32,7 @@ export type Book = {
     rating: Rating,
 }
 
+
 export default function BookList() {
     const location = useLocation();
     const [books, setBooks] = useState<Book[]>([])
@@ -45,6 +46,12 @@ export default function BookList() {
             // set filter title to value {AND: [{title: {equals: value}}]}
             let newFilter = new Map(filter);
             newFilter.set("title", {contains: value});
+            setFilter(newFilter);
+        }} />,
+        <RangeSearch min={0} max={5} valuelow={0} valuehigh={5} onChange={(low, high) => {
+            // set filter rating to value {AND: [{rating: {gte: low}}, {rating: {lte: high}}]}
+            let newFilter = new Map(filter);
+            newFilter.set("ratingValue", {gte: low, lte: high});
             setFilter(newFilter);
         }} />,
     ]
