@@ -11,6 +11,8 @@ import RankingScreen from './components/pages/ranking/RankingScreen.tsx';
 import { setUpAxios } from './common/auth.tsx';
 import LoginScreen from './components/pages/register/LoginScreen.tsx';
 import GenreScreen from './components/pages/genre/GenreScreen.tsx';
+import AdminScreen from './components/pages/admin/admin/AdminScreen.tsx';
+import { UsersScreen } from './components/pages/admin/users/UsersScreen.tsx';
 
 function App() {
   setUpAxios()
@@ -28,6 +30,8 @@ function App() {
             <Route path="/register/" element={<RegisterScreen />}></Route>
             <Route path="/ranking/" element={<RankingScreen />}></Route>
             <Route path="/login" element={<LoginScreen />}></Route>
+            <Route path="/admin" element={<AdminScreen />}></Route>
+            <Route path="/admin/users" element={<UsersScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />

@@ -18,9 +18,13 @@ const Navbar: React.FC<NavbarProps> = () => {
   const navigate = useNavigate();
 
   const [loggedIn, setLoggedIn] = useState<boolean>(user.userId !== null);
-  
-  useEffect(() => { setLoggedIn(user.userId !== null); }
-  , [user]);
+  const [admin, setAdmin] = useState<boolean>(user.role === "ADMIN");
+
+  useEffect(() => { 
+    setLoggedIn(user.userId !== null); 
+    setAdmin(user.role === "ADMIN");
+  }
+    , [user]);
 
   const handleLogout = () => {
     logout();
@@ -28,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     toast(`Logged out`, { type: 'success' })
   };
 
-  const handleLogin= () => {
+  const handleLogin = () => {
     navigate('/login');
   };
 
@@ -36,13 +40,17 @@ const Navbar: React.FC<NavbarProps> = () => {
     navigate('/register');
   };
 
+  const handleAdmin = () => {
+    navigate('/admin');
+  };
+
   return (
     <nav className="navbar">
       <ul className="nav-list">
-      <header className="app-header">
-      <Link to="/">BookWorld</Link>
-      </header>
-      <div className='spacer'/>
+        <header className="app-header">
+          <Link to="/">BookWorld</Link>
+        </header>
+        <div className='spacer' />
         <li className="nav-item">
           <Link to="/">Home</Link>
         </li>
@@ -53,7 +61,14 @@ const Navbar: React.FC<NavbarProps> = () => {
           <Link to="/contact">Contact</Link>
         </li>
         {/* Add more navigation links as needed */}
-        <div className='search-field-container'><SearchField/></div>
+        <div className='search-field-container'><SearchField /></div>
+        {admin && (
+          <>
+            <li className="nav-item" onClick={handleAdmin}>
+              Admin
+            </li>
+          </>
+        )}
         {loggedIn ? (
           <>
             <li className="nav-item" onClick={handleLogout}>
