@@ -84,7 +84,6 @@ export const AddBookScreen = () => {
       console.error('Error:', error);
     }
     );
-    // Add logic to submit the book data to a server or handle as required
   };
 
   return (
