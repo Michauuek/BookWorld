@@ -16,6 +16,10 @@ const AdminScreen = () => {
         // Logic for other options
     };
 
+    const handleAddAuthor = () => {
+        navigate('/admin/add-author');
+    }
+
     return (
         <div className="admin-container">
             <h1 className="admin-title">Admin Screen</h1>
@@ -25,6 +29,9 @@ const AdminScreen = () => {
                 </button>
                 <button className="admin-button" onClick={() => navigate("/admin/add-book")}>
                     Add Books
+                </button>
+                <button className="admin-button" onClick={handleAddAuthor}>
+                    Add Author
                 </button>
             </div>
             {/* You can add more components or elements here */}

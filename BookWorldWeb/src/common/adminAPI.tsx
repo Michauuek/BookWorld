@@ -51,3 +51,13 @@ const payload = {
 export const AddBook = (request: BookRequest) => {
     return axios.post('/api/books/create', request)
 }
+
+export type Author = {
+    authorId: number;
+    name: string;
+    lastName: string;
+}
+
+export const AddAuthor = (request: Author) => {
+    return axios.post('/api/authors/create', request)
+}
