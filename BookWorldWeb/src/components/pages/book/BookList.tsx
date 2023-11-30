@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import BookThumbnail from "../../page_elements/BookThumbnail.tsx";
 import "../../page_elements/default_style.css";
 import axios from "axios";
-import { RangeSearch, Sort, Sorting, TextSearch } from "../../searchComponents/search.tsx";
+import { RangeSearch, Sorting, Sort, TextSearch } from "../../searchComponents/search.tsx";
 
 export type Author = {
     id: number,
@@ -40,23 +40,23 @@ export default function BookList() {
     const [sortings, setSortings] = useState<Sort[]>([])
 
 
-    const filters =  [
+    const filters = [
         // title
         <TextSearch placeholder="Search titles..." value={""} onChange={(value) => {
             // set filter title to value {AND: [{title: {equals: value}}]}
             let newFilter = new Map(filter);
-            newFilter.set("title", {contains: value});
+            newFilter.set("title", { contains: value });
             setFilter(newFilter);
         }} />,
         <RangeSearch min={0} max={5} valuelow={0} valuehigh={5} onChange={(low, high) => {
             // set filter rating to value {AND: [{rating: {gte: low}}, {rating: {lte: high}}]}
             let newFilter = new Map(filter);
-            newFilter.set("ratingValue", {gte: low, lte: high});
+            newFilter.set("ratingValue", { gte: low, lte: high });
             setFilter(newFilter);
         }} />,
     ]
 
-    const sorting = <Sorting avalibleColumns={["title", "author"]} onChange={(value) => {
+    const sorting = <Sorting avalibleColumns={["title", "ratingValue"]} onChange={(value) => {
         // set sorting to value {title: ASC}
         console.log(value)
         setSortings(value);
@@ -71,11 +71,9 @@ export default function BookList() {
             }
         })
 
-    
-
         // transform sortings into orderBy (object with keys as columns and values as order)
         let orderBy = sortings.reduce((acc, sort) => {
-            return {...acc, ...sort}
+            return { ...acc, ...sort }
         }, {})
 
 
@@ -102,24 +100,24 @@ export default function BookList() {
     const bookList = books.map(book => {
         return (
             <Link to={`/book/${book.id}`} key={book.id}>
-            <BookThumbnail book={book} key={book.id}/>
+                <BookThumbnail book={book} key={book.id} />
             </Link>
         )
     })
 
-    
+
 
     return (
         <div className="screen">
-        <div className="search">
-            {filters}
-        </div>
-        <div className="sorting">
-            {sorting}
-        </div>
-        <div className="book-list">
-            {bookList}
-        </div>
+            <div className="search">
+                {filters}
+            </div>
+            <div className="sorting">
+                {sorting}
+            </div>
+            <div className="book-list">
+                {bookList}
+            </div>
         </div>
     )
 }

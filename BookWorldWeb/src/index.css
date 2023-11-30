@@ -96,7 +96,7 @@ button:focus-visible {
   width: 100%;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  height: auto;
+  height: 400px;
 }
 
 .book-thumbnail:hover {

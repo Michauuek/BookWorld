@@ -1,70 +1,108 @@
-  
-  .book-details {
-    display: flex;
-  }
-  
-  .book-cover {
-    max-width: 200px;
-    margin-right: 20px;
-    border-radius: 8px;
-  }
-  
-  .book-info {
-    margin-left: 2rem;
-    text-align: left;
-  }
-  
-  .book-description {
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .book-rating {
-    font-size: 24px;
-    color: black;
-  }
-  
-  .book-star {
-    color: gold;
-    font-size: 32px;
-  }
-  
-  .book-rating-container {
-    display: ruby;
-    align-items: center;
-  }
-  
-  .book-meta{
-    margin-top: 10px;
-    font-size: 14px;
-    color: #777;
-  }
-  
-  .book-rating-section {
-    align-items: center;
-    color: black;
-    margin-left: 2rem;
-  }
+.book-details {
+  display: flex;
+}
 
-  .book-opinions {
-    margin-top: 5rem;
-    color: black;
-  }
+.book-cover {
+  max-width: 200px;
+  margin-right: 20px;
+  border-radius: 8px;
+}
 
-  .delete-button {
-    max-width: 300px;
-    height: 30px;
-    margin-top: 2rem;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .delete-button button {
-    width: 30px;
-    height: 30px;
-    margin-left: 1rem;
+.book-info {
+  margin-left: 2rem;
+  text-align: left;
+}
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.book-description {
+  font-size: 16px;
+  color: #333;
+  max-width: 40rem;
+  overflow-wrap: break-word;
+}
+
+.book-rating {
+  font-size: 24px;
+  color: black;
+}
+
+.book-star {
+  color: gold;
+  font-size: 32px;
+}
+
+.book-rating-container {
+  display: ruby;
+  align-items: center;
+}
+
+.book-meta {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #777;
+}
+
+.book-rating-section {
+  align-items: center;
+  color: black;
+  margin-left: 2rem;
+}
+
+.book-opinions {
+  margin-top: 5rem;
+  color: black;
+}
+
+.sorting {
+  width: 400px;
+  display: flex;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.sorting .MuiGrid-root {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.search {
+  width: 300px;
+  display: flex;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.delete-button {
+  max-width: 300px;
+  min-width: 300px;
+  height: 30px;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-button button {
+  width: 25px;
+  height: 25px;
+  font-size: 0;
+  border-radius: 50%;
+  margin-left: 1rem;
+  background-color: #deb887;
+
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-button button .MuiSvgIcon-root {
+  color: #fff;
+}
+
+.delete-button button:hover {
+  background-color: #deb887;
+  border: 1px solid #deb887;
+}

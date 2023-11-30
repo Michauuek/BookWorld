@@ -55,8 +55,6 @@ export const UsersScreen = () => {
         setUsers([]);
         pageRef.current = 1;
         setHasMore(true);
-        
-        
     };
 
     return (
@@ -67,7 +65,7 @@ export const UsersScreen = () => {
                 value={searchEmail}
                 onChange={handleSearchChange}
             />
-            {users.map((user, index) => (
+            {users.map((user) => (
                 <UserCard user={user} />
             ))}
             {loading && <p>Loading...</p>}
