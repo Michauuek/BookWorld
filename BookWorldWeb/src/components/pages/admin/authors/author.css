@@ -1,0 +1,52 @@
+.add-author {
+    color: black;
+    width: 60rem;
+    margin: auto;
+}
+
+.add-author form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-author div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.add-author label {
+    width: 20%;
+    text-align: right;
+    margin-right: 1rem;
+}
+
+.add-author input {
+    width: 25rem;
+    flex: 1;
+    height: 3rem;
+    border: 2px solid #deb887;
+    outline: none;
+    color: black;
+    background-color: #fefefe;
+    font-size: 1.5rem;
+    padding: 0 1rem;
+    border-radius: 5px;
+}
+
+.add-author button {
+    width: 25rem;
+    margin: 1rem auto;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: #deb887;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-author button:hover {
+    background-color: #d2a066;
+}
