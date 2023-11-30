@@ -1,14 +1,13 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Book } from './BookList';
 import { Link, useParams } from 'react-router-dom';
 import './book_screen.css';
 import "../../page_elements/default_style.css";
 import RatingInteractive from './rating/RatingInteractive';
 import { Opinions, RatingResponse } from './opinions/Opinions';
-import axios from 'axios';
-import { AddRating, BookRatingResponse, GetRating, RatingRequest } from '../../../common/booksAPI';
+import { AddRating, GetRating, RatingRequest, getBook } from '../../../common/booksAPI';
 import { AllowLoged } from '../../../common/allowOnly';
-import { AuthContext, useAuth } from '../../../common/auth';
+import { useAuth } from '../../../common/auth';
 import { toast } from 'react-toastify';
 
 // Define the props interface
@@ -40,7 +39,7 @@ const BookScreen = () => {
     const [rating, setRating] = useState<RatingResponse>(defaultRating)
 
     useEffect(() => {
-       axios.get<BookScreenProps>(`/api/books/${bookId!}`)
+      getBook(bookId!)
           .then(response => response.data)
           .then(data => setBook(data));
           

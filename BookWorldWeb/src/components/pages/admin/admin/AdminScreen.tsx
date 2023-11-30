@@ -12,10 +12,6 @@ const AdminScreen = () => {
         navigate('/admin/users');
     };
 
-    const handleOtherOption = () => {
-        // Logic for other options
-    };
-
     const handleAddAuthor = () => {
         navigate('/admin/add-author');
     }

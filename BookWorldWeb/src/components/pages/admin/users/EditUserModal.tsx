@@ -1,7 +1,6 @@
-import { Button, FormControl, Input, Modal, TextField } from "@mui/material";
-import { User } from "../../../../common/adminAPI";
+import { Button, Modal, TextField } from "@mui/material";
+import { User, changeUserData, getUserStatus, resetPassword, setUserStatus } from "../../../../common/adminAPI";
 import "../../../../index.css";
-import { changeUserData, getUserStatus, resetPassword, setUserStatus } from "../admin/adminAPI";
 import { useEffect, useState } from "react";
 
 

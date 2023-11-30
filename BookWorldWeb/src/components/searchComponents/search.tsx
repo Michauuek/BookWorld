@@ -1,4 +1,5 @@
-import { Slider, TextField } from "@mui/material";
+import { AddCircle, Cancel } from "@mui/icons-material";
+import { FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Slider, TextField } from "@mui/material";
 import { useState } from "react";
 
 
@@ -10,10 +11,10 @@ interface DeleteButtonProps {
 const DeleteButton = (props: DeleteButtonProps) => {
     return (
         <div className="delete-button">
-        {props.children}
-        <button onClick={props.onClick}>
-            x
-        </button>
+            {props.children}
+            <button onClick={props.onClick}>
+                <Cancel />
+            </button>
         </div>
     );
 }
@@ -21,29 +22,35 @@ const DeleteButton = (props: DeleteButtonProps) => {
 interface TextSearchProps {
     value: string;
     placeholder?: string;
-    onChange: (value: string|undefined) => void;
+    onChange: (value: string | undefined) => void;
 }
 
-    
+
 
 export const TextSearch = (props: TextSearchProps) => {
-    const [value, setValue] = useState<string|undefined>(props.value);
-    
+    const [value, setValue] = useState<string | undefined>(props.value);
+    const [notActive, setNotActive] = useState(false);
+
     return (
         <DeleteButton
             onClick={() => {
-                setValue(undefined);
+                setValue('');
                 props.onChange(undefined);
+                setNotActive(true);
             }}
         >
-        <TextField
-            placeholder={props.placeholder}
-            value={value}
-            onChange={(e) => {
-                setValue(e.target.value);
-                props.onChange(e.target.value);
-            }}
-        />
+            <TextField
+                placeholder={props.placeholder}
+                sx={{
+                    color: notActive ? "gray" : "#deb887",
+                }}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value);
+                    props.onChange(e.target.value);
+                    setNotActive(false);
+                }}
+            />
         </DeleteButton>
     );
 }
@@ -53,36 +60,41 @@ interface RangeSearchProps {
     valuehigh: number;
     min: number;
     max: number;
-    onChange: (l: number|undefined, h: number|undefined) => void;
+    onChange: (l: number | undefined, h: number | undefined) => void;
 }
 
 
 // slider
 export const RangeSearch = (props: RangeSearchProps) => {
     const [value, setValue] = useState([props.valuelow, props.valuehigh]);
+    const [notActive, setNotActive] = useState(false);
 
-    const handleChange = (event: any, newValue: number|number[]) => {
+    const handleChange = (_: any, newValue: number | number[]) => {
         let [low, high] = newValue as number[];
         setValue([low, high]);
         props.onChange(low, high);
+        setNotActive(false);
     };
 
     return (
         <DeleteButton
-        onClick={() => {
-            setValue([1,5]);
-            props.onChange(undefined, undefined);
-        }}
+            onClick={() => {
+                setValue([0, 5]);
+                props.onChange(undefined, undefined);
+                setNotActive(true);
+            }}
         >
-        <Slider
-            value={value}
-            onChange={(e) => {}}
-            onChangeCommitted={handleChange}
-            valueLabelDisplay="auto"
-            aria-labelledby="range-slider"
-            min={props.min}
-            max={props.max}
-        />
+            <Slider
+                value={value}
+                onChange={handleChange}
+                sx={{
+                    color: notActive ? "gray" : "#deb887",
+                }}
+                valueLabelDisplay="auto"
+                aria-labelledby="range-slider"
+                min={props.min}
+                max={props.max}
+            />
         </DeleteButton>
     );
 };
@@ -131,12 +143,14 @@ export const Sorting = (props: SortingProps) => {
         const newSorts = [...sorts];
         newSorts.push({ [props.avalibleColumns[0]]: "asc" });
         setSorts(newSorts);
+        props.onChange(newSorts);
     };
 
     const removeSort = (index: number) => {
         const newSorts = [...sorts];
         newSorts.splice(index, 1);
         setSorts(newSorts);
+        props.onChange(newSorts);
     };
 
     const changeSort = (index: number, column: string, order: "asc" | "desc") => {
@@ -144,43 +158,71 @@ export const Sorting = (props: SortingProps) => {
         const currentSort = newSorts[index];
         const currentColumn = Object.keys(currentSort)[0];
         const currentOrder = Object.values(currentSort)[0] as "asc" | "desc";
-    
+
         if (column !== currentColumn) {
             newSorts[index] = { [column]: currentOrder };
         } else if (order !== currentOrder) {
             newSorts[index] = { [currentColumn]: order };
         }
-    
+
         setSorts(newSorts);
+        props.onChange(newSorts);
     };
 
     return (
-        <div className="sorting">
+        <Grid container direction="row">
             {sorts.map((sort, index) => (
-                <div className="sort" key={index}>
-                    <select
-                        value={Object.keys(sort)[0] || ""}
-                        onChange={(e) => changeSort(index, e.target.value, Object.values(sort)[0])}
-                    >
-                        <option value="">None</option>
-                        {props.avalibleColumns.map((column) => (
-                            <option key={column} value={column}>
-                                {column}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        value={Object.values(sort)[0] || ""}
-                        onChange={(e) => changeSort(index, Object.keys(sort)[0], e.target.value as "asc" | "desc")}
-                    >
-                        <option value="asc">ASC</option>
-                        <option value="desc">DESC</option>
-                    </select>
-                    <button onClick={() => removeSort(index)}>X</button>
-                </div>
+                <Grid item container direction="row" alignItems="center" spacing={2}>
+                    <Grid item>
+                        <FormControl fullWidth>
+                            <InputLabel>Column</InputLabel>
+                            <Select
+                                size="small"
+                                sx={{
+                                    width: "100px",
+                                }}
+                                value={Object.keys(sort)[0] || ""}
+                                onChange={(e) => changeSort(index, e.target.value, Object.values(sort)[0])}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                {props.avalibleColumns.map((column: any) => (
+                                    <MenuItem key={column} value={column}>
+                                        {column}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item>
+                        <FormControl fullWidth>
+                            <InputLabel>Order</InputLabel>
+                            <Select
+                                size="small"
+                                sx={{
+                                    width: "100px",
+                                }}
+                                value={Object.values(sort)[0] || ""}
+                                onChange={(e) => changeSort(index, Object.keys(sort)[0], e.target.value as "asc" | "desc")}
+                            >
+                                <MenuItem value="asc">ASC</MenuItem>
+                                <MenuItem value="desc">DESC</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item>
+                        <IconButton size="small" onClick={() => removeSort(index)}>
+                            <Cancel />
+                        </IconButton>
+                    </Grid>
+                </Grid>
             ))}
-            <button onClick={addSort}>Add sort</button>
-            <button onClick={() => props.onChange(sorts)}>Apply</button>
-        </div>
+            <Grid item xs={12}>
+                <IconButton onClick={addSort}>
+                    <AddCircle />
+                </IconButton>
+            </Grid>
+        </Grid>
     );
-}
+};
