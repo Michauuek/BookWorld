@@ -108,7 +108,7 @@ Table MailTemplates {
   dynamicVariables String [not null]
 }
 
-Ref: Ratings.bookId > Books.id [delete: No Action]
+Ref: Ratings.bookId > Books.id [delete: Cascade]
 
 Ref: Ratings.userId > Users.id [delete: Cascade]
 

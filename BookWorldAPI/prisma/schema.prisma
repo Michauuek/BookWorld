@@ -42,7 +42,7 @@ model Authors {
 
 model Ratings {
   id        Int       @id @default(autoincrement())
-  book      Books     @relation(fields: [bookId], references: [id], onDelete: NoAction)
+  book      Books     @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId    Int
   user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
