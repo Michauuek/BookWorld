@@ -1,0 +1,25 @@
+.contact-info p {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+    border-bottom: 2px solid chocolate;
+    width: 100%;
+    text-align: left;
+    padding: 0 0.3rem;
+}
+
+.contact-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 60rem;
+    margin: 4rem auto;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
