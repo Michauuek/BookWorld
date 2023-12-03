@@ -12,6 +12,7 @@
 .add-author div {
     display: flex;
     align-items: center;
+    flex-direction: column;
     margin-bottom: 1.5rem;
 }
 
@@ -35,7 +36,7 @@
 }
 
 .add-author button {
-    width: 25rem;
+    width: 20rem;
     margin: 1rem auto;
     padding: 1rem 2rem;
     font-size: 1.5rem;

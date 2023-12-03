@@ -4,6 +4,7 @@ import './add_book.css';
 import { AddBook } from '../../../../common/adminAPI';
 import { toast } from 'react-toastify';
 import { BookForm } from './bookForm';
+import {useAuth} from "../../../../common/auth.tsx";
 
 interface BookRequest {
   title: string;
@@ -16,7 +17,7 @@ interface BookRequest {
 
 export const AddBookScreen = () => {
   const navigate = useNavigate();
-
+  const role = useAuth().user.role;
   const handleFormSubmit = (newBook: BookRequest) => {
 
     console.log('New Book:', newBook);
@@ -35,10 +36,18 @@ export const AddBookScreen = () => {
 
   return (
     <div className='add-book'>
-      <h2>Add a New Book</h2>
-      <BookForm onSubmit={handleFormSubmit}
-        book={undefined}
-      />
+      {role === 'ADMIN' ? (
+          <>
+            <h2>Add a New Book</h2>
+            <BookForm onSubmit={handleFormSubmit}
+              book={undefined}
+            />
+          </>
+        ) : (
+            <>
+              <h1 className="admin-title">You are not an admin</h1>
+            </>
+        )}
     </div>
   );
 };

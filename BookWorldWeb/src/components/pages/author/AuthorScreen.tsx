@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import "../../page_elements/default_style.css";
-import { Author, Book } from '../book/BookList';
+import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
 import './author_screen.css';
 import { LikeButton } from '../../page_elements/like_button/LikeButton';
@@ -11,7 +11,6 @@ import { GetAuthorLike, LikeAuthor } from '../../../common/favouriteAPI';
 import { AllowLoged } from '../../../common/allowOnly';
 
 
-// Define the props interface
 type AuthorScreenProps =
   {
     id: number,
@@ -19,7 +18,6 @@ type AuthorScreenProps =
     lastName: string,
   }
 
-// Define the BookScreen functional component
 const AuthorScreen = () => {
   const { authorId } = useParams();
   const { user } = useAuth();
@@ -32,10 +30,6 @@ const AuthorScreen = () => {
   const [author, setAuthor] = useState<AuthorScreenProps>(defaultAuthor)
   const [bestRated, setBestRated] = useState<Book[]>([])
   const [liked, setLiked] = useState<boolean>(false)
-
-  // useEffect(() => {
-  //   axios.get<AuthorScreenProps>(`/api/authors/${authorId!}`)
-  // }, [authorId])
 
 
   const bestRatedPayload = {
