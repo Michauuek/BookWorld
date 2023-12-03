@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { BookRequest } from "../../../../common/adminAPI";
 import { getBook, updateBook } from "../../../../common/booksAPI";
 import { toast } from "react-toastify";
+import {useAuth} from "../../../../common/auth.tsx";
 
 
 export const EditBook = () => {
@@ -14,6 +15,7 @@ export const EditBook = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const nav = useNavigate()
+    const role = useAuth().user.role;
 
     useEffect(() => {
         setIsLoading(true);
@@ -51,8 +53,16 @@ export const EditBook = () => {
 
     return (
         <div className='add-book'>
-            <h2>Modify Book</h2>
-            {form}
+            {role === 'ADMIN' ? (
+                <>
+                    <h2>Modify Book</h2>
+                    {form}
+                </>
+            ) : (
+                <div>
+                    <h1 className="admin-title">You are not an admin</h1>
+                </div>
+            )}
         </div>
     )
 

@@ -11,7 +11,6 @@ interface Props {
 }
 
 
-// buttons for: change password, delete user
 export const EditUserModal = ({ user, show, handleClose }: Props) => {
     const [userState, setUserState] = useState<boolean | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +43,6 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
     const handleChangePassword = () => {
         setIsLoading(true);
         setChangePasswordMessage("Sending request...");
-        // change password
         resetPassword(user.id).then(() => {
             setChangePasswordMessage("Done.");
         }).catch(() => {
@@ -61,9 +59,7 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
     const handleSubmit = (e: any) => {
         e.preventDefault();
         
-        // gather data from form
         const data = new FormData(e.target);
-
         const name = data.get("name") as string;
         const lastName = data.get("lastName") as string;
         const email = data.get("email") as string;
@@ -77,13 +73,10 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
         }
         
         setIsLoading(true);
-
         changeUserData(user.id, email, name, lastName).finally(() => {
             setIsLoading(false);
         }
         );
-
-        
     }
 
     const message = userState === undefined ? "Loading..." : userState ? "Block user" : "Unblock user";

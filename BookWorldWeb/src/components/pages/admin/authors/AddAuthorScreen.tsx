@@ -3,8 +3,10 @@ import {AddAuthor} from "../../../../common/adminAPI.tsx";
 import {toast} from "react-toastify";
 import {Author} from "../../../../common/adminAPI.tsx";
 import './author.css';
+import {useAuth} from "../../../../common/auth.tsx";
 
 export const AddAuthorScreen = () => {
+    const role = useAuth().user.role;
     const [newAuthor, setNewAuthor] = useState<Author>({
         authorId: 0,
         name: '',
@@ -34,33 +36,41 @@ export const AddAuthorScreen = () => {
 
     return (
         <div className={'add-author'}>
-            <h2>Add new author</h2>
-            <form onSubmit={handleFormSubmit}>
+            {role === 'ADMIN' ? (
                 <div>
-                    <label htmlFor="name">Name:</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={newAuthor.name}
-                        onChange={handleInputChange}
-                        required
-                    />
+                    <h2>Add new author</h2>
+                    <form onSubmit={handleFormSubmit}>
+                        <div>
+                            <label htmlFor="name">Name:</label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={newAuthor.name}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="lastName">Last Name:</label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                value={newAuthor.lastName}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                        <button type="submit">Add Author</button>
+                    </form>
                 </div>
-                <div>
-                    <label htmlFor="lastName">Last Name:</label>
-                    <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={newAuthor.lastName}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <button type="submit">Add Author</button>
-            </form>
 
+         ) : (
+            <div>
+                <h1 className="admin-title">You are not an admin</h1>
+            </div>
+        )}
         </div>
-    )
+    );
 }

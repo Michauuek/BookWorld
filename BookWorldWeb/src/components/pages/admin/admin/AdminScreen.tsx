@@ -1,12 +1,12 @@
 
 import { useNavigate } from 'react-router-dom';
 import './admin.css';
+import {useAuth} from "../../../../common/auth.tsx";
 
 
-
-// Define the AdminScreen functional component
 const AdminScreen = () => {
     const navigate = useNavigate();
+    const role = useAuth().user.role;
 
     const handleUserManagement = () => {
         navigate('/admin/users');
@@ -18,19 +18,26 @@ const AdminScreen = () => {
 
     return (
         <div className="admin-container">
-            <h1 className="admin-title">Admin Screen</h1>
-            <div className="admin-button-container">
-                <button className="admin-button" onClick={handleUserManagement}>
-                    User Management
-                </button>
-                <button className="admin-button" onClick={() => navigate("/admin/add-book")}>
-                    Add Books
-                </button>
-                <button className="admin-button" onClick={handleAddAuthor}>
-                    Add Author
-                </button>
-            </div>
-            {/* You can add more components or elements here */}
+            {role === 'ADMIN' ? (
+                <div>
+                    <h1 className="admin-title">Admin Screen</h1>
+                    <div className="admin-button-container">
+                        <button className="admin-button" onClick={handleUserManagement}>
+                            User Management
+                        </button>
+                        <button className="admin-button" onClick={() => navigate("/admin/add-book")}>
+                            Add Books
+                        </button>
+                        <button className="admin-button" onClick={handleAddAuthor}>
+                            Add Author
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div>
+                    <h1 className="admin-title">You are not an admin</h1>
+                </div>
+            )}
         </div>
     );
 };
