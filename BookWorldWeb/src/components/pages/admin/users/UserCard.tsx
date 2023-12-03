@@ -19,7 +19,6 @@ export const UserCard = (props: UserCardProps) => {
       <div className="user-info-right">
         <p>Role: {props.user.role}</p>
         <p>Created At: {new Date(props.user.createdAt).toDateString()}</p>
-        {/* Add more information on the right side as needed */}
       </div>
       <button
         onClick={() => setShow(true)}

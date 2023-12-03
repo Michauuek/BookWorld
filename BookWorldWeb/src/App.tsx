@@ -16,6 +16,7 @@ import { UsersScreen } from './components/pages/admin/users/UsersScreen.tsx';
 import { AddBookScreen } from './components/pages/admin/books/AddBookScreen.tsx';
 import { AddAuthorScreen } from './components/pages/admin/authors/AddAuthorScreen.tsx';
 import { EditBook } from './components/pages/admin/books/EditBook.tsx';
+import { ContactScreen } from './components/pages/general/ContactScreen.tsx';
 
 function App() {
   setUpAxios()
@@ -38,6 +39,7 @@ function App() {
             <Route path="/admin/add-book" element={<AddBookScreen />}></Route>
             <Route path="/admin/add-author" element={<AddAuthorScreen />}></Route>
             <Route path="/admin/book/:bookId" element={<EditBook />}></Route>
+            <Route path="/contact" element={<ContactScreen />}></Route>
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
           <Footer />
