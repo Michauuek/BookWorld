@@ -39,10 +39,6 @@ const BookScreen = () => {
   const [rating, setRating] = useState<RatingResponse>(defaultRating)
 
   useEffect(() => {
-    getBook(bookId!)
-      .then(response => response.data)
-      .then(data => setBook(data));
-
     if (user.userId !== undefined) {
       GetRating(parseInt(bookId!), user.userId!)
         .then(response => response.data)
@@ -54,6 +50,12 @@ const BookScreen = () => {
         });
     }
 
+  }, [bookId])
+
+  useEffect(() => {
+    getBook(bookId!)
+      .then(response => response.data)
+      .then(data => setBook(data));
   }, [bookId, rating])
 
   return (
