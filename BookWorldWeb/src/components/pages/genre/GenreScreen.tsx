@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import "../../page_elements/default_style.css";
+import {Link, useParams} from 'react-router-dom';
 import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
 import './genre_screen.css';
 import { LikeButton } from '../../page_elements/like_button/LikeButton';
 import axios from 'axios';
 import { useAuth } from '../../../common/auth';
-import { GetAuthorLike, GetGenreLike, LikeAuthor, LikeGenre } from '../../../common/favouriteAPI';
+import { GetGenreLike, LikeGenre } from '../../../common/favouriteAPI';
 import { AllowLoged } from '../../../common/allowOnly';
+import "../../page_elements/default_style.css";
 
 
 // Define the props interface
@@ -29,13 +29,7 @@ const GenreScreen = () => {
   }
   const [genre, setGenre] = useState<GenreScreenProps>(defaultGenre)
   const [bestRated, setBestRated] = useState<Book[]>([])
-  const [liked, setLiked] = useState<boolean>(false)
-
-  // useEffect(() => {
-  //   axios.get<GenreScreenProps>(`/api/genres/${genreId!}`)
-  // }, [genreId])
-
-
+  const [liked, setLiked] = useState<boolean>(false);
   const bestRatedPayload = {
     where: {
       genres: {
@@ -93,8 +87,10 @@ const GenreScreen = () => {
       <h2 className='title'>Best rated books</h2>
       <div className="book-list">
         {
-          bestRated.map((book, index) => (
-            <BookThumbnail book={book} key={index} />
+          bestRated.map((book) => (
+              <Link to={`/book/${book.id}`} key={book.id}>
+                <BookThumbnail book={book} key={book.id} />
+              </Link>
           ))
         }
       </div>

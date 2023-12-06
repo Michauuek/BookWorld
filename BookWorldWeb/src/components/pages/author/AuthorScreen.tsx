@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import "../../page_elements/default_style.css";
+import {Link, useParams} from 'react-router-dom';
 import { Book } from '../book/BookList';
 import BookThumbnail from '../../page_elements/BookThumbnail';
 import './author_screen.css';
@@ -9,6 +8,7 @@ import axios from 'axios';
 import { useAuth } from '../../../common/auth';
 import { GetAuthorLike, LikeAuthor } from '../../../common/favouriteAPI';
 import { AllowLoged } from '../../../common/allowOnly';
+import "../../page_elements/default_style.css";
 
 
 type AuthorScreenProps =
@@ -90,7 +90,9 @@ const AuthorScreen = () => {
       <div className="book-list">
       {
         bestRated.map((book, index) => (
-          <BookThumbnail book={book} key={index} />
+            <Link to={`/book/${book.id}`} key={index}>
+              <BookThumbnail book={book} key={index} />
+            </Link>
         ))
       }
       </div>
