@@ -14,8 +14,6 @@
     margin-bottom: 30px;
   }
   
-
-  
   .user-screen .label {
     font-weight: bold;
     margin-right: 5px;
@@ -24,4 +22,35 @@
   .user-screen .value {
     color: #333;
   }
-  
+
+  .unsel {
+      width: 30rem;
+color: chocolate;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2em;
+  margin: 15px auto;
+  border-bottom: 1px solid #333;
+  padding: 10px;
+  }
+
+
+.liked {
+  display: block;
+  font-size: 1.2em;
+  color: chocolate;
+}
+
+button {
+  background-color: #deb887;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d2a066;
+}

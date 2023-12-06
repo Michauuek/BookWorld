@@ -3,7 +3,6 @@ import { useAuth } from "../../../common/auth";
 import { User} from "../../../common/adminAPI";
 import axios from "axios";
 import { LikedSection } from "./LikedSection";
-import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import "./user.css";
 

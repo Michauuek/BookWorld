@@ -30,6 +30,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     logout();
     setLoggedIn(false);
     toast(`Logged out`, { type: 'success' })
+    navigate('/')
   };
 
   const handleLogin = () => {
