@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../common/auth";
 import { User } from "../../../common/adminAPI";
 import axios from "axios";
+import { LikedSection } from "./LikedSection";
 
 
 const UnselLabel = (props: {label: string, value: ReactNode}) => {
@@ -30,7 +31,7 @@ export const UserScreen = () => {
             <UnselLabel label="Role" value={allUser?.role} />
             <UnselLabel label="Created at" value={allUser?.createdAt?.toString()} />
 
-
+            <LikedSection user={user.userId!} />
             <h1>Reset password</h1>
             <form>
                 <label>
