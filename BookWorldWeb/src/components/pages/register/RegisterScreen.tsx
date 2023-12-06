@@ -6,6 +6,7 @@ import axios from 'axios';
 import "./login_screen.css";
 import 'react-toastify/dist/ReactToastify.css'
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 type RegisterRequest = {
     email: string,
@@ -25,6 +26,7 @@ type UserResponse = {
 
 const RegisterScreen = () => {
     const { login } = useAuth();
+    const nav = useNavigate();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -38,7 +40,7 @@ const RegisterScreen = () => {
         axios.post<UserResponse>('/api/users/create', data)
         .then(response => {
             toast(`User ${response.data.name} ${response.data.lastName} created`, { type: 'success' })
-            console.log(response.data);
+            nav("/login")
         })
         .catch((error) => {
             console.log(error);

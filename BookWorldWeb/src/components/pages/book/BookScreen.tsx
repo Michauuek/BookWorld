@@ -18,46 +18,43 @@ const BookScreen = () => {
   const { bookId } = useParams();
   const { user } = useAuth();
 
-    const defaultBook: BookScreenProps = {
-        id: 0,
-        title: '',
-        description: '',
-        isbn: '',
-        genres: [],
-        author: {id:0, name:'', lastName:''},
-        coverUrl: '',
-        rating: {value:0, count:0},
+  const defaultBook: BookScreenProps = {
+    id: 0,
+    title: '',
+    description: '',
+    isbn: '',
+    genres: [],
+    author: { id: 0, name: '', lastName: '' },
+    coverUrl: '',
+    rating: { value: 0, count: 0 },
+  }
+  const defaultRating: RatingResponse = {
+    id: 0,
+    bookId: 0,
+    userId: '',
+    comment: '',
+    rating: 0,
+  }
+  const [book, setBook] = useState<BookScreenProps>(defaultBook)
+  const [rating, setRating] = useState<RatingResponse>(defaultRating)
+
+  useEffect(() => {
+    getBook(bookId!)
+      .then(response => response.data)
+      .then(data => setBook(data));
+
+    if (user.userId !== undefined) {
+      GetRating(parseInt(bookId!), user.userId!)
+        .then(response => response.data)
+        .then(data => {
+          if (data.length > 0) {
+            setRating(data[0]); // Set the first element of the list as the rating
+
+          }
+        });
     }
-    const defaultRating: RatingResponse = {
-      id: 0,
-      bookId: 0,
-      userId: '',
-      comment: '',
-      rating: 0,
-    }
-    const [book, setBook] = useState<BookScreenProps>(defaultBook)
-    const [rating, setRating] = useState<RatingResponse>(defaultRating)
 
-    useEffect(() => {
-      getBook(bookId!)
-          .then(response => response.data)
-          .then(data => setBook(data));
-          
-          if(user.userId !== undefined)
-          {
-          GetRating(parseInt(bookId!), user.userId!)
-          .then(response => response.data)
-          .then(data => {
-            if (data.length > 0) {
-              setRating(data[0]); // Set the first element of the list as the rating
-
-            }
-          });
-        }
-
-        console.log(rating);
-
-    },[bookId])
+  }, [bookId, rating])
 
   return (
     <div className="screen">
@@ -93,8 +90,8 @@ const BookScreen = () => {
             <div className="book-rating">{book.rating.value.toFixed(2)}/5</div>
           </div>
           <AllowLoged>
-          <br></br>Rate book:
-          <RatingInteractive key={rating.rating} presetRating={rating.rating} presentComment={rating.comment ?? ""} onClick={(number, comment) => { 
+            <br></br>Rate book:
+            <RatingInteractive key={rating.rating} presetRating={rating.rating} presentComment={rating.comment ?? ""} onClick={(number, comment) => {
               const request: RatingRequest = {
                 bookId: book.id,
                 rating: number,
@@ -102,13 +99,13 @@ const BookScreen = () => {
               }
               AddRating(request).then(() => {
                 GetRating(parseInt(bookId!), user.userId!)
-                .then(response => response.data)
-                .then(data => {
-                  if (data.length > 0) {
-                    setRating(data[0]); // Set the first element of the list as the rating
-                    toast(`Book ${book.title} rated ${number}`, { type: 'success' })
-                  }
-                });
+                  .then(response => response.data)
+                  .then(data => {
+                    if (data.length > 0) {
+                      setRating(data[0]); // Set the first element of the list as the rating
+                      toast(`Book ${book.title} rated ${number}`, { type: 'success' })
+                    }
+                  });
               }
               );
               console.log(`ocenka ${number} komentarz "${comment}"`)
@@ -118,7 +115,7 @@ const BookScreen = () => {
       </div>
       <div className='book-opinions'>
         <h3>Opinions:</h3>
-        <Opinions bookId={book.id}/>
+        <Opinions bookId={book.id} rating={rating} />
       </div>
     </div>
   );
