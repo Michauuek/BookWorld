@@ -71,6 +71,9 @@ const Navbar: React.FC<NavbarProps> = () => {
         )}
         {loggedIn ? (
           <>
+            <li className="nav-item">
+              <Link to={`/user`}>{user.email?.toString()||''}</Link>
+            </li>
             <li className="nav-item" onClick={handleLogout}>
               Logout
             </li>

@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../common/auth";
-import { User } from "../../../common/adminAPI";
+import { User, passwordChange } from "../../../common/adminAPI";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const UnselLabel = (props: {label: string, value: ReactNode}) => {
@@ -21,6 +21,36 @@ export const UserScreen = () => {
         .then(data => setUser(data));
     }, [user.userId])   
 
+
+    const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        const data = {
+            pass1: event.currentTarget.pass1.value,
+            pass2: event.currentTarget.pass2.value,
+        }
+
+        if (data.pass1 !== data.pass2) {
+            toast(`Passwords don't match`, { type: 'error' })
+            return
+        }
+
+        if(allUser?.email === undefined) {
+            toast(`You must be logged in to change password`, { type: 'error' })
+            return
+        }
+            
+        passwordChange(allUser.email, data.pass1, data.pass2)
+        .then(() => {
+            toast(`Password changed!`, { type: 'success' })
+            window.location.reload()
+        })
+        .catch((error) => {
+            console.log(error);
+            toast(error.message, { type: 'error' })
+        })
+    }
+
     return <>
         <div className="screen">
             <h1>User</h1>
@@ -29,17 +59,17 @@ export const UserScreen = () => {
             <UnselLabel label="Last name" value={allUser?.lastName} />
             <UnselLabel label="Role" value={allUser?.role} />
             <UnselLabel label="Created at" value={allUser?.createdAt?.toString()} />
-
+        
 
             <h1>Reset password</h1>
-            <form>
+            <form onSubmit={handleResetPassword}>
                 <label>
                     New password: 
-                    <input type="password" placeholder="new password" />
+                    <input type="password" name='pass1' placeholder="new password" />
                 </label><br/>
                 <label>
                     Confirm new password:
-                    <input type="password" placeholder="confirm new password" />
+                    <input type="password" name='pass2' placeholder="confirm new password" />
                 </label><br/>
                 <button type="submit">Reset password</button>
             </form>
