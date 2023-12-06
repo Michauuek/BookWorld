@@ -77,18 +77,69 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
 
     async update(id: number, bookRequest: BookRequest): Promise<BookResponse> {
         logger.info(`update() - id: ${id}, bookRequest: ${bookRequest}`);
-        const book = await prisma.books.update({
-            where: { id: id },
-            data: {
-                title: bookRequest.title,
-                description: bookRequest.description,
-                authorId: bookRequest.authorId,
-                isbn: bookRequest.isbn,
-                coverUrl: bookRequest.coverUrl
+
+        const updatedBook = await prisma.$transaction(async (prismaClient) => {
+            // Fetch the existing book with its associated genres
+            const existingBook = await prismaClient.books.findUnique({
+                where: { id: id },
+                include: {
+                    genres: true,
+                },
+            });
+
+            if (!existingBook) {
+                throw new EntityNotFoundException(`Book with id ${id} does not exist`)
             }
+
+            // Update book fields
+            const updatedBook = await prismaClient.books.update({
+                where: { id: id },
+                data: {
+                    title: bookRequest.title,
+                    description: bookRequest.description,
+                    authorId: bookRequest.authorId,
+                    isbn: bookRequest.isbn,
+                    coverUrl: bookRequest.coverUrl,
+                },
+            });
+
+            // Update genres
+            const newGenreIds = bookRequest.genresIds;
+            const existingGenreIds = existingBook.genres.map((genre) => genre.genreId);
+
+            const genresToAdd = newGenreIds.filter((genreId) => !existingGenreIds.includes(genreId));
+            const genresToRemove = existingGenreIds.filter((genreId) => !newGenreIds.includes(genreId));
+
+            // Add new genres
+            await Promise.all(
+                genresToAdd.map(async (genreId) => {
+                    await prismaClient.bookGenres.create({
+                        data: {
+                            bookId: id,
+                            genreId: genreId,
+                        },
+                    });
+                })
+            );
+
+            // Remove old genres
+            await Promise.all(
+                genresToRemove.map(async (genreId) => {
+                    await prismaClient.bookGenres.delete({
+                        where: {
+                            bookId_genreId: {
+                                bookId: id,
+                                genreId: genreId,
+                            },
+                        },
+                    });
+                })
+            );
+            return updatedBook;
         });
-        const bookResponse = await this.mapToResponse(book);
-        logger.info({bookResponse}, `update() - book:`);
+
+        const bookResponse = await this.mapToResponse(updatedBook);
+        logger.info({ bookResponse }, `update() - book:`);
         return bookResponse;
     }
 
