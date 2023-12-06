@@ -75,6 +75,10 @@ export const resetPassword = (id: string) => {
   return axios.patch(`api/users/password/reset`, { userId: id })
 }
 
+export const passwordChange = (email: string, oldPassword: string, newPassword: string) => {
+  return axios.patch(`api/users/password/change`, { email, oldPassword, newPassword })
+}
+
 
 export const changeUserData = (id: string, email: string, name: string, lastName: string) => {
   return axios.patch(`api/users/data`, { userId: id, email, name, lastName })
