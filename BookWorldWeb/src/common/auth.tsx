@@ -2,10 +2,10 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 
 
-function setLocalStorage(token: string, refreshToken: string, role: string, userId: string) {
+function setLocalStorage(token: string, refreshToken: string, role: string, userId: string, email: string) {
   sessionStorage.setItem("token", token);
   sessionStorage.setItem("refreshToken", refreshToken);
-  sessionStorage.setItem("user", JSON.stringify({role, userId}));
+  sessionStorage.setItem("user", JSON.stringify({role, userId, email}));
 }
 
 function cleanLocalStorage() {
@@ -19,7 +19,7 @@ function getToken(email: string, password: string) {
     email,
     password,
   }).then((response) => {
-    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId);
+    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId, email);
     setUpAxios();
     return response;
   });
@@ -29,7 +29,7 @@ function refreshToken() {
   return axios.post("/api/auth/refresh", {
     refreshToken: sessionStorage.getItem("refreshToken"),
   }).then((response) => {
-    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId);
+    setLocalStorage(response.data.token, response.data.refreshToken, response.data.role, response.data.userId, response.data.email);
     setUpAxios();
     return response;
   });
