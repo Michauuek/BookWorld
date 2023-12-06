@@ -26,6 +26,7 @@ export const UserScreen = () => {
         event.preventDefault();
 
         const data = {
+            oldpass: event.currentTarget.oldpass.value,
             pass1: event.currentTarget.pass1.value,
             pass2: event.currentTarget.pass2.value,
         }
@@ -40,7 +41,7 @@ export const UserScreen = () => {
             return
         }
             
-        passwordChange(allUser.email, data.pass1, data.pass2)
+        passwordChange(allUser.email, data.oldpass, data.pass2)
         .then(() => {
             toast(`Password changed!`, { type: 'success' })
             window.location.reload()
@@ -63,6 +64,10 @@ export const UserScreen = () => {
 
             <h1>Reset password</h1>
             <form onSubmit={handleResetPassword}>
+                <label>
+                    Old password:
+                    <input type="password" name='oldpass' placeholder="old password" />
+                </label><br/>
                 <label>
                     New password: 
                     <input type="password" name='pass1' placeholder="new password" />
