@@ -5,6 +5,7 @@ import "./opinions.css";
 type OpinionsProps = 
 {
     bookId: number;
+    rating: RatingResponse;
 }
 
 export type RatingResponse = {
@@ -44,7 +45,7 @@ export const Opinions = (props: OpinionsProps) => {
         })
           .then(response => response.json())
           .then(data => setRatings(data))
-      }, [props.bookId])
+      }, [props.bookId, props.rating])
 
     const opinionsList = ratings.map(rating => {
         return (

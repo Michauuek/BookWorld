@@ -58,7 +58,6 @@ export default function BookList() {
 
     const sorting = <Sorting avalibleColumns={["title", "ratingValue"]} onChange={(value) => {
         // set sorting to value {title: ASC}
-        console.log(value)
         setSortings(value);
     }} />
 
