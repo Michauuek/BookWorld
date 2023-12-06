@@ -66,7 +66,12 @@ export const UsersScreen = () => {
                 onChange={handleSearchChange}
             />
             {users.map((user) => (
-                <UserCard user={user} />
+                <UserCard user={user} refreshUsers={() => {
+                    setUsers([]);
+                    pageRef.current = 1;
+                    setHasMore(true);
+                }
+                } />
             ))}
             {loading && <p>Loading...</p>}
             <div className="end-marker"></div>

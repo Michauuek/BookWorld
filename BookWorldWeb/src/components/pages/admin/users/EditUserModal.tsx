@@ -8,10 +8,11 @@ interface Props {
     user: User;
     handleClose: () => void;
     show: boolean;
+    refreshUsers: () => void;
 }
 
 
-export const EditUserModal = ({ user, show, handleClose }: Props) => {
+export const EditUserModal = ({ user, show, handleClose, refreshUsers }: Props) => {
     const [userState, setUserState] = useState<boolean | undefined>(undefined);
     const [isLoading, setIsLoading] = useState(false);
     const [changePasswordMessge, setChangePasswordMessage] = useState<string>("Change password");
@@ -34,6 +35,7 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
         setIsLoading(true);
         setUserStatus(user.id, !userState).then(() => {
             setUserState(!userState);
+            refreshUsers();
         }
         ).finally(() => {
             setIsLoading(false);
@@ -45,6 +47,7 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
         setChangePasswordMessage("Sending request...");
         resetPassword(user.id).then(() => {
             setChangePasswordMessage("Done.");
+            refreshUsers();
         }).catch(() => {
             setChangePasswordMessage("failed.");
         })
@@ -75,6 +78,7 @@ export const EditUserModal = ({ user, show, handleClose }: Props) => {
         setIsLoading(true);
         changeUserData(user.id, email, name, lastName).finally(() => {
             setIsLoading(false);
+            refreshUsers();
         }
         );
     }
