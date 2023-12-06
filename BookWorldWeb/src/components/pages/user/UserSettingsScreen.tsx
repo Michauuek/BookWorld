@@ -11,7 +11,7 @@ const UnselLabel = (props: {label: string, value: ReactNode}) => {
 }
 
 
-export const UserScreen = () => {
+export const UserSettingsScreen = () => {
     const { user } = useAuth();
 
     const [allUser, setUser] = useState<User|null>(null)
@@ -55,14 +55,6 @@ export const UserScreen = () => {
 
     return <>
         <div className="screen">
-            <h1>User</h1>
-            <UnselLabel label="Email" value={allUser?.email} />
-            <UnselLabel label="Name" value={allUser?.name} />
-            <UnselLabel label="Last name" value={allUser?.lastName} />
-            <UnselLabel label="Role" value={allUser?.role} />
-            <UnselLabel label="Created at" value={allUser?.createdAt?.toString()} />
-
-            <LikedSection user={user.userId!} />
             <h1>Reset password</h1>
             <form onSubmit={handleResetPassword}>
                 <label>
