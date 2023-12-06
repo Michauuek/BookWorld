@@ -4,13 +4,14 @@ import { EditUserModal } from './EditUserModal';
 
 interface UserCardProps {
   user: User
+  refreshUsers: () => void
 }
 
 export const UserCard = (props: UserCardProps) => {
   const [show, setShow] = useState(false);
 
   return (<>
-    {<EditUserModal user={props.user} handleClose={() => setShow(false)} show={show}/>}
+    {<EditUserModal user={props.user} handleClose={() => setShow(false)} show={show} refreshUsers={props.refreshUsers} />}
     <div className="user-card">
       <div className="user-info-left">
         <h2>{`${props.user.name} ${props.user.lastName}`}</h2>

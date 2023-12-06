@@ -4,6 +4,7 @@ import {toast} from "react-toastify";
 import {Author} from "../../../../common/adminAPI.tsx";
 import './author.css';
 import {useAuth} from "../../../../common/auth.tsx";
+import {useNavigate} from "react-router-dom";
 
 export const AddAuthorScreen = () => {
     const role = useAuth().user.role;
@@ -19,6 +20,7 @@ export const AddAuthorScreen = () => {
             [name]: value,
         });
     };
+    const navigate = useNavigate();
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('New Author:', newAuthor);
@@ -26,6 +28,7 @@ export const AddAuthorScreen = () => {
         AddAuthor(newAuthor).then(response => {
                 toast(`Added author ${newAuthor.name}`, { type: 'success' })
                 console.log('Response:', response);
+                navigate('/author/' + response.data.id);
             }
         ).catch(error => {
                 toast(error.message, { type: 'error' })
