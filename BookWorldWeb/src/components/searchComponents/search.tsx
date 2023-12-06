@@ -69,8 +69,8 @@ export const RangeSearch = (props: RangeSearchProps) => {
     const [value, setValue] = useState([props.valuelow, props.valuehigh]);
     const [notActive, setNotActive] = useState(false);
 
-    const handleChange = (_: any, newValue: number | number[]) => {
-        let [low, high] = newValue as number[];
+    const handleChange = (_: unknown, newValue: number | number[]) => {
+        const [low, high] = newValue as number[];
         setValue([low, high]);
         props.onChange(low, high);
         setNotActive(false);
@@ -90,6 +90,7 @@ export const RangeSearch = (props: RangeSearchProps) => {
                 sx={{
                     color: notActive ? "gray" : "#deb887",
                 }}
+                step={0.1}
                 valueLabelDisplay="auto"
                 aria-labelledby="range-slider"
                 min={props.min}
@@ -187,7 +188,7 @@ export const Sorting = (props: SortingProps) => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                {props.avalibleColumns.map((column: any) => (
+                                {props.avalibleColumns.map((column) => (
                                     <MenuItem key={column} value={column}>
                                         {column}
                                     </MenuItem>

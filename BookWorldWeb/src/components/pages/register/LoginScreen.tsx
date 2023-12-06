@@ -16,7 +16,7 @@ const LoginScreen = () => {
     
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        login(email, password).then(response => {
+        login(email, password).then(() => {
             toast(`Logged in as ${email}`, { type: 'success' })
             nav('/');
         }

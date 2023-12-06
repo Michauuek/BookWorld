@@ -44,13 +44,13 @@ export default function BookList() {
         // title
         <TextSearch placeholder="Search titles..." value={""} onChange={(value) => {
             // set filter title to value {AND: [{title: {equals: value}}]}
-            let newFilter = new Map(filter);
+            const newFilter = new Map(filter);
             newFilter.set("title", { contains: value });
             setFilter(newFilter);
         }} />,
         <RangeSearch min={0} max={5} valuelow={0} valuehigh={5} onChange={(low, high) => {
             // set filter rating to value {AND: [{rating: {gte: low}}, {rating: {lte: high}}]}
-            let newFilter = new Map(filter);
+            const newFilter = new Map(filter);
             newFilter.set("ratingValue", { gte: low, lte: high });
             setFilter(newFilter);
         }} />,
@@ -64,25 +64,25 @@ export default function BookList() {
 
 
     useEffect(() => {
-        let filters = Array.from(filter.entries()).map(([key, value]) => {
+        const filters = Array.from(filter.entries()).map(([key, value]) => {
             return {
                 [key]: value
             }
         })
 
         // transform sortings into orderBy (object with keys as columns and values as order)
-        let orderBy = sortings.reduce((acc, sort) => {
+        const orderBy = sortings.reduce((acc, sort) => {
             return { ...acc, ...sort }
         }, {})
 
 
-        let where = {
+        const where = {
             AND: [
                 ...filters
             ]
         }
 
-        let request = {
+        const request = {
             where: where,
             orderBy: orderBy,
         }
