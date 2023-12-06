@@ -3,6 +3,7 @@ import { Genre } from "../../../common/genreAPI";
 import { Author } from "../../../common/authorAPI";
 import { GetAuthorLikes, GetGenreLikes } from "../../../common/favouriteAPI";
 import { Link } from "react-router-dom";
+import "../../page_elements/default_style.css";
 
 type LikedSectionProps = {
     user: string;
@@ -37,11 +38,11 @@ export const LikedSection = (props: LikedSectionProps) => {
             <div className="liked-section__books">
             <h3>Authors</h3>
             {likedAuthors.map((author) => (
-                <Link key={author.id} to={`/author/${author.id}`}> {author.name} {author.lastName}, </Link> 
+                <Link className='liked' key={author.id} to={`/author/${author.id}`}> {author.name} {author.lastName} </Link>
             ))}
             <h3>Genres</h3>
             {likedGenres.map((genre) => (
-                <Link key={genre.id} to={`/genre/${genre.id}`}> {genre.name}, </Link>
+                <Link className='liked' key={genre.id} to={`/genre/${genre.id}`}> {genre.name} </Link>
             ))}
             </div>
         )}
