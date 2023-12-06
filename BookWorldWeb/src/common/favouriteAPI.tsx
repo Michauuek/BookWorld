@@ -113,3 +113,33 @@ export const GetGenreLike = (genreId: number, userId: string) => {
     }
   return axios.post('/api/favourites/genre/elastic/get', payload)
 }
+
+export const GetAuthorLikes = (userId: string) => {
+  const payload = {
+      where: {
+        AND: [
+          {
+              userId: {
+                equals: userId
+              }
+            },
+        ]
+      },
+    }
+  return axios.post('/api/favourites/author/elastic/get', payload)
+}
+
+export const GetGenreLikes = (userId: string) => {
+const payload = {
+    where: {
+      AND: [
+        {
+            userId: {
+              equals: userId
+            }
+          },
+      ]
+    },
+  }
+return axios.post('/api/favourites/genre/elastic/get', payload)
+}

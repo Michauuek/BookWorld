@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useAuth } from "../../../common/auth";
 import { User, passwordChange } from "../../../common/adminAPI";
 import axios from "axios";
+import { LikedSection } from "./LikedSection";
 import { toast } from "react-toastify";
 
 
@@ -60,8 +61,8 @@ export const UserScreen = () => {
             <UnselLabel label="Last name" value={allUser?.lastName} />
             <UnselLabel label="Role" value={allUser?.role} />
             <UnselLabel label="Created at" value={allUser?.createdAt?.toString()} />
-        
 
+            <LikedSection user={user.userId!} />
             <h1>Reset password</h1>
             <form onSubmit={handleResetPassword}>
                 <label>
