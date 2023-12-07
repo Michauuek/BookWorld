@@ -4,10 +4,9 @@ import { Author, GetAuthors } from "../../../../common/authorAPI"
 import { Genre, GetGenres } from "../../../../common/genreAPI"
 
 
-
-
 interface BookFormProps {
     book: BookRequest|undefined
+    submitButton: string
     onSubmit: (newBook: BookRequest) => void
 }
 
@@ -40,7 +39,6 @@ export const BookForm = (props: BookFormProps) => {
     const [genres, setGenres] = useState<Genre[]>([]);
   
     useEffect(() => {
-  
       GetAuthors().then(response => {
         setAuthors(response.data);
       }
@@ -56,7 +54,7 @@ export const BookForm = (props: BookFormProps) => {
         console.error('Error:', error);
       }
       );
-    }, [location]);
+    }, []);
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -77,7 +75,7 @@ export const BookForm = (props: BookFormProps) => {
         }
     };
 
-    const handleFormSubmit = (e: any) => {
+    const handleFormSubmit = (e) => {
         e.preventDefault();
         props.onSubmit(newBook)
     }
@@ -160,7 +158,7 @@ export const BookForm = (props: BookFormProps) => {
                 </select>
 
             </div>
-            <button type="submit">Add Book</button>
+            <button type="submit">{props.submitButton}</button>
         </form>
     )
 }
