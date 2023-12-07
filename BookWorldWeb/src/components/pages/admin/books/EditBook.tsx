@@ -42,10 +42,10 @@ export const EditBook = () => {
         updateBook(bookId!, newBook).then(() => {
             toast(`Book modifed.`, { type: 'success' })
             nav(`/book/${bookId}`)
-        })
-        .catch(() => {
-            toast(`Failed .`, { type: 'success' })
-        })
+        }).catch((error) => {
+            toast(`Error: ${error}`, { type: 'error' })
+        }
+        )
     }
     
 
