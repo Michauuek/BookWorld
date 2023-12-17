@@ -145,6 +145,10 @@ export class BookService extends ElasticSearchService<'books', BookResponse> {
 
     async deleteById(id: number): Promise<void> {
         logger.info({id}, `deleteById() - id:`);
+
+        await prisma.ratings.deleteMany(
+            { where: { bookId: id } }
+        )
         
         
         await prisma.ratings.deleteMany(
